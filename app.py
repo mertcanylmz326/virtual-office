@@ -223,7 +223,7 @@ HTML_TEMPLATE = """
             <span style="color: #38bdf8; font-weight: bold;">● DİREK TIKLANABİLİR LİNK MODU</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown hazır. İstediğin siteyi kurdurduğun an doğrudan tıklanabilir canlı link ekrana düşecek!</div>
+            <div class="log-line">[SYSTEM]: Ajanlar hazır. Hangi ajana yazarsan yaz, site kurulduğu an tıklanabilir link ekrana düşecek!</div>
         </div>
     </div>
 
@@ -401,7 +401,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} projeyi kodluyor ve canlı link hazırlıyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor ve canlı link hazırlıyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -533,6 +533,7 @@ def api_chat():
     preview_url = ""
     reply = ""
 
+    # Hangi ajana yazılırsa yazırılsın site/kur/yap/tasarla geçtiği an otomatik web servis kodu üretilir!
     if any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
         try:
             code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, şık ve tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ham HTML kodunu döndür, asla markdown işaretleri (```html) veya açıklama metni ekleme."
@@ -555,7 +556,7 @@ def api_chat():
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
             cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
-                        ("Mertcan (CEO)", user_message[:40], "Web Servis Canlı", html_code))
+                        (f"{agent_name} (Otonom)", user_message[:40], "Web Servis Canlı", html_code))
             project_id = cur.fetchone()[0]
             conn.commit()
             cur.close()
@@ -569,7 +570,7 @@ def api_chat():
     try:
         system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} uzmanısın. Patronun sana yazdı: '{user_message}'. Kısa ve karizmatik yanıt ver."
         if preview_url:
-            system_prompt += f" Proje kodlandı, web servis linki hazır."
+            system_prompt += f" Proje kodlandı, web servis linki hazır: {preview_url}"
 
         completion = groq_client.chat.completions.create(
             model="qwen/qwen3.8-27b",
