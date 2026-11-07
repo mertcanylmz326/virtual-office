@@ -4,6 +4,7 @@ import threading
 import random
 import datetime
 import requests
+import base64
 import psycopg2
 from flask import Flask, render_template_string, jsonify, request
 from groq import Groq
@@ -13,6 +14,9 @@ app = Flask(__name__)
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
 GROQ_API_KEY = "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"
 COINGECKO_API_KEY = "CG-rU5NZkTSGvA1dXfNV58J26fK"
+GITHUB_TOKEN = "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"
+GITHUB_USERNAME = "mertcanymlz326"
+
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 company_state = {
@@ -45,6 +49,7 @@ def init_db():
                 client_name TEXT,
                 project_type TEXT,
                 status TEXT DEFAULT 'İşleniyor',
+                repo_url TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
@@ -66,6 +71,42 @@ def get_crypto_price(coin_id="bitcoin"):
             return data[coin_id]["usd"]
     except Exception as e:
         print(f"CoinGecko API Hatası: {e}")
+    return None
+
+def create_github_repo_and_deploy(project_name, html_content):
+    try:
+        repo_name = f"e-trade-{int(time.time())}-{project_name.lower().replace(' ', '-')[:20]}"
+        headers = {
+            "Authorization": f"Bearer {GITHUB_TOKEN}",
+            "Accept": "application/vnd.github+json"
+        }
+        
+        # 1. Repo Oluştur
+        repo_data = {
+            "name": repo_name,
+            "description": f"E-Trade Pro AI Agency - Otomatik Üretilen Proje: {project_name}",
+            "private": False,
+            "auto_init": True
+        }
+        r = requests.post("https://api.github.com/user/repos", json=repo_data, headers=headers, timeout=10)
+        if r.status_code != 201:
+            print(f"GitHub Repo Oluşturma Hatası: {r.text}")
+            return None
+
+        time.sleep(2) # GitHub'ın repoyu hazırlaması için kısa bekleme
+
+        # 2. index.html Dosyasını Ekle
+        file_url = f"https://api.github.com/repos/{GITHUB_USERNAME}/{repo_name}/contents/index.html"
+        encoded_content = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
+        file_data = {
+            "message": "Brown agent: otomatik web sitesi şablonu eklendi",
+            "content": encoded_content
+        }
+        r_file = requests.put(file_url, json=file_data, headers=headers, timeout=10)
+        if r_file.status_code in [200, 201]:
+            return f"https://github.com/{GITHUB_USERNAME}/{repo_name}"
+    except Exception as e:
+        print(f"GitHub Entegrasyon Hatası: {e}")
     return None
 
 employees = {
@@ -181,7 +222,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // LIVE CRYPTO AI HQ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // GITHUB DEPLOY AI HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
@@ -193,7 +234,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">⚡ COINGECKO API: Aktif</span>
+        <span style="color: #fbbf24;">🚀 GITHUB DEPLOY: Aktif</span>
     </div>
 
     <!-- Canvas Haritası -->
@@ -209,7 +250,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="İrfan'a btc fiyatını sor veya talimat ver..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Brown'a 'şu isimde web sitesi kur' de..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -218,10 +259,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● LIVE DATA ENGINE</span>
+            <span style="color: #38bdf8;">● GITHUB AUTO-DEPLOY READY</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: CoinGecko API entegrasyonu ve Qwen AI aktif edildi.</div>
+            <div class="log-line">[SYSTEM]: GitHub PAT ve Otomatik Kod Üretim Motoru devreye alındı.</div>
         </div>
     </div>
 
@@ -295,9 +336,9 @@ HTML_TEMPLATE = """
             const rooms = [
                 {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO", glow: "#3b82f6"},
                 {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444"},
-                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN", glow: "#10b981"},
+                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (DEV)", glow: "#10b981"},
                 {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b"},
-                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN (FİNANS)", glow: "#8b5cf6"},
+                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6"},
                 {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL", glow: "#f97316"},
                 {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX", glow: "#14b8a6"},
                 {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR", glow: "#64748b"},
@@ -455,7 +496,8 @@ HTML_TEMPLATE = """
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
                 if(data.task_created) {
-                    appendLog(`> [MÜŞTERİ KUYRUĞU]: Yeni proje otonom kuyruğa eklendi -> "${data.task_title}"`);
+                    appendLog(`> [GİTHUB DEPLOY]: Yeni web sitesi kodlandı ve GitHub'a yüklendi!`);
+                    appendLog(`> [REPO LİNKİ]: <a href="${data.repo_url}" target="_blank" style="color: #38bdf8;">${data.repo_url}</a>`);
                 }
             })
             .catch(err => {
@@ -576,19 +618,45 @@ def api_chat():
 
     task_created = False
     task_title = ""
-    if "site" in user_message.lower() or "kur" in user_message.lower() or "yap" in user_message.lower():
+    repo_url = ""
+
+    # Eğer Brown'a site kurduruluyorsa GitHub'da repo oluştur ve kod bas
+    if agent_name == "Brown" and ("site" in user_message.lower()  or "kur" in user_message.lower() or "yap" in user_message.lower() or "kod" in user_message.lower()):
         task_created = True
         task_title = user_message[:40]
+
+        # 1. Groq ile profesyonel HTML/CSS kodu üret
+        html_code = "<!DOCTYPE html><html><head><title>Proje</title></head><body><h1>E-Trade Pro AI Sitesi</h1></body></html>"
+        try:
+            code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern ve şık tek dosyalık bir HTML/CSS (Bootstrap veya dahili style içeren) web sitesi kodu yaz: '{user_message}'. Sadece ham HTML kodunu döndür, başka açıklama yazma."
+            comp = groq_client.chat.completions.create(
+                model="qwen/qwen3.8-27b",
+                messages=[{"role": "user", "content": code_prompt}],
+                max_tokens=1500, temperature=0.3
+            )
+            raw_code = comp.choices[0].message.content.strip()
+            if "```html" in raw_code:
+                html_code = raw_code.split("```html")[1].split("```")[0].strip()
+            elif "```" in raw_code:
+                html_code = raw_code.split("```")[1].split("```")[0].strip()
+            else:
+                html_code = raw_code
+        except Exception as e:
+            print(f"Kod Üretim Hatası: {e}")
+
+        # 2. GitHub'a otomatik yükle
+        repo_url = create_github_repo_and_deploy(task_title, html_code)
+
         try:
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
-            cur.execute("INSERT INTO client_orders (client_name, project_type) VALUES (%s, %s)", ("Mertcan (CEO)", task_title))
+            cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url) VALUES (%s, %s, %s)", ("Mertcan (CEO)", task_title, repo_url or "Başarısız"))
             conn.commit()
             cur.close()
             conn.close()
         except: pass
 
-    # Canlı Veri Entegrasyonu (CoinGecko)
+    # Canlı Veri (CoinGecko) İrfan için
     live_context = ""
     if agent_name == "İrfan" and ("btc" in user_message.lower() or "bitcoin" in user_message.lower() or "fiyat" in user_message.lower()):
         btc_price = get_crypto_price("bitcoin")
@@ -602,23 +670,29 @@ def api_chat():
             f"Sen E-Trade Pro otonom ajansında {agent['role']} departmanında çalışan {agent_name} adında bir uzmansın. "
             f"Patronun Mertcan sana yazdı: '{user_message}'.\n"
             f"{live_context}\n"
-            f"Kendi departmanının uzmanlık alanına göre kısa, net, canlı verileri de kullanarak zekice bir yanıt ver."
+            f"Kıdemli bir uzman gibi kısa, net, karizmatik ve doğrudan sonuca giden bir yanıt ver."
         )
+        if task_created and repo_url:
+            system_prompt += f" Proje başarıyla kodlandı ve GitHub'a yüklendi. Repo linki: {repo_url}"
+
         completion = groq_client.chat.completions.create(
             model="qwen/qwen3.8-27b",
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
-            max_tokens=150, temperature=0.7
+            max_tokens=200, temperature=0.7
         )
         reply = completion.choices[0].message.content.strip('"').strip()
     except Exception as e:
         print(f"GROQ API HATASI: {e}")
 
     if not reply:
-        reply = f"Emredersiniz patron, {agent['role']} olarak talimatınız işleme alındı."
+        if repo_url:
+            reply = f"Patron site kodlandı ve GitHub'a atıldı: {repo_url}"
+        else:
+            reply = f"Emredersiniz patron, {agent['role']} olarak talimatınız işleme alındı."
 
     employees[agent_name]["speech"] = reply[:25]
-    log_to_supabase(agent_name, "CLIENT_PROJECT", f"Talimat: {user_message} | Yanıt: {reply}")
-    return jsonify({"status": reply, "task_created": task_created, "task_title": task_title})
+    log_to_supabase(agent_name, "GITHUB_DEPLOY", f"Talimat: {user_message} | Repo: {repo_url}")
+    return jsonify({"status": reply, "task_created": task_created, "task_title": task_title, "repo_url": repo_url})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
@@ -630,11 +704,11 @@ def api_tasks():
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
-        cur.execute("SELECT client_name, project_type, status FROM client_orders ORDER BY id DESC LIMIT 5;")
+        cur.execute("SELECT client_name, project_type, status, repo_url FROM client_orders ORDER BY id DESC LIMIT 5;")
         rows = cur.fetchall()
         cur.close()
         conn.close()
-        tasks = [f"[{r[0]}]: {r[1]} ({r[2]})" for r in rows]
+        tasks = [f"[{r[0]}]: {r[1]} ({r[2]}) -> {r[3]}" for r in rows]
         return jsonify({"tasks": tasks if tasks else ["Bekleyen müşteri projesi yok."]})
     except:
         return jsonify({"tasks": ["Projeler yüklenemedi."]})
@@ -644,11 +718,11 @@ def api_orders():
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
-        cur.execute("SELECT client_name, project_type, status FROM client_orders ORDER BY id DESC LIMIT 5;")
+        cur.execute("SELECT client_name, project_type, status, repo_url FROM client_orders ORDER BY id DESC LIMIT 5;")
         rows = cur.fetchall()
         cur.close()
         conn.close()
-        orders = [f"Müşteri: {r[0]} | İş: {r[1]} [{r[2]}]" for r in rows]
+        orders = [f"Müşteri: {r[0]} | İş: {r[1]} | Repo: {r[3]}" for r in rows]
         return jsonify({"orders": orders if orders else ["Aktif müşteri siparişi bulunmuyor."]})
     except:
         return jsonify({"orders": ["Siparişler okunamadı."]})
@@ -660,8 +734,8 @@ def api_boardroom():
         prompt = "Otonom ajansın büyümesi için stratejik bir yapay zeka entegrasyon kararı al. İki cümlelik karar yaz."
         completion = groq_client.chat.completions.create(
             model="qwen/qwen3.8-27b",
-            messages=[{"role": "system", "content": prompt}],
-            max_titles=120, temperature=0.7
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=120, temperature=0.7
         )
         decision = completion.choices[0].message.content.strip('"').strip()
     except Exception as e:
