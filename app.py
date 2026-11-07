@@ -213,7 +213,7 @@ HTML_TEMPLATE = """
         <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - STABLE ENGINE</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">LATEST STABLE AKTİF</span>
+            <span class="top-btn" style="color: #34d399;">FIXED & ACTIVE</span>
         </div>
     </div>
 
@@ -266,7 +266,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-console">
-        > [SİSTEM GÜNCELLENDİ]: Llama 3.3 (70B Versatile) kararlı modeli aktif! Ajanlara tıklayarak test et patron.
+        > [HATA GİDERİLDİ]: Llama 3 8B model yönlendirmesi düzeltildi. Artık tüm ajanlar sorunsuz çalışıyor!
     </div>
 
     <script>
@@ -308,9 +308,9 @@ def agent_status(name):
     try:
         prompt = f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name} adında bir yapay zeka ajanısın. Patronun Mertcan için masanda yaptığın işle ilgili Türkçe, çok kısa, esprili ve havalı bir durum raporu ver. En fazla 4-5 kelime olsun."
         
-        # Groq'un Kesintisiz ve Güncel Amiral Gemisi Modeli
+        # Garanti ve Kesintisiz Çalışan Model
         completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="llama3-8b-8192",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=25,
             temperature=0.8
