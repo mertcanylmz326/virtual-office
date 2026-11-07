@@ -76,7 +76,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Autonomous AI Agency</title>
+    <title>E-Trade Pro - AI Agency HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -147,7 +147,7 @@ HTML_TEMPLATE = """
             margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
         .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
-        .terminal-body { padding: 10px; height: 95px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; }
+        .terminal-body { padding: 10px; height: 110px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
         .log-line { margin-bottom: 4px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
 
         #agent-modal {
@@ -196,7 +196,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Ajana talimat ver veya e-ticaret sitesi kurdur..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Ajana talimat ver veya soru sor..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -208,7 +208,7 @@ HTML_TEMPLATE = """
             <span style="color: #38bdf8;">● READY</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Ajanlar ve harita başarıyla yüklendi.</div>
+            <div class="log-line">[SYSTEM]: Ajanlar ve akıllı yanıt mekanizması hazır.</div>
         </div>
     </div>
 
@@ -227,7 +227,6 @@ HTML_TEMPLATE = """
         const terminalLogs = document.getElementById('terminal-logs');
 
         let agentsData = {};
-        let lastLoggedDialogue = "";
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
@@ -580,9 +579,9 @@ def api_chat():
     try:
         memory_context = query_supabase_memory(user_message)
         system_prompt = (
-            f"Sen E-Trade Pro otonom yazılım ajansında {agent['role']} olarak çalışan {agent_name} adında bir kıdemli yapay zeka uzmansın. "
-            f"Patronun Mertcan sana talimat verdi: '{user_message}'. "
-            f"Kısa, net ve profesyonel bir yanıt ver."
+            f"Sen E-Trade Pro otonom yazılım ajansında {agent['role']} olarak çalışan {agent_name} adında bir uzmansın. "
+            f"Patronun Mertcan sana yazdı: '{user_message}'. "
+            f"Kendi departmanının uzmanlık alanına göre kısa, net, zekice ve doğrudan soruya odaklanan bir yanıt ver."
         )
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
@@ -593,9 +592,20 @@ def api_chat():
     except Exception as e:
         print(f"Groq Hatası: {e}")
 
-    # Boş yanıt dönerse güvenli yedek metin
+    # Role özel akıllı yedek yanıtlar
     if not reply:
-        reply = f"Emredersiniz patron, {agent['role']} departmanı olarak talimatınız işleme alındı ve kuruluyor."
+        fallbacks = {
+            "Finans": "Patron, finansal veriler inceleniyor, bütçe kontrol altında.",
+            "Destek": "Anlaşıldı patron, müşteri talebi ve destek kuyruğu güncellendi.",
+            "Yazılım": "Emredersiniz patron, kod tabanı optimize ediliyor ve kuruluyor.",
+            "Operasyon": "Operasyonel süreçler sorunsuz şekilde ilerliyor patron.",
+            "Hukuk": "Sözleşmeler ve yasal mevzuat denetleniyor patron.",
+            "Siber": "Güvenlik duvarı aktif, tüm siber tehditler engelleniyor.",
+            "Pazarlama": "Hedef kitle analizi ve lead toplama süreci devam ediyor.",
+            "İK": "Ajan performans optimizasyonu ve kaynak planlaması yapılıyor.",
+            "Başarı": "Müşteri memnuniyet oranları hedef düzeyde seyrediyor."
+        }
+        reply = fallbacks.get(agent['role'], "Emredersiniz patron, talimatınız işleme alındı.")
 
     employees[agent_name]["speech"] = reply[:25]
     log_to_supabase(agent_name, "CLIENT_PROJECT", f"Talimat: {user_message} | Yanıt: {reply}")
