@@ -4,7 +4,7 @@ from groq import Groq
 
 app = Flask(__name__)
 
-# Yeni Groq API Anahtarın ile Canlı Bağlantı
+# Groq API Anahtarın ve Güncel İstemci
 GROQ_API_KEY = "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"
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
@@ -213,7 +213,7 @@ HTML_TEMPLATE = """
         <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - LIVE AI AGENTS</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">YENİ API AKTİF</span>
+            <span class="top-btn" style="color: #34d399;">MODEL GÜNCELLENDİ</span>
         </div>
     </div>
 
@@ -266,7 +266,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-console">
-        > [SİSTEM GÜNCELLENDİ]: Yeni API anahtarı aktif. Ajanlara tıklayarak anlık yapay zeka raporu alabilirsin!
+        > [MODEL GÜNCELLENDİ]: Llama 3.3 aktif edildi. Ajanlara tıklayarak anlık rapor alabilirsin patron!
     </div>
 
     <script>
@@ -308,8 +308,9 @@ def agent_status(name):
     try:
         prompt = f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name} adında bir yapay zeka ajanısın. Patronun Mertcan için masanda yaptığın işle ilgili Türkçe, çok kısa, esprili ve havalı bir durum raporu ver. En fazla 4-5 kelime olsun."
         
+        # Güncel ve Desteklenen Groq Llama 3.3 Modeli
         completion = groq_client.chat.completions.create(
-            model="llama3-70b-8192",
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=25,
             temperature=0.8
