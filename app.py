@@ -208,7 +208,7 @@ HTML_TEMPLATE = """
             <span style="color: #38bdf8;">● READY</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Ajanlar ve akıllı yanıt mekanizması hazır.</div>
+            <div class="log-line">[SYSTEM]: Gerçek LLM entegrasyonu aktif edildi.</div>
         </div>
     </div>
 
@@ -579,33 +579,21 @@ def api_chat():
     try:
         memory_context = query_supabase_memory(user_message)
         system_prompt = (
-            f"Sen E-Trade Pro otonom yazılım ajansında {agent['role']} olarak çalışan {agent_name} adında bir uzmansın. "
+            f"Sen E-Trade Pro otonom ajansında {agent['role']} departmanında çalışan {agent_name} adında bir uzmansın. "
             f"Patronun Mertcan sana yazdı: '{user_message}'. "
             f"Kendi departmanının uzmanlık alanına göre kısa, net, zekice ve doğrudan soruya odaklanan bir yanıt ver."
         )
         completion = groq_client.chat.completions.create(
-            model="openai/gpt-oss-20b",
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
             max_tokens=150, temperature=0.7
         )
         reply = completion.choices[0].message.content.strip('"').strip()
     except Exception as e:
-        print(f"Groq Hatası: {e}")
+        print(f"GROQ API HATASI: {e}")
 
-    # Role özel akıllı yedek yanıtlar
     if not reply:
-        fallbacks = {
-            "Finans": "Patron, finansal veriler inceleniyor, bütçe kontrol altında.",
-            "Destek": "Anlaşıldı patron, müşteri talebi ve destek kuyruğu güncellendi.",
-            "Yazılım": "Emredersiniz patron, kod tabanı optimize ediliyor ve kuruluyor.",
-            "Operasyon": "Operasyonel süreçler sorunsuz şekilde ilerliyor patron.",
-            "Hukuk": "Sözleşmeler ve yasal mevzuat denetleniyor patron.",
-            "Siber": "Güvenlik duvarı aktif, tüm siber tehditler engelleniyor.",
-            "Pazarlama": "Hedef kitle analizi ve lead toplama süreci devam ediyor.",
-            "İK": "Ajan performans optimizasyonu ve kaynak planlaması yapılıyor.",
-            "Başarı": "Müşteri memnuniyet oranları hedef düzeyde seyrediyor."
-        }
-        reply = fallbacks.get(agent['role'], "Emredersiniz patron, talimatınız işleme alındı.")
+        reply = f"Emredersiniz patron, {agent['role']} olarak talimatınız işleme alındı."
 
     employees[agent_name]["speech"] = reply[:25]
     log_to_supabase(agent_name, "CLIENT_PROJECT", f"Talimat: {user_message} | Yanıt: {reply}")
@@ -650,13 +638,13 @@ def api_boardroom():
     try:
         prompt = "Otonom ajansın büyümesi için stratejik bir yapay zeka entegrasyon kararı al. İki cümlelik karar yaz."
         completion = groq_client.chat.completions.create(
-            model="openai/gpt-oss-20b",
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=120, temperature=0.7
         )
         decision = completion.choices[0].message.content.strip('"').strip()
-    except:
-        pass
+    except Exception as e:
+        print(f"GROQ ZİRVE HATASI: {e}")
     
     if not decision:
         decision = "Yönetim kurulu otonom ağ altyapısını güçlendirme kararı aldı."
