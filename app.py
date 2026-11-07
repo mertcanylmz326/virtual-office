@@ -180,7 +180,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">⚡ DURUM: Aktif</span>
+        <span style="color: #fbbf24;">⚡ MODEL: Qwen-27B</span>
     </div>
 
     <!-- Canvas Haritası -->
@@ -205,10 +205,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● READY</span>
+            <span style="color: #38bdf8;">● QWEN AI READY</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Gerçek LLM entegrasyonu aktif edildi.</div>
+            <div class="log-line">[SYSTEM]: Qwen 27B modeli aktif, ajanlar tam performansla çalışıyor.</div>
         </div>
     </div>
 
@@ -584,7 +584,7 @@ def api_chat():
             f"Kendi departmanının uzmanlık alanına göre kısa, net, zekice ve doğrudan soruya odaklanan bir yanıt ver."
         )
         completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="qwen/qwen3.8-27b",
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
             max_tokens=150, temperature=0.7
         )
@@ -638,7 +638,7 @@ def api_boardroom():
     try:
         prompt = "Otonom ajansın büyümesi için stratejik bir yapay zeka entegrasyon kararı al. İki cümlelik karar yaz."
         completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="qwen/qwen3.8-27b",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=120, temperature=0.7
         )
