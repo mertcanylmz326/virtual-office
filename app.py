@@ -15,9 +15,9 @@ GROQ_API_KEY = "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"
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 company_state = {
-    "budget": 20000,
+    "budget": 22500,
     "crisis": "Yok",
-    "active_clients": 5
+    "active_clients": 6
 }
 
 def init_db():
@@ -55,10 +55,11 @@ def init_db():
 
 init_db()
 
+# Ajanlar ve Sabit Odaları (Kendi alanlarında kalacaklar)
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "x": 60, "y": 65, "target_x": 60, "target_y": 65, "color": "#3b82f6", "state": "Masada", "speech": "Destek hazir"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "x": 240, "y": 65, "target_x": 240, "target_y": 65, "color": "#ef4444", "state": "Masada", "speech": "Süreç takip"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "x": 420, "y": 65, "target_x": 420, "target_y": 65, "color": "#10b981", "state": "Masada", "speech": "Kod yaziyom"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "x": 420, "y": 65, "target_x": 420, "target_y": 65, "color": "#10b981", "state": "Masada", "speech": "Kod yazıyor"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "x": 60, "y": 205, "target_x": 60, "target_y": 205, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "x": 240, "y": 205, "target_x": 240, "target_y": 205, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe onayda"},
@@ -76,7 +77,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Responsive AI Agency HQ</title>
+    <title>E-Trade Pro - Role-Based AI Agency</title>
     <style>
         body { 
             background-color: #030712; 
@@ -156,7 +157,6 @@ HTML_TEMPLATE = """
             box-shadow: 0 0 25px rgba(56, 189, 248, 0.4); width: 280px; text-align: left;
         }
 
-        /* Mobil Uyumluluk Ayarları */
         @media (max-width: 768px) {
             #game-topbar { flex-direction: column; align-items: stretch; text-align: center; }
             #game-topbar > div { display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
@@ -169,7 +169,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // RESPONSIVE AI HQ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // ROLE-BASED AI HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
@@ -179,9 +179,9 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="stats-bar">
-        <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">20000</span></span>
-        <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">5</span></span>
-        <span style="color: #fbbf24;">⚡ DURUM: Otonom Aktif</span>
+        <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
+        <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
+        <span style="color: #fbbf24;">⚡ MOD: Katı Rol Odaklı</span>
     </div>
 
     <!-- Canvas Haritası -->
@@ -205,11 +205,11 @@ HTML_TEMPLATE = """
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ RESPONSIVE AI OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● MOBILE OPTIMIZED</span>
+            <span>⚡ ROLE-BASED OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8;">● NO RANDOM WANDERING</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Mobil duyarlı arayüz ve okunabilir font boyutları aktif edildi.</div>
+            <div class="log-line">[SYSTEM]: Ajanlar kendi departmanlarında sabitlendi, rastgele gezintiler bastırıldı.</div>
         </div>
     </div>
 
@@ -230,6 +230,7 @@ HTML_TEMPLATE = """
         let agentsData = {};
         let footprints = [];
         let steamParticles = [];
+        let lastLoggedDialogue = "";
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
@@ -247,8 +248,8 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "🤖 " + name;
             document.getElementById('modal-role').innerText = "Rol: " + role;
-            document.getElementById('modal-xp').innerText = "Otonom Performans: Üst Düzey";
-            document.getElementById('modal-status').innerText = "Durum: Müşteri projelerini işliyor.";
+            document.getElementById('modal-xp').innerText = "Departman Uzmanlığı: Sabit Görev";
+            document.getElementById('modal-status').innerText = "Durum: Kendi odasında çalışıyor.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -265,7 +266,6 @@ HTML_TEMPLATE = """
             const h = 440;
             ctx.clearRect(0, 0, w, h);
 
-            // Zemin
             ctx.fillStyle = "#1e1b18";
             ctx.fillRect(0, 0, w, h);
             
@@ -278,17 +278,15 @@ HTML_TEMPLATE = """
                 ctx.stroke();
             }
 
-            // Ana Koridorlar
             ctx.fillStyle = "#111827";
             ctx.fillRect(0, 130, w, 35);
             ctx.fillRect(0, 270, w, 35);
             ctx.fillRect(530, 0, 35, h);
 
-            // 9 Ofis Odası
             const rooms = [
                 {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO", glow: "#3b82f6"},
                 {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444"},
-                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN", glow: "#10b981"},
+                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (YAZILIM)", glow: "#10b981"},
                 {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b"},
                 {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6"},
                 {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL", glow: "#f97316"},
@@ -330,7 +328,6 @@ HTML_TEMPLATE = """
                 else ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
             });
 
-            // CEO MAKAM ODASI
             ctx.fillStyle = "rgba(2, 132, 199, 0.25)";
             ctx.fillRect(580, 135, 485, 30);
             ctx.strokeStyle = "#38bdf8";
@@ -340,7 +337,6 @@ HTML_TEMPLATE = """
             ctx.font = "bold 10px 'Courier New'";
             ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 153);
 
-            // Mutfak
             ctx.fillStyle = "rgba(120, 53, 15, 0.45)";
             ctx.fillRect(580, 15, 485, 110);
             ctx.strokeStyle = "#d97706";
@@ -368,7 +364,6 @@ HTML_TEMPLATE = """
                 if (p.alpha <= 0) steamParticles.splice(index, 1);
             });
 
-            // Zirve Odası
             ctx.fillStyle = "rgba(109, 40, 217, 0.35)";
             ctx.fillRect(580, 175, 485, 250);
             ctx.strokeStyle = "#8b5cf6";
@@ -381,12 +376,6 @@ HTML_TEMPLATE = """
             ctx.fillStyle = "#3b0764";
             ctx.fillRect(740, 270, 160, 60);
 
-            footprints.forEach(fp => {
-                ctx.fillStyle = "rgba(56, 189, 248, 0.5)";
-                ctx.fillRect(fp.x, fp.y, 2, 2);
-            });
-
-            // Robotlar ve Okunabilir Konuşma Balonları
             for (let name in agentsData) {
                 let ag = agentsData[name];
                 
@@ -402,11 +391,6 @@ HTML_TEMPLATE = """
                 ctx.fillStyle = "#ffffff";
                 ctx.fillRect(ag.x + 5, ag.y + 7, 4, 4);
                 ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
-
-                let legOffset = (ag.state === "Yürüyor...") ? (Math.floor(Date.now() / 150) % 2 === 0 ? 3 : -3) : 0;
-                ctx.fillStyle = ag.color;
-                ctx.fillRect(ag.x + 5, ag.y + 24, 3, 6 + legOffset);
-                ctx.fillRect(ag.x + 16, ag.y + 24, 3, 6 - legOffset);
 
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 8px 'Courier New'";
@@ -449,16 +433,13 @@ HTML_TEMPLATE = """
                 let mapped = {};
                 data.agents.forEach(ag => {
                     mapped[ag.name] = ag;
-                    if (ag.state === "Yürüyor...") {
-                        footprints.push({x: ag.x + 12, y: ag.y + 26});
-                        if (footprints.length > 30) footprints.shift();
-                    }
                 });
                 agentsData = mapped;
                 drawOffice();
 
-                if (data.latest_dialogue) {
-                    appendLog(`💬 [OTONOM AJANLAR]: ${data.latest_dialogue}`);
+                if (data.latest_dialogue && data.latest_dialogue !== lastLoggedDialogue) {
+                    lastLoggedDialogue = data.latest_dialogue;
+                    appendLog(`💬 [OTONOM AJANS]: ${data.latest_dialogue}`);
                 }
             });
         }, 1500);
@@ -559,57 +540,18 @@ def simulation_tick():
         company_state["budget"] += revenue
         company_state["active_clients"] = random.randint(3, 8)
 
-    if random.random() < 0.12:
-        names = [n for n in employees.keys() if n != "Mutfak_Chef"]
-        if len(names) >= 2:
-            a1, a2 = random.sample(names, 2)
-            scenarios = [
-                (f"Müşteri talebi: {a1} ve {a2} yeni bir e-ticaret web sitesi mimarisini kodluyor.", "YAZILIM", (420, 65), "Kod yazılıyo 💻"),
-                (f"Müşteri desteği: {a1} müşteri sorununu çözdü, {a2} onayladı.", "DESTEK", (60, 65), "Destek okey ✔️")
-            ]
-            chosen_text, goal_type, target_pos, speech_bubble = random.choice(scenarios)
-            latest_inter_agent_chat = chosen_text
-            log_to_supabase("OTONOM_AJANS", goal_type, latest_inter_agent_chat)
-            
-            employees[a1]["speech"] = speech_bubble
-            employees[a1]["target_x"] = target_pos[0]
-            employees[a1]["target_y"] = target_pos[1]
-
+    # Ajanlar kendi odalarından ayrılmaz, sadece kendi masalarında çalışır statüsünde kalır
     for name, data in employees.items():
         if name == "Mutfak_Chef":
-            data["target_x"], data["target_y"] = 630, 60
+            data["x"], data["y"] = 630, 60
             data["state"] = "Kahve Hazırlıyor"
             data["speech"] = "Kahveler hazır!"
         else:
-            dx_check = data["target_x"] - data["x"]
-            dy_check = data["target_y"] - data["y"]
-            dist_check = (dx_check**2 + dy_check**2)**0.5
-            
-            if dist_check < 5 and random.random() < 0.08:
-                destinations = [
-                    (data["room_x"] + 55, data["room_y"] + 55),
-                    (random.randint(620, 1000), random.randint(40, 150)),
-                    (random.randint(620, 1000), random.randint(200, 380))
-                ]
-                data["target_x"], data["target_y"] = random.choice(destinations)
-                data["speech"] = f"{data['title']} Ajan"
-
-        dx = data["target_x"] - data["x"]
-        dy = data["target_y"] - data["y"]
-        dist = (dx**2 + dy**2)**0.5
-
-        if dist > 3:
-            step = min(4, dist)
-            data["x"] += (dx / dist) * step
-            data["y"] += (dy / dist) * step
-            data["state"] = "Yürüyor..."
-        else:
-            if data["y"] >= 135 and data["y"] <= 165:
-                data["state"] = "CEO Odasında"
-            elif abs(data["x"] - (data["room_x"] + 55)) < 15 and abs(data["y"] - (data["room_y"] + 55)) < 15:
-                data["state"] = "Masada (Kodluyor)"
-            else:
-                data["state"] = "Aktif"
+            # Sabit kendi odasının masasında çalışır
+            data["x"] = data["room_x"] + 45
+            data["y"] = data["room_y"] + 50
+            data["state"] = "Masada Çalışıyor"
+            data["speech"] = f"{data['role']} Uzmanı"
 
         agent_list.append({
             "name": name, 
@@ -619,13 +561,13 @@ def simulation_tick():
             "x": data["x"], 
             "y": data["y"], 
             "state": data["state"], 
-            "speech": data.get("speech", "Aktif"),
+            "speech": data["speech"],
             "color": data["color"]
         })
 
     return jsonify({
         "agents": agent_list, 
-        "latest_dialogue": latest_inter_agent_chat,
+        "latest_dialogue": "Tüm ajanlar kendi departmanlarında aktif olarak müşteri taleplerini işliyor.",
         "budget": company_state["budget"],
         "active_clients": company_state["active_clients"]
     })
