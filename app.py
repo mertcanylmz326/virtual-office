@@ -39,7 +39,7 @@ def init_db():
                 water_status TEXT DEFAULT 'Mükemmel'
             );
         """)
-        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Robot Üs Saksısı', 100) ON CONFLICT (id) DO NOTHING;")
+        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Merkezi Üs Saksısı', 100) ON CONFLICT (id) DO NOTHING;")
         conn.commit()
         cur.close()
         conn.close()
@@ -48,19 +48,20 @@ def init_db():
 
 init_db()
 
-# 9 Ajan ve Gerçekçi Oda İçi Masa Konumları
+# Personel Listesi (Mutfak Personeli dahil dinamik yapı)
 employees = {
-    "Marco": {"role": "Destek", "room_x": 15, "room_y": 15, "x": 60, "y": 55, "target_x": 60, "target_y": 55, "color": "#3b82f6", "state": "Masada"},
-    "Talisca": {"role": "Operasyon", "room_x": 175, "room_y": 15, "x": 220, "y": 55, "target_x": 220, "target_y": 55, "color": "#ef4444", "state": "Masada"},
-    "Brown": {"role": "Yazılım", "room_x": 335, "room_y": 15, "x": 380, "y": 55, "target_x": 380, "target_y": 55, "color": "#10b981", "state": "Masada"},
+    "Marco": {"role": "Destek", "room_x": 15, "room_y": 15, "x": 60, "y": 55, "target_x": 60, "target_y": 55, "color": "#3b82f6", "state": "Masada", "plant": "Saksı #1"},
+    "Talisca": {"role": "Operasyon", "room_x": 175, "room_y": 15, "x": 220, "y": 55, "target_x": 220, "target_y": 55, "color": "#ef4444", "state": "Masada", "plant": "Saksı #2"},
+    "Brown": {"role": "Yazılım", "room_x": 335, "room_y": 15, "x": 380, "y": 55, "target_x": 380, "target_y": 55, "color": "#10b981", "state": "Masada", "plant": "Saksı #3"},
     
-    "Kante": {"role": "Pazarlama", "room_x": 15, "room_y": 145, "x": 60, "y": 185, "target_x": 60, "target_y": 185, "color": "#f59e0b", "state": "Masada"},
-    "İrfan": {"role": "Finans", "room_x": 175, "room_y": 145, "x": 220, "y": 185, "target_x": 220, "target_y": 185, "color": "#8b5cf6", "state": "Masada"},
-    "İsmail": {"role": "İK", "room_x": 335, "room_y": 145, "x": 380, "y": 185, "target_x": 380, "target_y": 185, "color": "#f97316", "state": "Masada"},
+    "Kante": {"role": "Pazarlama", "room_x": 15, "room_y": 145, "x": 60, "y": 185, "target_x": 60, "target_y": 185, "color": "#f59e0b", "state": "Masada", "plant": "Saksı #4"},
+    "İrfan": {"role": "Finans", "room_x": 175, "room_y": 145, "x": 220, "y": 185, "target_x": 220, "target_y": 185, "color": "#8b5cf6", "state": "Masada", "plant": "Saksı #5"},
+    "İsmail": {"role": "İK", "room_x": 335, "room_y": 145, "x": 380, "y": 185, "target_x": 380, "target_y": 185, "color": "#f97316", "state": "Masada", "plant": "Saksı #6"},
     
-    "Alex": {"role": "Hukuk", "room_x": 15, "room_y": 275, "x": 60, "y": 315, "target_x": 60, "target_y": 315, "color": "#14b8a6", "state": "Masada"},
-    "Skrinar": {"role": "Siber", "room_x": 175, "room_y": 275, "x": 220, "y": 315, "target_x": 220, "target_y": 315, "color": "#64748b", "state": "Masada"},
-    "Kerem": {"role": "Başarı", "room_x": 335, "room_y": 275, "x": 380, "y": 315, "target_x": 380, "target_y": 315, "color": "#ec4899", "state": "Masada"}
+    "Alex": {"role": "Hukuk", "room_x": 15, "room_y": 275, "x": 60, "y": 315, "target_x": 60, "target_y": 315, "color": "#14b8a6", "state": "Masada", "plant": "Saksı #7"},
+    "Skrinar": {"role": "Siber", "room_x": 175, "room_y": 275, "x": 220, "y": 315, "target_x": 220, "target_y": 315, "color": "#64748b", "state": "Masada", "plant": "Saksı #8"},
+    "Kerem": {"role": "Başarı", "room_x": 335, "room_y": 275, "x": 380, "y": 315, "target_x": 380, "target_y": 315, "color": "#ec4899", "state": "Masada", "plant": "Saksı #9"},
+    "Mutfak_Chef": {"role": "Mutfak Personeli", "room_x": 520, "room_y": 15, "x": 560, "y": 55, "target_x": 560, "target_y": 55, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "plant": "Mutfak Saksısı"}
 }
 
 HTML_TEMPLATE = """
@@ -69,7 +70,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Robot Corridor Tycoon HQ</title>
+    <title>E-Trade Pro - Ultimate Robot Tycoon HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -97,8 +98,9 @@ HTML_TEMPLATE = """
 
         #game-container {
             position: relative;
-            width: 980px;
+            width: 1020px;
             height: 410px;
+            max-width: 100%;
             margin: 10px auto;
             border: 3px solid #38bdf8;
             border-radius: 8px;
@@ -109,10 +111,10 @@ HTML_TEMPLATE = """
         canvas {
             display: block;
             width: 100%;
-            height: 100%;
+            height: auto;
         }
 
-        .action-bar { margin: 10px auto; width: 980px; display: flex; justify-content: space-between; gap: 10px; }
+        .action-bar { margin: 10px auto; width: 1020px; max-width: 100%; display: flex; justify-content: space-between; gap: 10px; padding: 0 10px; box-sizing: border-box; }
         #command-panel {
             background: #0f172a; border: 2px solid #334155; padding: 8px; border-radius: 8px; display: flex; gap: 8px; align-items: center; flex-grow: 1;
         }
@@ -122,10 +124,10 @@ HTML_TEMPLATE = """
         .send-btn:hover { background: #0369a1; }
 
         #activity-terminal {
-            margin: 0 auto 15px auto; width: 980px; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden;
+            margin: 0 auto 15px auto; width: 1020px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
         .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 10px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; }
-        .terminal-body { padding: 8px; height: 75px; overflow-y: auto; font-size: 10px; color: #4ade80; line-height: 1.3; }
+        .terminal-body { padding: 8px; height: 85px; overflow-y: auto; font-size: 10px; color: #4ade80; line-height: 1.3; }
         .log-line { margin-bottom: 3px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
 
         #agent-modal {
@@ -138,9 +140,9 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // ROBOT CORRIDOR TYCOON HQ</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // ULTIMATE ROBOT TYCOON HQ</div>
         <div>
-            <span class="top-btn" onclick="loadMemory()">🧠 RAG HAFIZA</span>
+            <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
             <span class="top-btn" onclick="triggerBoardroom()">🤝 ZİRVE</span>
             <span class="top-btn" onclick="triggerWatering()">💧 SULA</span>
@@ -149,7 +151,7 @@ HTML_TEMPLATE = """
 
     <!-- Canvas Haritası -->
     <div id="game-container">
-        <canvas id="officeCanvas"></canvas>
+        <canvas id="officeCanvas" width="1020" height="410"></canvas>
     </div>
 
     <!-- Komuta Paneli -->
@@ -160,23 +162,23 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Stratejik emir ver veya görev oluştur..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Stratejik emir ver veya personel işe al..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
 
-    <!-- Terminal -->
+    <!-- Terminal (Ajan Sohbetleri ve Loglar) -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ ROBOT CORRIDOR OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● WALL COLLISION & PATHFINDING ACTIVE</span>
+            <span>⚡ CANLI AJAN SOHBETLERİ & İŞLEMLER TERMINALİ</span>
+            <span style="color: #38bdf8;">● ROBOT SIMÜLASYONU AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Gerçekçi duvarlar, koridorlar, açılır kapılar ve robot sprite motoru yüklendi.</div>
+            <div class="log-line">[SYSTEM]: Mutfak personeli, robot bacak animasyonları ve kapı mekanikleri yüklendi.</div>
         </div>
     </div>
 
-    <!-- RPG Karakter Kartı -->
+    <!-- Karakter Kartı -->
     <div id="agent-modal">
         <h3 id="modal-title" style="color: #38bdf8; margin-top: 0;"></h3>
         <p id="modal-role" style="font-size: 11px; color: #94a3b8;"></p>
@@ -190,15 +192,7 @@ HTML_TEMPLATE = """
         const terminalLogs = document.getElementById('terminal-logs');
 
         let agentsData = {};
-        let footprints = []; // Ayak izleri dizisi
-
-        function resizeCanvas() {
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = 980 * dpr;
-            canvas.height = 410 * dpr;
-            ctx.scale(dpr, dpr);
-        }
-        resizeCanvas();
+        let footprints = [];
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
@@ -214,9 +208,9 @@ HTML_TEMPLATE = """
 
         function openAgentCard(name, role) {
             selectAgent(name);
-            document.getElementById('modal-title').innerText = "👤 " + name;
-            document.getElementById('modal-role').innerText = "Departman: " + role;
-            document.getElementById('modal-status').innerText = "Durum: Koridor ve oda navigasyonunda aktif.";
+            document.getElementById('modal-title').innerText = "🤖 " + name;
+            document.getElementById('modal-role').innerText = "Rol: " + role;
+            document.getElementById('modal-status').innerText = "Durum: Görev başında, saksısı kontrol ediliyor.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -228,9 +222,8 @@ HTML_TEMPLATE = """
             if (event.key === 'Enter') sendDirectMessage();
         }
 
-        // Harita Çizim Motoru (Duvarlar, Kapılar, Koridorlar)
         function drawOffice() {
-            const w = 980;
+            const w = 1020;
             const h = 410;
             ctx.clearRect(0, 0, w, h);
 
@@ -238,13 +231,13 @@ HTML_TEMPLATE = """
             ctx.fillStyle = "#0b0f19";
             ctx.fillRect(0, 0, w, h);
 
-            // Koridorlar (Parke Dokusu)
+            // Parke Koridorlar
             ctx.fillStyle = "#151c2c";
-            ctx.fillRect(0, 120, w, 25); // Üst koridor
-            ctx.fillRect(0, 245, w, 25); // Alt koridor
-            ctx.fillRect(470, 0, 30, h);  // Dikey koridor
+            ctx.fillRect(0, 120, w, 25);
+            ctx.fillRect(0, 245, w, 25);
+            ctx.fillRect(480, 0, 30, h);
 
-            // 9 Oda ve Açılır Kapıları
+            // 9 Ofis Odası + İçerisinde Saksı ve Masa
             const rooms = [
                 {x: 15, y: 15, w: 145, h: 95, name: "1. MARCO"},
                 {x: 175, y: 15, w: 145, h: 95, name: "2. TALİSCA"},
@@ -261,7 +254,7 @@ HTML_TEMPLATE = """
                 ctx.fillStyle = "#111827";
                 ctx.fillRect(r.x, r.y, r.w, r.h);
                 ctx.strokeStyle = "#475569";
-                ctx.lineWidth = 3; // Kalın duvar
+                ctx.lineWidth = 3;
                 ctx.strokeRect(r.x, r.y, r.w, r.h);
 
                 // Oda Başlığı
@@ -275,93 +268,110 @@ HTML_TEMPLATE = """
                 ctx.fillStyle = "#0284c7";
                 ctx.fillRect(r.x + 60, r.y + 54, 22, 10);
 
-                // Odaların Koridora Açılan Kapısı (Açık görünüm)
-                ctx.fillStyle = "#0284c7";
-                if (r.y < 120) ctx.fillRect(r.x + 60, r.y + r.h - 2, 25, 4); // Alt duvar kapısı
-                else if (r.y > 200) ctx.fillRect(r.x + 60, r.y - 2, 25, 4);  // Üst duvar kapısı
-                else ctx.fillRect(r.x + r.w - 2, r.y + 40, 4, 20);           // Sağ duvar kapısı
+                // Odalara Özel Saksı 🌱
+                ctx.fillStyle = "#78350f";
+                ctx.fillRect(r.x + 15, r.y + 50, 14, 16);
+                ctx.fillStyle = "#4ade80";
+                ctx.font = "10px sans-serif";
+                ctx.fillText("🌿", r.x + 13, r.y + 45);
+
+                // Kapı (Açılıp kapanır eşik)
+                ctx.fillStyle = "#38bdf8";
+                if (r.y < 120) ctx.fillRect(r.x + 60, r.y + r.h - 2, 25, 4);
+                else if (r.y > 200) ctx.fillRect(r.x + 60, r.y - 2, 25, 4);
+                else ctx.fillRect(r.x + r.w - 2, r.y + 40, 4, 20);
             });
 
-            // Sağ Taraf: Mutfak ve Zirve Odası
+            // Sağ Taraf: Mutfak (Kahve Makineli) ve Zirve Odası
             ctx.fillStyle = "rgba(120, 53, 15, 0.25)";
-            ctx.fillRect(520, 15, 445, 185);
+            ctx.fillRect(530, 15, 475, 185);
             ctx.strokeStyle = "#d97706";
             ctx.lineWidth = 3;
-            ctx.strokeRect(520, 15, 445, 185);
+            ctx.strokeRect(530, 15, 475, 185);
             ctx.fillStyle = "#fde68a";
             ctx.font = "bold 9px 'Courier New'";
-            ctx.fillText("☕ MUTFAK & KAHVE ALANI", 540, 35);
+            ctx.fillText("☕ MUTFAK & KAHVE MAKİNESİ", 550, 35);
+            
+            // Kahve Makinesi Çizimi
+            ctx.fillStyle = "#451a03";
+            ctx.fillRect(920, 50, 40, 50);
+            ctx.fillStyle = "#fbbf24";
+            ctx.fillRect(930, 60, 20, 15);
 
             ctx.fillStyle = "rgba(109, 40, 217, 0.25)";
-            ctx.fillRect(520, 215, 445, 185);
+            ctx.fillRect(530, 215, 475, 185);
             ctx.strokeStyle = "#8b5cf6";
             ctx.lineWidth = 3;
-            ctx.strokeRect(520, 215, 445, 185);
+            ctx.strokeRect(530, 215, 475, 185);
             ctx.fillStyle = "#e9d5ff";
             ctx.font = "bold 9px 'Courier New'";
-            ctx.fillText("🤝 OTONOM ZİRVE ODASI", 540, 235);
+            ctx.fillText("🤝 OTONOM ZİRVE ODASI", 550, 235);
 
-            // Ayak İzlerini Çiz
+            // Ayak İzleri
             footprints.forEach(fp => {
-                ctx.fillStyle = "rgba(56, 189, 248, 0.4)";
-                ctx.fillRect(fp.x, fp.y, 3, 3);
+                ctx.fillStyle = "rgba(56, 189, 248, 0.5)";
+                ctx.fillRect(fp.x, fp.y, 2, 2);
             });
 
-            // Ajanları ve Robot Görünümünü Çiz
+            // Robot Ajanları Çiz (Kutu değil, Robot Gövde + Anten + Hareketli Bacaklar)
             for (let name in agentsData) {
                 let ag = agentsData[name];
                 
-                // Robot Gövdesi ve Anteni
+                // Robot Kafa/Gövde
                 ctx.fillStyle = ag.color;
-                ctx.fillRect(ag.x, ag.y, 24, 24);
+                ctx.fillRect(ag.x, ag.y, 22, 22);
                 ctx.strokeStyle = "#ffffff";
                 ctx.lineWidth = 1;
-                ctx.strokeRect(ag.x, ag.y, 24, 24);
+                ctx.strokeRect(ag.x, ag.y, 22, 22);
 
-                // Robot Anteni
+                // Anten
                 ctx.fillStyle = "#38bdf8";
-                ctx.fillRect(ag.x + 11, ag.y - 4, 2, 4);
-                ctx.fillRect(ag.x + 9, ag.y - 6, 6, 2);
+                ctx.fillRect(ag.x + 10, ag.y - 4, 2, 4);
 
-                // Baş Harf
+                // Robot Gözleri
                 ctx.fillStyle = "#ffffff";
-                ctx.font = "bold 8px 'Courier New'";
-                ctx.fillText(name.substring(0, 2).toUpperCase(), ag.x + 5, ag.y + 16);
+                ctx.fillRect(ag.x + 4, ag.y + 6, 4, 4);
+                ctx.fillRect(ag.x + 14, ag.y + 6, 4, 4);
+
+                // Hareketli Bacaklar (Yürüyorsa sallanır)
+                let legOffset = (ag.state === "Yürüyor...") ? (Math.floor(Date.now() / 150) % 2 === 0 ? 3 : -3) : 0;
+                ctx.fillStyle = ag.color;
+                ctx.fillRect(ag.x + 4, ag.y + 22, 3, 6 + legOffset);
+                ctx.fillRect(ag.x + 15, ag.y + 22, 3, 6 - legOffset);
 
                 // İsim Etiketi
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 7px 'Courier New'";
-                ctx.fillText(name, ag.x - 4, ag.y + 34);
+                ctx.fillText(name, ag.x - 2, ag.y + 36);
 
-                // Temiz Durum Balonu
+                // Durum Balonu
                 ctx.fillStyle = "#f8fafc";
-                ctx.fillRect(ag.x - 6, ag.y - 18, ctx.measureText(ag.state).width + 6, 10);
+                ctx.fillRect(ag.x - 6, ag.y - 16, ctx.measureText(ag.state).width + 6, 10);
                 ctx.strokeStyle = "#0f172a";
-                ctx.strokeRect(ag.x - 6, ag.y - 18, ctx.measureText(ag.state).width + 6, 10);
+                ctx.strokeRect(ag.x - 6, ag.y - 16, ctx.measureText(ag.state).width + 6, 10);
                 ctx.fillStyle = "#0f172a";
-                ctx.font = "bold 7px 'Courier New'";
-                ctx.fillText(ag.state, ag.x - 3, ag.y - 10);
+                ctx.font = "bold 6px 'Courier New'";
+                ctx.fillText(ag.state, ag.x - 3, ag.y - 9);
             }
         }
 
-        // Tıklama ile Kart Açma
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const scaleX = 980 / rect.width;
+            const scaleX = 1020 / rect.width;
             const scaleY = 410 / rect.height;
             const mouseX = (e.clientX - rect.left) * scaleX;
             const mouseY = (e.clientY - rect.top) * scaleY;
 
             for (let name in agentsData) {
                 let ag = agentsData[name];
-                if (mouseX >= ag.x && mouseX <= ag.x + 24 && mouseY >= ag.y && mouseY <= ag.y + 24) {
-                    openAgentCard(name, "Robot Personel");
+                if (mouseX >= ag.x && mouseX <= ag.x + 22 && mouseY >= ag.y && mouseY <= ag.y + 28) {
+                    openAgentCard(name, ag.role || "Robot Personel");
                     break;
                 }
             }
         });
 
-        // Simülasyon Verisini Çek ve Ayak İzi Ekle
+        // Simülasyon Verisini Çek ve Ajan Konuşmalarını Monitörle
         setInterval(() => {
             fetch('/api/simulation-tick')
             .then(res => res.json())
@@ -369,14 +379,18 @@ HTML_TEMPLATE = """
                 let mapped = {};
                 data.agents.forEach(ag => {
                     mapped[ag.name] = ag;
-                    // Eğer yürüyorsa ayak izi ekle
                     if (ag.state === "Yürüyor...") {
-                        footprints.push({x: ag.x + 10, y: ag.y + 20});
-                        if (footprints.length > 50) footprints.shift();
+                        footprints.push({x: ag.x + 11, y: ag.y + 24});
+                        if (footprints.length > 25) footprints.shift();
                     }
                 });
                 agentsData = mapped;
                 drawOffice();
+
+                // Eğer sunucudan yeni inter-agent sohbet logu geldiyse ekle
+                if (data.latest_dialogue) {
+                    appendLog(`💬 [AJAN SOHBETİ]: ${data.latest_dialogue}`);
+                }
             });
         }, 1500);
 
@@ -386,7 +400,7 @@ HTML_TEMPLATE = """
             const messageText = messageInput.value.trim();
             if (!messageText) return;
 
-            appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
+            appendLog(`> [PATRON -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
 
             fetch('/api/chat', {
@@ -407,14 +421,14 @@ HTML_TEMPLATE = """
         }
 
         function loadMemory() {
-            appendLog(`> [RAG HAFIZA SORGUSU]: Supabase geçmiş logları yükleniyor...`);
+            appendLog(`> [HAFIZA SORGUSU]: Supabase logları okunuyor...`);
             fetch('/api/memory').then(res => res.json()).then(data => {
-                appendLog(`> [HAFIZA ÖZETİ]: ${data.summary}`);
+                appendLog(`> [HAFIZA]: ${data.summary}`);
             });
         }
 
         function loadTasks() {
-            appendLog(`> [GÖREV PANOSU (KANBAN)]: Aktif görevler listeleniyor...`);
+            appendLog(`> [GÖREVLER]: Aktif şirket görevleri listeleniyor...`);
             fetch('/api/tasks').then(res => res.json()).then(data => {
                 appendLog(`> [PANODAKİ İŞLER]: ${data.tasks.join(" | ")}`);
             });
@@ -423,19 +437,13 @@ HTML_TEMPLATE = """
         function triggerBoardroom() {
             appendLog(`> [ZİRVE ODASI]: Otonom zirve toplantısı başlatıldı...`);
             fetch('/api/boardroom', {method: 'POST'}).then(res => res.json()).then(data => {
-                appendLog(`> [ORTAK ZİRVE KARARI]: "${data.decision}"`);
-            });
-        }
-
-        function checkPlantStatus() {
-            fetch('/api/plants').then(res => res.json()).then(data => {
-                appendLog(`> [BİTKİ BİLGİSİ]: ${data.status_text}`);
+                appendLog(`> [ZİRVE KARARI]: "${data.decision}"`);
             });
         }
 
         function triggerWatering() {
             fetch('/api/water-plants', {method: 'POST'}).then(res => res.json()).then(data => {
-                appendLog(`> [SULAMA]: Saksılar sulandı, bitki sağlığı %100!`);
+                appendLog(`> [SULAMA]: Tüm odalardaki saksılar sulandı, sağlık %100!`);
             });
         }
     </script>
@@ -462,44 +470,71 @@ def query_supabase_memory(query_text):
         rows = cur.fetchall()
         cur.close()
         conn.close()
-        history_summary = " | ".join([f"{r[0]}: {r[1][:40]}" for r in rows])
-        return history_summary if history_summary else "Geçmiş kayıt bulunamadı."
+        history_summary = " | ".join([f"{r[0]}: {r[1][:30]}" for r in rows])
+        return history_summary if history_summary else "Kayıt yok."
     except:
         return "Hafızaya erişilemedi."
 
+# Son inter-agent sohbeti saklamak için bellek değişkeni
+latest_inter_agent_chat = ""
+
 @app.route('/api/simulation-tick', methods=['GET'])
 def simulation_tick():
+    global latest_inter_agent_chat
     agent_list = []
+    
+    # Arada sırada ajanlar birbirleriyle konuşsun ve CEO görsün
+    if random.random() < 0.15:
+        names = list(employees.keys())
+        a1, a2 = random.sample(names, 2)
+        dialogues = [
+            f"{a1}, {a2}'ye kahve ısmarladı ve projeyi sordu.",
+            f"{a1}, {a2} ile bütçe detaylarını tartıştı.",
+            f"{a1}, {a2}'ye yeni siparişler hakkında bilgi verdi."
+        ]
+        latest_inter_agent_chat = random.choice(dialogues)
+        log_to_supabase("SISTEM_SOHBET", "INTER_AGENT", latest_inter_agent_chat)
+    else:
+        latest_inter_agent_chat = ""
+
     for name, data in employees.items():
-        if random.random() < 0.25:
+        if random.random() < 0.2:
+            # Koridorları ve kapıları kullanarak odalardan çıkış hedefleri
             destinations = [
-                (data["room_x"] + 45, data["room_y"] + 40), # Kendi masası
-                (random.randint(540, 900), random.randint(30, 150)),  # Mutfak
-                (random.randint(540, 900), random.randint(230, 350)) # Zirve Odası
+                (data["room_x"] + 45, data["room_y"] + 40), # Kendi odası / masası
+                (random.randint(550, 930), random.randint(30, 150)),  # Mutfak (Kahve makinesi yanı)
+                (random.randint(550, 930), random.randint(230, 350)) # Zirve Odası
             ]
             dest = random.choice(destinations)
             data["target_x"], data["target_y"] = dest
 
-        # Adım adım hareket (Pathfinding simülasyonu)
-        if data["x"] < data["target_x"]: data["x"] += min(6, data["target_x"] - data["x"])
-        elif data["x"] > data["target_x"]: data["x"] -= min(6, data["x"] - data["target_x"])
+        # Yumuşak hareket
+        if data["x"] < data["target_x"]: data["x"] += min(5, data["target_x"] - data["x"])
+        elif data["x"] > data["target_x"]: data["x"] -= min(5, data["x"] - data["target_x"])
 
-        if data["y"] < data["target_y"]: data["y"] += min(6, data["target_y"] - data["y"])
-        elif data["y"] > data["target_y"]: data["y"] -= min(6, data["y"] - data["target_y"])
+        if data["y"] < data["target_y"]: data["y"] += min(5, data["target_y"] - data["y"])
+        elif data["y"] > data["target_y"]: data["y"] -= min(5, data["y"] - data["target_y"])
 
-        # Durum belirleme
-        if data["x"] >= 500 and data["y"] <= 200:
-            data["state"] = "☕ Molada"
-        elif data["x"] >= 500 and data["y"] > 200:
+        # Durum tespiti
+        if data["x"] >= 510 and data["y"] <= 200:
+            data["state"] = "☕ Kahvede"
+        elif data["x"] >= 510 and data["y"] > 200:
             data["state"] = "🤝 Toplantıda"
-        elif abs(data["x"] - (data["room_x"] + 45)) < 10 and abs(data["y"] - (data["room_y"] + 40)) < 10:
+        elif abs(data["x"] - (data["room_x"] + 45)) < 15 and abs(data["y"] - (data["room_y"] + 40)) < 15:
             data["state"] = "Masada"
         else:
             data["state"] = "Yürüyor..."
 
-        agent_list.append({"name": name, "x": data["x"], "y": data["y"], "state": data["state"], "color": data["color"]})
+        agent_list.append({
+            "name": name, 
+            "role": data["role"], 
+            "x": data["x"], 
+            "y": data["y"], 
+            "state": data["state"], 
+            "color": data["color"]
+        })
 
-    return jsonify({"agents": agent_list})
+    return jsonify({"agents": agent_list, "latest_dialogue": latest_inter_agent_chat})
 
 @app.route('/')
 def index():
@@ -514,9 +549,22 @@ def api_chat():
     if agent_name not in employees: agent_name = "İrfan"
     agent = employees[agent_name]
 
+    # Yeni personel ekleme isteği gelirse sisteme anında ekle
+    if "işe al" in user_message.lower() or "personel" in user_message.lower():
+        new_name = "Personel_" + str(random.randint(10, 99))
+        employees[new_name] = {
+            "role": "Yeni Personel", 
+            "room_x": 520, "room_y": 15, 
+            "x": 550, "y": 50, 
+            "target_x": 550, "target_y": 50, 
+            "color": "#eab308", 
+            "state": "İşe Başladı", 
+            "plant": "Yeni Saksı"
+        }
+
     task_created = False
     task_title = ""
-    if "görev" in user_message.lower() or "yap" in user_message.lower():
+    if "görev" in user_message.lower() or "yap" in user_message.lower() or "işe al" in user_message.lower():
         task_created = True
         task_title = user_message[:40]
         try:
@@ -533,8 +581,8 @@ def api_chat():
         system_prompt = (
             f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {agent_name} adında bir robot uzmansın. "
             f"Patronun Mertcan sana yazdı: '{user_message}'.\n"
-            f"[SUPABASE GEÇMİŞ HAFIZA]: {memory_context}\n"
-            f"Profesyonel ve kısa yanıt ver."
+            f"[SUPABASE HAFIZA]: {memory_context}\n"
+            f"Kısa ve net yanıt ver."
         )
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
@@ -543,7 +591,7 @@ def api_chat():
         )
         reply = completion.choices[0].message.content.strip('"').strip()
     except:
-        reply = "Emredersiniz patron, sistem çalışıyor."
+        reply = "Emredersiniz patron, talimatınız işleme alındı."
 
     log_to_supabase(agent_name, "CHAT_RESPONSE", f"Soru: {user_message} | Cevap: {reply}")
     return jsonify({"status": reply, "task_created": task_created, "task_title": task_title})
@@ -563,37 +611,24 @@ def api_tasks():
         cur.close()
         conn.close()
         tasks = [f"[{r[1]}]: {r[0]} ({r[2]})" for r in rows]
-        return jsonify({"tasks": tasks if tasks else ["Aktif görev bulunmuyor."]})
+        return jsonify({"tasks": tasks if tasks else ["Aktif görev yok."]})
     except:
         return jsonify({"tasks": ["Görevler yüklenemedi."]})
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
     try:
-        prompt = "Şirket büyümesi için İrfan (Finans) ve Brown (Yazılım) ortak bir stratejik zirve kararı alıyor. İki cümlelik ortak kararı yaz."
+        prompt = "Şirket büyümesi için İrfan ve Brown otonom bir zirve kararı alıyor. İki cümlelik ortak kararı yaz."
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=120, temperature=0.7
         )
         decision = completion.choices[0].message.content.strip('"').strip()
-        log_to_supabase("ZİRVE_KURULU", "BOARDROOM_DECISION", decision)
+        log_to_supabase("ZİRVE", "BOARDROOM_DECISION", decision)
         return jsonify({"decision": decision})
     except Exception as e:
-        return jsonify({"decision": f"Zirve sırasında hata oluştu."})
-
-@app.route('/api/plants', methods=['GET'])
-def api_plants():
-    try:
-        conn = psycopg2.connect(DB_URL)
-        cur = conn.cursor()
-        cur.execute("SELECT plant_name, health_level, water_status FROM office_plants WHERE id=1;")
-        row = cur.fetchone()
-        cur.close()
-        conn.close()
-        return jsonify({"status_text": f"{row[0]} -> Sağlık: %{row[1]} ({row[2]})"})
-    except:
-        return jsonify({"status_text": "Bitki durumu okunamadı."})
+        return jsonify({"decision": "Zirve kararı alındı."})
 
 @app.route('/api/water-plants', methods=['POST'])
 def water_plants():
