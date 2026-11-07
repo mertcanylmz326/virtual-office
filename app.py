@@ -3,17 +3,17 @@ from flask import Flask, render_template_string
 
 app = Flask(__name__)
 
-# 9 Kişilik Rüya Takımımız, Konumları ve Canlı Konuşma Balonları
+# 9 Kişilik Rüya Takımımız ve Her Birine Ait Tamamen Ayrı Özel Odalar
 employees = {
-    "Marco": {"role": "Müşteri İlişkileri", "room": "Destek", "home_x": 75, "home_y": 70, "color": "#3b82f6", "bubble": "Destek hattında..."},
-    "Talisca": {"role": "Sipariş Takip", "room": "Operasyon", "home_x": 250, "home_y": 70, "color": "#ef4444", "bubble": "Sipariş işliyor"},
-    "Brown": {"role": "Yazılım (E-Trade Pro)", "room": "Yazılım", "home_x": 550, "home_y": 70, "color": "#10b981", "bubble": "Kod derleniyor..."},
-    "Kante": {"role": "Pazarlama & Büyüme", "room": "Pazarlama", "home_x": 730, "home_y": 70, "color": "#f59e0b", "bubble": "Kampanya kurguluyor"},
-    "İrfan": {"role": "Muhasebe & Finans", "room": "Finans", "home_x": 730, "home_y": 320, "color": "#8b5cf6", "bubble": "Bütçe kontrolü"},
-    "İsmail": {"role": "İnsan Kaynakları", "room": "İK", "home_x": 75, "home_y": 320, "color": "#f97316", "bubble": "Mülarette..."},
-    "Alex": {"role": "Hukuk & Mevzuat", "room": "Hukuk", "home_x": 250, "home_y": 320, "color": "#14b8a6", "bubble": "Sözleşme inceliyor"},
-    "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik", "home_x": 530, "home_y": 320, "color": "#64748b", "bubble": "Sistem taranıyor"},
-    "Kerem": {"role": "Müşteri Başarı", "room": "Müşteri Başarı", "home_x": 700, "home_y": 320, "color": "#ec4899", "bubble": "Onboarding aktif"}
+    "Marco": {"role": "Müşteri İlişkileri", "room": "Destek Odası", "home_x": 90, "home_y": 70, "color": "#3b82f6", "bubble": "Destek hattında..."},
+    "Talisca": {"role": "Sipariş Takip", "room": "Operasyon Odası", "home_x": 270, "home_y": 70, "color": "#ef4444", "bubble": "Sipariş işliyor"},
+    "Brown": {"role": "Yazılım (E-Trade Pro)", "room": "Yazılım Üssü", "home_x": 560, "home_y": 70, "color": "#10b981", "bubble": "Kod derleniyor..."},
+    "Kante": {"role": "Pazarlama & Büyüme", "room": "Pazarlama Odası", "home_x": 740, "home_y": 70, "color": "#f59e0b", "bubble": "Kampanya kurguluyor"},
+    "İrfan": {"role": "Muhasebe & Finans", "room": "Finans Odası", "home_x": 740, "home_y": 330, "color": "#8b5cf6", "bubble": "Bütçe kontrolü"},
+    "İsmail": {"role": "İnsan Kaynakları", "room": "İK Odası", "home_x": 90, "home_y": 330, "color": "#f97316", "bubble": "Mülakatta..."},
+    "Alex": {"role": "Hukuk & Mevzuat", "room": "Hukuk Bürosu", "home_x": 270, "home_y": 330, "color": "#14b8a6", "bubble": "Sözleşme inceliyor"},
+    "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik Odası", "home_x": 540, "home_y": 330, "color": "#64748b", "bubble": "Sistem taranıyor"},
+    "Kerem": {"role": "Müşteri Başarı", "room": "Müşteri Başarı Odası", "home_x": 710, "home_y": 330, "color": "#ec4899", "bubble": "Onboarding aktif"}
 }
 
 HTML_TEMPLATE = """
@@ -21,7 +21,7 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - Ultimate RPG HQ</title>
+    <title>E-Trade Pro - Separate Rooms HQ</title>
     <style>
         body { 
             background-color: #06090f; 
@@ -44,7 +44,7 @@ HTML_TEMPLATE = """
         }
         .top-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 4px 10px; border-radius: 4px; font-weight: bold; }
 
-        /* Harbi Parke Zeminli Ofis Katı */
+        /* Parke Zeminli Ofis Katı */
         #office-floor { 
             position: relative; 
             width: 920px; 
@@ -61,22 +61,21 @@ HTML_TEMPLATE = """
             overflow: hidden;
         }
 
-        /* Neon Odalar */
+        /* Herkesin Ayrı Odaları */
         .hq-room {
             position: absolute;
             border: 3px solid #475569;
             background: rgba(24, 18, 14, 0.9);
             border-radius: 6px;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
         }
         .hq-room-title {
             position: absolute;
-            font-size: 8px;
+            font-size: 7px;
             color: #94a3b8;
-            top: 4px;
-            left: 8px;
+            top: 3px;
+            left: 6px;
             font-weight: bold;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         /* Kapılar */
@@ -87,14 +86,14 @@ HTML_TEMPLATE = """
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 7px;
+            font-size: 6px;
             color: #fde68a;
             font-weight: bold;
         }
 
-        /* Masalar ve Monitörler */
-        .desk { position: absolute; width: 55px; height: 28px; background: #27272a; border: 1px solid #52525b; border-radius: 3px; }
-        .pc-monitor { position: absolute; width: 20px; height: 12px; background: #38bdf8; top: 4px; left: 17px; border-radius: 2px; box-shadow: 0 0 6px #38bdf8; }
+        /* Çalışma Masaları */
+        .desk { position: absolute; width: 50px; height: 26px; background: #27272a; border: 1px solid #52525b; border-radius: 3px; }
+        .pc-monitor { position: absolute; width: 18px; height: 10px; background: #38bdf8; top: 4px; left: 16px; border-radius: 2px; box-shadow: 0 0 5px #38bdf8; }
         
         /* Ortak Mola Alanı */
         .lounge-area {
@@ -135,7 +134,7 @@ HTML_TEMPLATE = """
             z-index: 50;
         }
 
-        /* Ajan Karakterler ve Konuşma Balonları */
+        /* Ajanlar */
         .agent { 
             position: absolute; 
             width: 45px; 
@@ -149,11 +148,11 @@ HTML_TEMPLATE = """
             z-index: 30;
         }
         .agent-avatar {
-            font-size: 15px;
+            font-size: 14px;
             background: #18181b;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -172,15 +171,14 @@ HTML_TEMPLATE = """
             border: 1px solid #475569;
         }
         
-        /* Canlı Konuşma Balonu */
         .speech-bubble {
             position: absolute;
-            top: -22px;
+            top: -20px;
             background: #f8fafc;
             color: #0f172a;
             font-size: 6px;
             font-weight: bold;
-            padding: 2px 5px;
+            padding: 2px 4px;
             border-radius: 4px;
             white-space: nowrap;
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
@@ -194,7 +192,6 @@ HTML_TEMPLATE = """
             100% { transform: translateY(-3px); }
         }
 
-        /* Yönetim Paneli / Konsol */
         #game-console {
             margin: 8px auto;
             width: 910px;
@@ -212,31 +209,34 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - ULTIMATE RPG EDITION</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - SEPARATE ROOMS EDITION</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">KONUŞMA BALONLARI AKTİF</span>
+            <span class="top-btn" style="color: #34d399;">HERKESİN AYRI ODASI VAR</span>
         </div>
     </div>
 
     <div id="office-floor">
-        <!-- Odalar -->
-        <div class="hq-room" style="left: 15px; top: 15px; width: 410px; height: 215px;">
-            <div class="hq-room-title">DESTEK & OPERASYON ODASI</div>
-        </div>
-        <div class="hq-room" style="left: 495px; top: 15px; width: 410px; height: 215px;">
-            <div class="hq-room-title">YAZILIM & PAZARLAMA ODASI</div>
-        </div>
-        <div class="hq-room" style="left: 15px; top: 265px; width: 410px; height: 215px;">
-            <div class="hq-room-title">HUKUK & İK BÜROSU</div>
-        </div>
-        <div class="hq-room" style="left: 495px; top: 265px; width: 410px; height: 215px;">
-            <div class="hq-room-title">FİNANS & GÜVENLİK ODASI</div>
-        </div>
+        <!-- Sol Üst: Marco & Talisca -->
+        <div class="hq-room" style="left: 15px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">MARCO (DESTEK)</div></div>
+        <div class="hq-room" style="left: 225px; top: 15px; width: 195px; height: 215px;"><div class="hq-room-title">TALİSCA (SİPARİŞ)</div></div>
+
+        <!-- Sağ Üst: Brown & Kante -->
+        <div class="hq-room" style="left: 495px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">BROWN (YAZILIM)</div></div>
+        <div class="hq-room" style="left: 705px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">KANTE (PAZARLAMA)</div></div>
+
+        <!-- Sol Alt: İsmail & Alex -->
+        <div class="hq-room" style="left: 15px; top: 255px; width: 200px; height: 215px;"><div class="hq-room-title">İSMAİL (İK)</div></div>
+        <div class="hq-room" style="left: 225px; top: 255px; width: 195px; height: 215px;"><div class="hq-room-title">ALEX (HUKUK)</div></div>
+
+        <!-- Sağ Alt: Skrinar, Kerem & İrfan -->
+        <div class="hq-room" style="left: 495px; top: 255px; width: 130px; height: 215px;"><div class="hq-room-title">SKRİNAR (SİBER)</div></div>
+        <div class="hq-room" style="left: 635px; top: 255px; width: 130px; height: 215px;"><div class="hq-room-title">KEREM (BAŞARI)</div></div>
+        <div class="hq-room" style="left: 775px; top: 255px; width: 130px; height: 215px;"><div class="hq-room-title">İRFAN (FİNANS)</div></div>
 
         <!-- Kapılar -->
-        <div class="hq-door" style="left: 430px; top: 110px; width: 60px; height: 15px;">KAPI</div>
-        <div class="hq-door" style="left: 430px; top: 360px; width: 60px; height: 15px;">KAPI</div>
+        <div class="hq-door" style="left: 425px; top: 110px; width: 65px; height: 15px;">KAPI</div>
+        <div class="hq-door" style="left: 425px; top: 350px; width: 65px; height: 15px;">KAPI</div>
 
         <!-- Mola Alanı -->
         <div class="lounge-area">
@@ -244,14 +244,15 @@ HTML_TEMPLATE = """
         </div>
 
         <!-- Masalar -->
-        <div class="desk" style="left: 60px; top: 65px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 240px; top: 65px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 540px; top: 65px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 720px; top: 65px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 60px; top: 315px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 240px; top: 315px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 520px; top: 315px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 700px; top: 315px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 90px; top: 75px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 295px; top: 75px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 570px; top: 75px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 770px; top: 75px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 90px; top: 315px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 295px; top: 315px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 535px; top: 315px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 675px; top: 315px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 815px; top: 315px;"><div class="pc-monitor"></div></div>
 
         <!-- CEO Makamı -->
         <div class="ceo-hq">
@@ -271,14 +272,14 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-console">
-        > [YÖNETİM PANELİ]: Konuşma balonları eklendi. Ajanlar kendi odalarında çalışıp sadece mola alanında buluşuyor. Detay için tıklayın.
+        > [SİSTEM]: Herkesin kendine ait özel odası tanımlandı. Asla birbirlerinin odasına girmiyorlar, sadece mola alanında buluşuyorlar.
     </div>
 
     <script>
         const consoleBox = document.getElementById('game-console');
 
         function selectAgent(name, role, room, bubble) {
-            consoleBox.innerHTML = `> [AJAN RAPORU] <b>${name}</b> (${role}) | Oda: <b>${room}</b> | Anlık Durum: <i>"${bubble}"</i> -> Sistem Verimliliği: %98.4`;
+            consoleBox.innerHTML = `> [AJAN RAPORU] <b>${name}</b> (${role}) | Özel Odası: <b>${room}</b> | Durum: <i>"${bubble}"</i>`;
         }
 
         const employeesData = {{ employees | tojson }};
@@ -293,7 +294,7 @@ HTML_TEMPLATE = """
             const data = employeesData[randomAgentKey];
 
             if (agentEl) {
-                if (Math.random() > 0.5) {
+                if (Math.random() > 0.4) {
                     agentEl.style.left = data.home_x + 'px';
                     agentEl.style.top = data.home_y + 'px';
                 } else {
