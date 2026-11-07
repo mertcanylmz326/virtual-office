@@ -26,7 +26,7 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - Ultimate AI HQ</title>
+    <title>E-Trade Pro - Live Operations Terminal</title>
     <style>
         body { 
             background-color: #05070b; 
@@ -35,7 +35,7 @@ HTML_TEMPLATE = """
             text-align: center; 
             margin: 0; 
             padding: 0; 
-            overflow: hidden; 
+            overflow-x: hidden; 
         }
         
         #game-topbar {
@@ -193,27 +193,45 @@ HTML_TEMPLATE = """
             100% { transform: translateY(-4px) rotate(2deg); }
         }
 
-        #game-console {
-            margin: 8px auto;
+        /* Gelişmiş Canlı Aktivite Terminali */
+        #activity-terminal {
+            margin: 10px auto 20px auto;
             width: 910px;
-            background: #0f172a;
+            background: #020617;
             border: 2px solid #334155;
-            padding: 8px 12px;
             border-radius: 6px;
-            font-size: 11px;
-            color: #38bdf8;
             text-align: left;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            overflow: hidden;
         }
+        .terminal-header {
+            background: #0f172a;
+            padding: 6px 12px;
+            font-size: 10px;
+            color: #38bdf8;
+            border-bottom: 1px solid #1e293b;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+        .terminal-body {
+            padding: 10px;
+            height: 120px;
+            overflow-y: auto;
+            font-size: 10px;
+            color: #4ade80;
+            line-height: 1.4;
+        }
+        .log-line { margin-bottom: 4px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 2px; }
     </style>
 </head>
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - INTERACTIVE CHAT</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - LIVE OPERATIONS</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">CANLI BAĞLANTI</span>
+            <span class="top-btn" style="color: #34d399;">TERM-LOG AKTİF</span>
         </div>
     </div>
 
@@ -265,25 +283,40 @@ HTML_TEMPLATE = """
         {% endfor %}
     </div>
 
-    <div id="game-console">
-        > [CANLI SOHBET AKTİF]: Ajanlara tıklayarak doğrudan selam ver ve yanıtını al patron!
+    <!-- Canlı Aktivite Terminali -->
+    <div id="activity-terminal">
+        <div class="terminal-header">
+            <span>⚡ E-TRADE PRO AI OPERATIONS LOG</span>
+            <span style="color: #34d399;">● LIVE STREAM</span>
+        </div>
+        <div class="terminal-body" id="terminal-logs">
+            <div class="log-line">[SYSTEM]: E-Trade Pro HQ operasyonel. Ajanlar masalarında görev bekliyor...</div>
+        </div>
     </div>
 
     <script>
-        const consoleBox = document.getElementById('game-console');
+        const terminalLogs = document.getElementById('terminal-logs');
+
+        function appendLog(text) {
+            const time = new Date().toLocaleTimeString();
+            const logDiv = document.createElement('div');
+            logDiv.className = 'log-line';
+            logDiv.innerHTML = `[${time}] ${text}`;
+            terminalLogs.prepend(logDiv); // En üste ekle
+        }
 
         function getAiReport(name, role) {
-            consoleBox.innerHTML = `> [YAPAY ZEKA]: <b>CEO Mertcan</b>, ${name} (${role}) ile konuşuyor...`;
-            document.getElementById('bubble-' + name).innerText = "Dinliyor...";
+            appendLog(`> [TALEP]: CEO Mertcan, <b>${name} (${role})</b> ajanına bağlandı...`);
+            document.getElementById('bubble-' + name).innerText = "İşleniyor...";
             
             fetch('/api/agent-status/' + name)
                 .then(response => response.json())
                 .then(data => {
-                    consoleBox.innerHTML = `> [${name.toUpperCase()}]: "${data.status}"`;
                     document.getElementById('bubble-' + name).innerText = data.short_status;
+                    appendLog(`> [<b>${name}</b>]: "${data.status}" (<span style="color: #38bdf8;">${role}</span>)`);
                 })
                 .catch(err => {
-                    consoleBox.innerHTML = `> [HATA]: Bağlantı kurulamadı.`;
+                    appendLog(`> [HATA]: ${name} ile bağlantı kurulamadı.`);
                 });
         }
     </script>
@@ -306,16 +339,15 @@ def agent_status(name):
         return jsonify({"status": "API anahtarı aktif değil.", "short_status": "Offline"})
 
     try:
-        # Doğrudan "Selam" mesajı ve rol bazlı etkileşim yapısı
         messages = [
-            {"role": "system", "content": f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name} adında bir yapay zeka ajanısın. Patronun Mertcan sana tıkladı ve selam verdi. Ona masanda yaptığın işle ilgili Türkçe, çok kısa, esprili ve havalı bir yanıt ver. Maksimum 4-5 kelime olsun."},
-            {"role": "user", "content": f"Selam {name}, durum nedir?"}
+            {"role": "system", "content": f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name} adında bir yapay zeka ajanısın. Patronun Mertcan sana selam verdi ve masanda şu an ne yaptığını sordu. Ona Türkçe, çok kısa, esprili ve havalı bir durum raporu ver. Maksimum 4-5 kelime olsun."},
+            {"role": "user", "content": f"Selam {name}, son durum nedir?"}
         ]
         
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
             messages=messages,
-            max_tokens=60,
+            max_tokens=50,
             temperature=0.9
         )
         
@@ -324,7 +356,7 @@ def agent_status(name):
             status_text = completion.choices[0].message.content.strip('"').strip()
             
         if not status_text:
-            status_text = f"Emredersiniz patron!"
+            status_text = f"{agent['role']} görev başında!"
 
         return jsonify({
             "status": status_text, 
@@ -332,8 +364,8 @@ def agent_status(name):
         })
     
     except Exception as e:
-        fallback_msg = f"Buradayım patron!"
-        return jsonify({"status": fallback_msg, "short_status": "Hazır"})
+        fallback_msg = f"Sistem aktif çalışıyor."
+        return jsonify({"status": fallback_msg, "short_status": "Aktif"})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
