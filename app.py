@@ -210,10 +210,10 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - INSTANT ENGINE</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - GPT-OSS SYNC</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">LATEST INSTANT AKTİF</span>
+            <span class="top-btn" style="color: #34d399;">GPT-OSS 20B AKTİF</span>
         </div>
     </div>
 
@@ -266,7 +266,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-console">
-        > [GÜNCELLEME]: Llama 3.1 Instant motoru aktif edildi. Şimdi tüm ajanlar hatasız çalışıyor patron!
+        > [GPT-OSS AKTİF]: Arayüzdeki model ile tam senkronize edildi. Ajanlara tıklayarak test et patron!
     </div>
 
     <script>
@@ -308,16 +308,16 @@ def agent_status(name):
     try:
         prompt = f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name} adında bir yapay zeka ajanısın. Patronun Mertcan için masanda yaptığın işle ilgili Türkçe, çok kısa, esprili ve havalı bir durum raporu ver. En fazla 4-5 kelime olsun."
         
-        # Groq Güncel Instant Modeli
+        # Arayüzde seçtiğimiz modelle tam uyumlu
         completion = groq_client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="openai/gpt-oss-20b",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=25,
             temperature=0.8
         )
         
         status_text = completion.choices[0].message.content.strip('"')
-        return jsonify({"status": status_status if 'status_status' in locals() else status_text, "short_status": status_text[:18] + "..." if len(status_text) > 18 else status_text})
+        return jsonify({"status": status_text, "short_status": status_text[:18] + "..." if len(status_text) > 18 else status_text})
     
     except Exception as e:
         return jsonify({"status": f"Hata: {str(e)}", "short_status": "Çalışıyor"})
