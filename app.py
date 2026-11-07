@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template_string, jsonify
+from flask import Flask, render_template_string, jsonify, request
 from groq import Groq
 
 app = Flask(__name__)
@@ -8,17 +8,17 @@ app = Flask(__name__)
 GROQ_API_KEY = "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"
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
-# 9 Kişilik E-Trade Pro Rüya Takımımız ve Çakışmasız Özel Odaları
+# 9 Kişilik E-Trade Pro Rüya Takımımız ve Görevleri
 employees = {
-    "Marco": {"role": "Müşteri İlişkileri", "room": "Destek Odası", "home_x": 90, "home_y": 70, "color": "#3b82f6", "default": "Destek hattında..."},
-    "Talisca": {"role": "Sipariş Takip", "room": "Operasyon Odası", "home_x": 270, "home_y": 70, "color": "#ef4444", "default": "Sipariş işliyor"},
-    "Brown": {"role": "Yazılım (E-Trade Pro)", "room": "Yazılım Üssü", "home_x": 560, "home_y": 70, "color": "#10b981", "default": "Kod derleniyor..."},
-    "Kante": {"role": "Pazarlama & Büyüme", "room": "Pazarlama Odası", "home_x": 740, "home_y": 70, "color": "#f59e0b", "default": "Kampanya kurguluyor"},
-    "İrfan": {"role": "Muhasebe & Finans", "room": "Finans Odası", "home_x": 820, "home_y": 330, "color": "#8b5cf6", "default": "Bütçe kontrolü"},
+    "Marco": {"role": "Müşteri İlişkileri & Destek", "room": "Destek Odası", "home_x": 90, "home_y": 70, "color": "#3b82f6", "default": "Destek hattında..."},
+    "Talisca": {"role": "Sipariş Takip & Operasyon", "room": "Operasyon Odası", "home_x": 270, "home_y": 70, "color": "#ef4444", "default": "Sipariş işliyor"},
+    "Brown": {"role": "Yazılım Mühendisi", "room": "Yazılım Üssü", "home_x": 560, "home_y": 70, "color": "#10b981", "default": "Kod derleniyor..."},
+    "Kante": {"role": "Pazarlama & Büyüme Uzmanı", "room": "Pazarlama Odası", "home_x": 740, "home_y": 70, "color": "#f59e0b", "default": "Kampanya kurguluyor"},
+    "İrfan": {"role": "Finans & Trader / Kripto Uzmanı", "room": "Finans Odası", "home_x": 820, "home_y": 330, "color": "#8b5cf6", "default": "Bütçe kontrolü"},
     "İsmail": {"role": "İnsan Kaynakları", "room": "İK Odası", "home_x": 90, "home_y": 330, "color": "#f97316", "default": "Mülakatta..."},
-    "Alex": {"role": "Hukuk & Mevzuat", "room": "Hukuk Bürosu", "home_x": 270, "home_y": 330, "color": "#14b8a6", "default": "Sözleşme inceliyor"},
-    "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik Odası", "home_x": 530, "home_y": 330, "color": "#64748b", "default": "Sistem taranıyor"},
-    "Kerem": {"role": "Müşteri Başarı", "room": "Müşteri Başarı Odası", "home_x": 670, "home_y": 330, "color": "#ec4899", "default": "Onboarding aktif"}
+    "Alex": {"role": "Hukuk & Mevzuat Danışmanı", "room": "Hukuk Bürosu", "home_x": 270, "home_y": 330, "color": "#14b8a6", "default": "Sözleşme inceliyor"},
+    "Skrinar": {"role": "Siber Güvenlik Uzmanı", "room": "Güvenlik Odası", "home_x": 530, "home_y": 330, "color": "#64748b", "default": "Sistem taranıyor"},
+    "Kerem": {"role": "Müşteri Başarı Uzmanı", "room": "Müşteri Başarı Odası", "home_x": 670, "home_y": 330, "color": "#ec4899", "default": "Onboarding aktif"}
 }
 
 HTML_TEMPLATE = """
@@ -26,7 +26,7 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - Live Operations Terminal</title>
+    <title>E-Trade Pro - CEO Command Center</title>
     <style>
         body { 
             background-color: #05070b; 
@@ -183,7 +183,7 @@ HTML_TEMPLATE = """
             white-space: nowrap;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
             pointer-events: none;
-            max-width: 110px;
+            max-width: 120px;
         }
 
         .agent:hover { transform: scale(1.3); z-index: 100; }
@@ -193,9 +193,43 @@ HTML_TEMPLATE = """
             100% { transform: translateY(-4px) rotate(2deg); }
         }
 
-        /* Gelişmiş Canlı Aktivite Terminali */
+        /* CEO Komuta ve Mesaj Paneli */
+        #command-panel {
+            margin: 10px auto;
+            width: 910px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            padding: 10px;
+            border-radius: 6px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        select, input[type="text"] {
+            background: #1e293b;
+            color: #fff;
+            border: 1px solid #475569;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+        }
+        input[type="text"] { flex-grow: 1; }
+        .send-btn {
+            background: #0284c7;
+            color: #fff;
+            border: none;
+            padding: 6px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .send-btn:hover { background: #0369a1; }
+
+        /* Canlı Terminal */
         #activity-terminal {
-            margin: 10px auto 20px auto;
+            margin: 0 auto 20px auto;
             width: 910px;
             background: #020617;
             border: 2px solid #334155;
@@ -216,7 +250,7 @@ HTML_TEMPLATE = """
         }
         .terminal-body {
             padding: 10px;
-            height: 120px;
+            height: 110px;
             overflow-y: auto;
             font-size: 10px;
             color: #4ade80;
@@ -228,15 +262,15 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - LIVE OPERATIONS</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - COMMAND CENTER</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">TERM-LOG AKTİF</span>
+            <span class="top-btn" style="color: #34d399;">DIRECT CHAT AKTİF</span>
         </div>
     </div>
 
+    <!-- Ofis Haritası -->
     <div id="office-floor">
-        <!-- Odalar -->
         <div class="hq-room" style="left: 15px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">MARCO (DESTEK)</div></div>
         <div class="hq-room" style="left: 225px; top: 15px; width: 195px; height: 215px;"><div class="hq-room-title">TALİSCA (SİPARİŞ)</div></div>
         <div class="hq-room" style="left: 495px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">BROWN (YAZILIM)</div></div>
@@ -248,14 +282,10 @@ HTML_TEMPLATE = """
         <div class="hq-room" style="left: 655px; top: 255px; width: 115px; height: 215px;"><div class="hq-room-title">KEREM (BAŞARI)</div></div>
         <div class="hq-room" style="left: 780px; top: 255px; width: 125px; height: 215px;"><div class="hq-room-title">İRFAN (FİNANS)</div></div>
 
-        <!-- Kapılar -->
         <div class="hq-door" style="left: 425px; top: 110px; width: 65px; height: 15px;">KAPI</div>
         <div class="hq-door" style="left: 425px; top: 350px; width: 65px; height: 15px;">KAPI</div>
-
-        <!-- Mola Alanı -->
         <div class="lounge-area">☕ ORTAK MOLA</div>
 
-        <!-- Masalar -->
         <div class="desk" style="left: 90px; top: 75px;"><div class="pc-monitor"></div></div>
         <div class="desk" style="left: 295px; top: 75px;"><div class="pc-monitor"></div></div>
         <div class="desk" style="left: 570px; top: 75px;"><div class="pc-monitor"></div></div>
@@ -266,16 +296,14 @@ HTML_TEMPLATE = """
         <div class="desk" style="left: 690px; top: 315px;"><div class="pc-monitor"></div></div>
         <div class="desk" style="left: 820px; top: 315px;"><div class="pc-monitor"></div></div>
 
-        <!-- CEO Makamı -->
         <div class="ceo-hq">
             <span>👑 SEN</span>
             <span style="font-size: 7px; color: #fca5a5;">CEO</span>
         </div>
 
-        <!-- Ajanlar -->
         {% for name, data in employees.items() %}
         <div class="agent" id="agent-{{ name }}" style="left: {{ data.home_x }}px; top: {{ data.home_y }}px;" 
-             onclick="getAiReport('{{ name }}', '{{ data.role }}')">
+             onclick="selectAgent('{{ name }}')">
             <div class="speech-bubble" id="bubble-{{ name }}">{{ data.default }}</div>
             <div class="robot-sprite" style="border-color: {{ data.color }};">🤖</div>
             <div class="agent-name" style="color: {{ data.color }};">{{ name }}</div>
@@ -283,14 +311,25 @@ HTML_TEMPLATE = """
         {% endfor %}
     </div>
 
-    <!-- Canlı Aktivite Terminali -->
+    <!-- CEO Mesaj Gönderme Paneli -->
+    <div id="command-panel">
+        <select id="agent-select">
+            {% for name, data in employees.items() %}
+            <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
+            {% endfor %}
+        </select>
+        <input type="text" id="ceo-message" placeholder="Ajana emir ver veya soru sor (Örn: Bitcoin ne kadar?)..." onkeypress="checkEnter(event)">
+        <button class="send-btn" onclick="sendDirectMessage()">EMİR GÖNDER</button>
+    </div>
+
+    <!-- Canlı Terminal Ekranı -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ E-TRADE PRO AI OPERATIONS LOG</span>
-            <span style="color: #34d399;">● LIVE STREAM</span>
+            <span>⚡ E-TRADE PRO AI OPERATIONS TERMINAL</span>
+            <span style="color: #34d399;">● CONNECTED</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: E-Trade Pro HQ operasyonel. Ajanlar masalarında görev bekliyor...</div>
+            <div class="log-line">[SYSTEM]: Komuta merkezi hazır. Çalışan seçip mesajınızı yazabilirsiniz patron.</div>
         </div>
     </div>
 
@@ -302,22 +341,44 @@ HTML_TEMPLATE = """
             const logDiv = document.createElement('div');
             logDiv.className = 'log-line';
             logDiv.innerHTML = `[${time}] ${text}`;
-            terminalLogs.prepend(logDiv); // En üste ekle
+            terminalLogs.prepend(logDiv);
         }
 
-        function getAiReport(name, role) {
-            appendLog(`> [TALEP]: CEO Mertcan, <b>${name} (${role})</b> ajanına bağlandı...`);
-            document.getElementById('bubble-' + name).innerText = "İşleniyor...";
-            
-            fetch('/api/agent-status/' + name)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('bubble-' + name).innerText = data.short_status;
-                    appendLog(`> [<b>${name}</b>]: "${data.status}" (<span style="color: #38bdf8;">${role}</span>)`);
-                })
-                .catch(err => {
-                    appendLog(`> [HATA]: ${name} ile bağlantı kurulamadı.`);
-                });
+        function selectAgent(name) {
+            document.getElementById('agent-select').value = name;
+            appendLog(`> [SEÇİM]: CEO Mertcan, <b>${name}</b> adlı ajanı seçti.`);
+        }
+
+        function checkEnter(event) {
+            if (event.key === 'Enter') {
+                sendDirectMessage();
+            }
+        }
+
+        function sendDirectMessage() {
+            const agentName = document.getElementById('agent-select').value;
+            const messageInput = document.getElementById('ceo-message');
+            const messageText = messageInput.value.trim();
+
+            if (!messageText) return;
+
+            appendLog(`> [CEO -> <b>${agentName}</b>]: "${messageText}"`);
+            document.getElementById('bubble-' + agentName).innerText = "Düşünüyor...";
+            messageInput.value = "";
+
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ agent: agentName, message: messageText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('bubble-' + agentName).innerText = data.short_status;
+                appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
+            })
+            .catch(err => {
+                appendLog(`> [HATA]: ${agentName} yanıt veremedi.`);
+            });
         }
     </script>
 </body>
@@ -328,27 +389,31 @@ HTML_TEMPLATE = """
 def index():
     return render_template_string(HTML_TEMPLATE, employees=employees)
 
-@app.route('/api/agent-status/<name>')
-def agent_status(name):
-    if name not in employees:
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    data = request.json
+    agent_name = data.get('agent')
+    user_message = data.get('message')
+
+    if agent_name not in employees:
         return jsonify({"status": "Bilinmeyen ajan", "short_status": "Hata"})
-    
-    agent = employees[name]
-    
+
+    agent = employees[agent_name]
+
     if not groq_client:
         return jsonify({"status": "API anahtarı aktif değil.", "short_status": "Offline"})
 
     try:
         messages = [
-            {"role": "system", "content": f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name} adında bir yapay zeka ajanısın. Patronun Mertcan sana selam verdi ve masanda şu an ne yaptığını sordu. Ona Türkçe, çok kısa, esprili ve havalı bir durum raporu ver. Maksimum 4-5 kelime olsun."},
-            {"role": "user", "content": f"Selam {name}, son durum nedir?"}
+            {"role": "system", "content": f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name if 'name' in locals() else agent_name} adında profesyonel bir yapay zeka ajanısın. Patronun Mertcan sana doğrudan soru sordu veya emir verdi. Ona profesyonel, akıllı ve nokta atışı bir yanıt ver. Eğer kripto, borsa veya veri sorulursa kendi alanına göre bilgi ver. Cevabın çok uzun olmasın ama tatmin edici ve net olsun."},
+            {"role": "user", "content": user_message}
         ]
         
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
             messages=messages,
-            max_tokens=50,
-            temperature=0.9
+            max_tokens=150,
+            temperature=0.7
         )
         
         status_text = ""
@@ -356,16 +421,16 @@ def agent_status(name):
             status_text = completion.choices[0].message.content.strip('"').strip()
             
         if not status_text:
-            status_text = f"{agent['role']} görev başında!"
+            status_text = f"Emredersiniz patron, ilgileniyorum."
 
         return jsonify({
             "status": status_text, 
-            "short_status": status_text[:18] + "..." if len(status_text) > 18 else status_text
+            "short_status": status_text[:22] + "..." if len(status_text) > 22 else status_text
         })
     
     except Exception as e:
-        fallback_msg = f"Sistem aktif çalışıyor."
-        return jsonify({"status": fallback_msg, "short_status": "Aktif"})
+        fallback_msg = f"Komut işlendi patron."
+        return jsonify({"status": fallback_msg, "short_status": "Tamamlandı"})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
