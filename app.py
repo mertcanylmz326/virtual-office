@@ -55,19 +55,18 @@ def init_db():
 
 init_db()
 
-# Ajanlar ve Sabit Odaları (Kendi alanlarında kalacaklar)
 employees = {
-    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "x": 60, "y": 65, "target_x": 60, "target_y": 65, "color": "#3b82f6", "state": "Masada", "speech": "Destek hazir"},
-    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "x": 240, "y": 65, "target_x": 240, "target_y": 65, "color": "#ef4444", "state": "Masada", "speech": "Süreç takip"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "x": 420, "y": 65, "target_x": 420, "target_y": 65, "color": "#10b981", "state": "Masada", "speech": "Kod yazıyor"},
+    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "x": 60, "y": 65, "target_x": 60, "target_y": 65, "color": "#3b82f6", "state": "Masada", "speech": "Destek hazır"},
+    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "x": 240, "y": 65, "target_x": 240, "target_y": 65, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "x": 420, "y": 65, "target_x": 420, "target_y": 65, "color": "#10b981", "state": "Masada", "speech": "Kod yazılıyor"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "x": 60, "y": 205, "target_x": 60, "target_y": 205, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
-    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "x": 240, "y": 205, "target_x": 240, "target_y": 205, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe onayda"},
+    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "x": 240, "y": 205, "target_x": 240, "target_y": 205, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
     "İsmail": {"role": "İK", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 375, "room_y": 155, "x": 420, "y": 205, "target_x": 420, "target_y": 205, "color": "#f97316", "state": "Masada", "speech": "Optimizasyon"},
     
-    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "x": 60, "y": 345, "target_x": 60, "target_y": 345, "color": "#14b8a6", "state": "Masada", "speech": "Sözleşme"},
-    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "x": 240, "y": 345, "target_x": 240, "target_y": 345, "color": "#64748b", "state": "Masada", "speech": "Firewall aktif"},
-    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 375, "room_y": 295, "x": 420, "y": 345, "target_x": 420, "target_y": 345, "color": "#ec4899", "state": "Masada", "speech": "Hedef tuttu"},
+    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "x": 60, "y": 345, "target_x": 60, "target_y": 345, "color": "#14b8a6", "state": "Masada", "speech": "Sözleşme aktif"},
+    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "x": 240, "y": 345, "target_x": 240, "target_y": 345, "color": "#64748b", "state": "Masada", "speech": "Firewall koruyor"},
+    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 375, "room_y": 295, "x": 420, "y": 345, "target_x": 420, "target_y": 345, "color": "#ec4899", "state": "Masada", "speech": "Hedefler tuttu"},
     "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 580, "room_y": 15, "x": 630, "y": 70, "target_x": 630, "target_y": 70, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "speech": "Taze kahve!"}
 }
 
@@ -77,7 +76,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Role-Based AI Agency</title>
+    <title>E-Trade Pro - Autonomous AI Agency</title>
     <style>
         body { 
             background-color: #030712; 
@@ -132,7 +131,7 @@ HTML_TEMPLATE = """
         canvas {
             display: block;
             width: 100%;
-            height: auto;
+            height: 100%;
         }
 
         .action-bar { margin: 10px auto; width: 1080px; max-width: 100%; display: flex; justify-content: space-between; gap: 10px; padding: 0 10px; box-sizing: border-box; }
@@ -169,7 +168,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // ROLE-BASED AI HQ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // AI AGENCY HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
@@ -181,7 +180,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">⚡ MOD: Katı Rol Odaklı</span>
+        <span style="color: #fbbf24;">⚡ DURUM: Aktif</span>
     </div>
 
     <!-- Canvas Haritası -->
@@ -205,11 +204,11 @@ HTML_TEMPLATE = """
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ ROLE-BASED OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● NO RANDOM WANDERING</span>
+            <span>⚡ OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8;">● READY</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Ajanlar kendi departmanlarında sabitlendi, rastgele gezintiler bastırıldı.</div>
+            <div class="log-line">[SYSTEM]: Ajanlar ve harita başarıyla yüklendi.</div>
         </div>
     </div>
 
@@ -228,8 +227,6 @@ HTML_TEMPLATE = """
         const terminalLogs = document.getElementById('terminal-logs');
 
         let agentsData = {};
-        let footprints = [];
-        let steamParticles = [];
         let lastLoggedDialogue = "";
 
         function appendLog(text) {
@@ -286,7 +283,7 @@ HTML_TEMPLATE = """
             const rooms = [
                 {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO", glow: "#3b82f6"},
                 {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444"},
-                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (YAZILIM)", glow: "#10b981"},
+                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN", glow: "#10b981"},
                 {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b"},
                 {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6"},
                 {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL", glow: "#f97316"},
@@ -352,17 +349,6 @@ HTML_TEMPLATE = """
             ctx.fillRect(960, 30, 40, 50);
             ctx.fillStyle = "#fbbf24";
             ctx.fillRect(970, 40, 18, 12);
-
-            if (Math.random() < 0.4) {
-                steamParticles.push({x: 978 + (Math.random()*10 - 5), y: 30, alpha: 1.0});
-            }
-            steamParticles.forEach((p, index) => {
-                p.y -= 0.8;
-                p.alpha -= 0.03;
-                ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-                ctx.fillRect(p.x, p.y, 3, 3);
-                if (p.alpha <= 0) steamParticles.splice(index, 1);
-            });
 
             ctx.fillStyle = "rgba(109, 40, 217, 0.35)";
             ctx.fillRect(580, 175, 485, 250);
@@ -436,11 +422,6 @@ HTML_TEMPLATE = """
                 });
                 agentsData = mapped;
                 drawOffice();
-
-                if (data.latest_dialogue && data.latest_dialogue !== lastLoggedDialogue) {
-                    lastLoggedDialogue = data.latest_dialogue;
-                    appendLog(`💬 [OTONOM AJANS]: ${data.latest_dialogue}`);
-                }
             });
         }, 1500);
 
@@ -462,7 +443,7 @@ HTML_TEMPLATE = """
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
                 if(data.task_created) {
-                    appendLog(`> [MÜŞTERİ KUYRUĞU]: Yeni proje otomatik işleme alındı -> "${data.task_title}"`);
+                    appendLog(`> [MÜŞTERİ KUYRUĞU]: Yeni proje otonom kuyruğa eklendi -> "${data.task_title}"`);
                 }
             })
             .catch(err => {
@@ -478,7 +459,7 @@ HTML_TEMPLATE = """
         }
 
         function loadTasks() {
-            appendLog(`> [GÖREVLER]: Ajanların otonom görev listesi yükleniyor...`);
+            appendLog(`> [GÖREVLER]: Otonom görev listesi yükleniyor...`);
             fetch('/api/tasks').then(res => res.json()).then(data => {
                 appendLog(`> [AKTİF İŞLER]: ${data.tasks.join(" | ")}`);
             });
@@ -526,12 +507,11 @@ def query_supabase_memory(query_text):
     except:
         return "Hafızaya erişilemedi."
 
-latest_inter_agent_chat = ""
 tick_counter = 0
 
 @app.route('/api/simulation-tick', methods=['GET'])
 def simulation_tick():
-    global latest_inter_agent_chat, tick_counter, company_state
+    global tick_counter, company_state
     agent_list = []
     tick_counter += 1
 
@@ -540,18 +520,16 @@ def simulation_tick():
         company_state["budget"] += revenue
         company_state["active_clients"] = random.randint(3, 8)
 
-    # Ajanlar kendi odalarından ayrılmaz, sadece kendi masalarında çalışır statüsünde kalır
     for name, data in employees.items():
         if name == "Mutfak_Chef":
             data["x"], data["y"] = 630, 60
             data["state"] = "Kahve Hazırlıyor"
             data["speech"] = "Kahveler hazır!"
         else:
-            # Sabit kendi odasının masasında çalışır
             data["x"] = data["room_x"] + 45
             data["y"] = data["room_y"] + 50
             data["state"] = "Masada Çalışıyor"
-            data["speech"] = f"{data['role']} Uzmanı"
+            data["speech"] = f"{data['role']} Aktif"
 
         agent_list.append({
             "name": name, 
@@ -567,7 +545,6 @@ def simulation_tick():
 
     return jsonify({
         "agents": agent_list, 
-        "latest_dialogue": "Tüm ajanlar kendi departmanlarında aktif olarak müşteri taleplerini işliyor.",
         "budget": company_state["budget"],
         "active_clients": company_state["active_clients"]
     })
@@ -599,13 +576,13 @@ def api_chat():
             conn.close()
         except: pass
 
+    reply = ""
     try:
         memory_context = query_supabase_memory(user_message)
         system_prompt = (
             f"Sen E-Trade Pro otonom yazılım ajansında {agent['role']} olarak çalışan {agent_name} adında bir kıdemli yapay zeka uzmansın. "
-            f"Patronun Mertcan sana müşteri projesi için talimat verdi: '{user_message}'.\n"
-            f"[SUPABASE HAFIZA]: {memory_context}\n"
-            f"Müşterinin web sitesini otomatik kurup hazırladığını belirten profesyonel ve kısa bir onay yanıtı ver."
+            f"Patronun Mertcan sana talimat verdi: '{user_message}'. "
+            f"Kısa, net ve profesyonel bir yanıt ver."
         )
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
@@ -613,10 +590,14 @@ def api_chat():
             max_tokens=150, temperature=0.7
         )
         reply = completion.choices[0].message.content.strip('"').strip()
-    except:
-        reply = "Emredersiniz patron, web sitesi otomasyonu ve kurulumu başlatıldı."
+    except Exception as e:
+        print(f"Groq Hatası: {e}")
 
-    employees[agent_name]["speech"] = "Proje kodlanıyor..."
+    # Boş yanıt dönerse güvenli yedek metin
+    if not reply:
+        reply = f"Emredersiniz patron, {agent['role']} departmanı olarak talimatınız işleme alındı ve kuruluyor."
+
+    employees[agent_name]["speech"] = reply[:25]
     log_to_supabase(agent_name, "CLIENT_PROJECT", f"Talimat: {user_message} | Yanıt: {reply}")
     return jsonify({"status": reply, "task_created": task_created, "task_title": task_title})
 
@@ -655,18 +636,23 @@ def api_orders():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
+    decision = ""
     try:
-        prompt = "Otonom ajansın büyümesi için Brown ve İrfan stratejik bir yapay zeka entegrasyon kararı alıyor. İki cümlelik karar yaz."
+        prompt = "Otonom ajansın büyümesi için stratejik bir yapay zeka entegrasyon kararı al. İki cümlelik karar yaz."
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=120, temperature=0.7
         )
         decision = completion.choices[0].message.content.strip('"').strip()
-        log_to_supabase("ZİRVE", "AI_AGENCY_DECISION", decision)
-        return jsonify({"decision": decision})
-    except Exception as e:
-        return jsonify({"decision": "Yapay zeka ajans protokolü güncellendi."})
+    except:
+        pass
+    
+    if not decision:
+        decision = "Yönetim kurulu otonom ağ altyapısını güçlendirme kararı aldı."
+
+    log_to_supabase("ZİRVE", "AI_AGENCY_DECISION", decision)
+    return jsonify({"decision": decision})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
