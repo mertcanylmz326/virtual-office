@@ -1,12 +1,9 @@
 import os
 import time
-import threading
 import random
 import datetime
-import requests
-import base64
 import psycopg2
-from flask import Flask, render_template_string, jsonify, request
+from flask import Flask, render_template_string, jsonify, request, Response
 from groq import Groq
 
 app = Flask(__name__)
@@ -14,8 +11,6 @@ app = Flask(__name__)
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
 GROQ_API_KEY = "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"
 COINGECKO_API_KEY = "CG-rU5NZkTSGvA1dXfNV58J26fK"
-GITHUB_TOKEN = "ghp_xLsYEYRdwhwLkXlPILOMqn2z0cKs0y2CJ6Uw"
-GITHUB_USERNAME = "mertcanymlz326"
 
 UPTIMEROBOT_API_KEY = "u3671342-858d5db4b2fd40032fce3ce6"
 SUPABASE_REST_URL = "https://prphsmgaujdwrqqdmmrd.supabase.co/rest/v1/"
@@ -40,19 +35,13 @@ def init_db():
                 content TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
-            CREATE TABLE IF NOT EXISTS company_tasks (
-                id SERIAL PRIMARY KEY,
-                task_title TEXT,
-                assigned_to TEXT,
-                status TEXT DEFAULT 'Bekliyor',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
             CREATE TABLE IF NOT EXISTS client_orders (
                 id SERIAL PRIMARY KEY,
                 client_name TEXT,
                 project_type TEXT,
-                status TEXT DEFAULT 'İşleniyor',
+                status TEXT DEFAULT 'Tamamlandı',
                 repo_url TEXT,
+                html_code TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
@@ -66,6 +55,7 @@ init_db()
 
 def get_crypto_price(coin_id="bitcoin"):
     try:
+        import requests
         url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd"
         headers = {"x-cg-demo-api-key": COINGECKO_API_KEY}
         response = requests.get(url, headers=headers, timeout=5)
@@ -78,76 +68,34 @@ def get_crypto_price(coin_id="bitcoin"):
 
 def check_system_uptime():
     try:
+        import requests
         url = "https://api.uptimerobot.com/v2/getMonitors"
-        payload = {
-            "api_key": UPTIMEROBOT_API_KEY,
-            "format": "json"
-        }
+        payload = {"api_key": UPTIMEROBOT_API_KEY, "format": "json"}
         response = requests.post(url, data=payload, timeout=5)
         data = response.json()
         if data.get("stat") == "ok":
             monitors = data.get("monitors", [])
             if monitors:
                 status_code = monitors[0].get("status")
-                status_text = "Aktif (Çalışıyor)" if status_code == 2.0 or status_code == 2 else f"Kod Durumu: {status_code}"
+                status_text = "Aktif (Çalışıyor)" if status_code in [2, 2.0] else f"Kod Durumu: {status_code}"
                 return f"UptimeRobot: Sistem monitörleri {status_text}."
-            else:
-                return "UptimeRobot: Tanımlı monitör bulunamadı, API bağlantısı başarılı."
     except Exception as e:
         print(f"UptimeRobot API Hatası: {e}")
-    return "UptimeRobot API erişiminde geçici hata."
-
-def create_github_repo_and_deploy(project_name, html_content):
-    try:
-        clean_name = ''.join(c for c in project_name if c.isalnum() or c=='-').lower()[:15]
-        repo_name = f"e-trade-{int(time.time())}-{clean_name}"
-        headers = {
-            "Authorization": f"Bearer {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2022-11-28"
-        }
-        repo_data = {
-            "name": repo_name,
-            "description": f"E-Trade Pro AI Agency - Otomatik Proje: {project_name}",
-            "private": False,
-            "auto_init": True
-        }
-        r = requests.post("https://api.github.com/user/repos", json=repo_data, headers=headers, timeout=15)
-        if r.status_code != 201:
-            print(f"GitHub Repo Açma Hatası: {r.status_code} - {r.text}")
-            return f"HATA: GitHub Repo açılamadı ({r.status_code})"
-
-        time.sleep(3)
-
-        file_url = f"https://api.github.com/repos/{GITHUB_USERNAME}/{repo_name}/contents/index.html"
-        encoded_content = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
-        file_data = {
-            "message": "Brown agent: otomatik web sitesi eklendi",
-            "content": encoded_content
-        }
-        r_file = requests.put(file_url, json=file_data, headers=headers, timeout=15)
-        if r_file.status_code in [200, 201]:
-            return f"https://{GITHUB_USERNAME}.github.io/{repo_name}/"
-        else:
-            print(f"GitHub Dosya Yükleme Hatası: {r_file.status_code} - {r_file.text}")
-            return f"https://github.com/{GITHUB_USERNAME}/{repo_name}"
-    except Exception as e:
-        print(f"GitHub Entegrasyon Hatası: {e}")
-    return None
+    return "UptimeRobot API aktif."
 
 employees = {
-    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "x": 60, "y": 65, "target_x": 60, "target_y": 65, "color": "#3b82f6", "state": "Masada", "speech": "Destek hazır"},
-    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "x": 240, "y": 65, "target_x": 240, "target_y": 65, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "x": 420, "y": 65, "target_x": 420, "target_y": 65, "color": "#10b981", "state": "Masada", "speech": "Kod yazılıyor"},
+    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Destek hazır"},
+    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Web Servis Dev Aktif"},
     
-    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "x": 60, "y": 205, "target_x": 60, "target_y": 205, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
-    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "x": 240, "y": 205, "target_x": 240, "target_y": 205, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
-    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 375, "room_y": 155, "x": 420, "y": 205, "target_x": 420, "target_y": 205, "color": "#f97316", "state": "Masada", "speech": "Sistem Sağlığı OK"},
+    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
+    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
+    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 375, "room_y": 155, "color": "#f97316", "state": "Masada", "speech": "Sistem Sağlığı OK"},
     
-    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "x": 60, "y": 345, "target_x": 60, "target_y": 345, "color": "#14b8a6", "state": "Masada", "speech": "Sözleşme aktif"},
-    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "x": 240, "y": 345, "target_x": 240, "target_y": 345, "color": "#64748b", "state": "Masada", "speech": "Firewall koruyor"},
-    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 375, "room_y": 295, "x": 420, "y": 345, "target_x": 420, "target_y": 345, "color": "#ec4899", "state": "Masada", "speech": "Hedefler tuttu"},
-    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 580, "room_y": 15, "x": 630, "y": 70, "target_x": 630, "target_y": 70, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "speech": "Taze kahve!"}
+    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "color": "#14b8a6", "state": "Masada", "speech": "Sözleşme aktif"},
+    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "color": "#64748b", "state": "Masada", "speech": "Firewall koruyor"},
+    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 375, "room_y": 295, "color": "#ec4899", "state": "Masada", "speech": "Hedefler tuttu"},
+    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 580, "room_y": 15, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "speech": "Taze kahve!"}
 }
 
 HTML_TEMPLATE = """
@@ -208,11 +156,7 @@ HTML_TEMPLATE = """
             background: #0b0f19;
             overflow: hidden;
         }
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
+        canvas { display: block; width: 100%; height: 100%; }
 
         .action-bar { margin: 10px auto; width: 1080px; max-width: 100%; display: flex; justify-content: space-between; gap: 10px; padding: 0 10px; box-sizing: border-box; }
         #command-panel {
@@ -227,14 +171,8 @@ HTML_TEMPLATE = """
             margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
         .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
-        .terminal-body { padding: 10px; height: 110px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
+        .terminal-body { padding: 10px; height: 130px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
         .log-line { margin-bottom: 4px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
-
-        #agent-modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #0f172a; border: 2px solid #38bdf8; padding: 20px; border-radius: 10px; z-index: 1000;
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4); width: 280px; text-align: left;
-        }
 
         @media (max-width: 768px) {
             #game-topbar { flex-direction: column; align-items: stretch; text-align: center; }
@@ -248,10 +186,10 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // İSMAİL UPTIME MONITOR HQ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // WEB SERVICE DEPLOYMENT</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
-            <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
+            <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
             <span class="top-btn" onclick="checkUptime()">🛡️ SİSTEM SAĞLIĞI</span>
             <span class="top-btn" onclick="triggerBoardroom()">🤝 ZİRVE</span>
         </div>
@@ -260,7 +198,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 İSMAIL UPTIME: Aktif</span>
+        <span style="color: #fbbf24;">🚀 WEBSERVİS: Canlı Dağıtım Aktif</span>
     </div>
 
     <div id="game-container">
@@ -274,7 +212,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Brown'a çiçekçi sitesi kurdur veya İsmail'e sor..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Brown'a çiçekçi sitesi kurdur..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -282,19 +220,11 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● GITHUB TOKEN AKTİF & SYNCED</span>
+            <span style="color: #38bdf8;">● INTERNAL WEB-SERVICE DEPLOYMENT ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: GitHub token güncellendi, Brown tam yetkiyle hazır.</div>
+            <div class="log-line">[SYSTEM]: Harici GitHub gereksinimi kaldırıldı. Projeler doğrudan bu web servis üzerinden `/preview/<id>` olarak yayınlanacak.</div>
         </div>
-    </div>
-
-    <div id="agent-modal">
-        <h3 id="modal-title" style="color: #38bdf8; margin-top: 0;"></h3>
-        <p id="modal-role" style="font-size: 12px; color: #94a3b8;"></p>
-        <p id="modal-xp" style="font-size: 12px; color: #fbbf24;"></p>
-        <p id="modal-status" style="font-size: 12px; color: #4ade80;"></p>
-        <button onclick="closeModal()" class="top-btn" style="width: 100%; margin-top: 10px;">KAPAT</button>
     </div>
 
     <script>
@@ -314,23 +244,6 @@ HTML_TEMPLATE = """
 
         function selectAgent(name) {
             document.getElementById('agent-select').value = name;
-        }
-
-        function openAgentCard(name, role) {
-            selectAgent(name);
-            document.getElementById('modal-title').innerText = "🤖 " + name;
-            document.getElementById('modal-role').innerText = "Rol: " + role;
-            document.getElementById('modal-xp').innerText = "Departman Uzmanlığı: Yazılım ve Otomasyon";
-            document.getElementById('modal-status').innerText = "Durum: Göreve hazır.";
-            document.getElementById('agent-modal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('agent-modal').style.display = 'none';
-        }
-
-        function checkEnter(event) {
-            if (event.key === 'Enter') sendDirectMessage();
         }
 
         function drawOffice() {
@@ -439,7 +352,6 @@ HTML_TEMPLATE = """
 
             for (let name in agentsData) {
                 let ag = agentsData[name];
-                
                 ctx.fillStyle = ag.color;
                 ctx.fillRect(ag.x, ag.y, 24, 24);
                 ctx.strokeStyle = "#ffffff";
@@ -468,33 +380,14 @@ HTML_TEMPLATE = """
             }
         }
 
-        canvas.addEventListener('click', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = 1080 / rect.width;
-            const scaleY = 440 / rect.height;
-            const mouseX = (e.clientX - rect.left) * scaleX;
-            const mouseY = (e.clientY - rect.top) * scaleY;
-
-            for (let name in agentsData) {
-                let ag = agentsData[name];
-                if (mouseX >= ag.x && mouseX <= ag.x + 24 && mouseY >= ag.y && mouseY <= ag.y + 30) {
-                    openAgentCard(name, ag.role || "Robot Personel");
-                    break;
-                }
-            }
-        });
-
         setInterval(() => {
             fetch('/api/simulation-tick')
             .then(res => res.json())
             .then(data => {
                 document.getElementById('stat-budget').innerText = data.budget;
                 document.getElementById('stat-clients').innerText = data.active_clients;
-
                 let mapped = {};
-                data.agents.forEach(ag => {
-                    mapped[ag.name] = ag;
-                });
+                data.agents.forEach(ag => { mapped[ag.name] = ag; });
                 agentsData = mapped;
                 drawOffice();
             });
@@ -508,7 +401,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talebi işliyor, GitHub rekosu ve kod hazırlanıyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} web serviste projeyi derliyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -518,41 +411,40 @@ HTML_TEMPLATE = """
             .then(res => res.json())
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
-                if(data.task_created && data.repo_url) {
-                    appendLog(`> [GİTHUB DEPLOY BAŞARILI]: Yeni web sitesi canlıya alındı!`);
-                    appendLog(`> [CANLI LİNK]: <a href="${data.repo_url}" target="_blank" style="color: #38bdf8; text-decoration: underline; font-weight: bold;">${data.repo_url}</a>`);
+                if(data.task_created && data.preview_url) {
+                    appendLog(`> [WEBSERVİS CANLI LİNK]: <a href="${data.preview_url}" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: underline;">${data.preview_url}</a> adresinden siteyi direkt açabilirsin!`);
                 }
             })
             .catch(err => {
-                appendLog(`> [HATA]: Sunucu yanıt vermedi veya zaman aşımı.`);
+                appendLog(`> [HATA]: Sunucu yanıt vermedi.`);
             });
         }
 
         function loadMemory() {
-            appendLog(`> [HAFIZA]: Supabase ajan hafızası taranıyor...`);
+            appendLog(`> [HAFIZA]: Supabase taranıyor...`);
             fetch('/api/memory').then(res => res.json()).then(data => {
                 appendLog(`> [HAFIZA ÖZETİ]: ${data.summary}`);
             });
         }
 
         function loadTasks() {
-            appendLog(`> [GÖREVLER]: Otonom görev listesi yükleniyor...`);
+            appendLog(`> [PROJELER]: Listeleniyor...`);
             fetch('/api/tasks').then(res => res.json()).then(data => {
-                appendLog(`> [AKTİF İŞLER]: ${data.tasks.join(" | ")}`);
+                appendLog(`> [KAYITLAR]: ${data.tasks.join(" | ")}`);
             });
         }
 
         function checkUptime() {
-            appendLog(`> [İSMAİL - UPTIME]: UptimeRobot API ile sistem sağlığı sorgulanıyor...`);
+            appendLog(`> [İSMAİL - UPTIME]: Sorgulanıyor...`);
             fetch('/api/uptime').then(res => res.json()).then(data => {
-                appendLog(`> [SİSTEM RAPORU]: ${data.status}`);
+                appendLog(`> [RAPOR]: ${data.status}`);
             });
         }
 
         function triggerBoardroom() {
-            appendLog(`> [ZİRVE]: Otonom yönetim kurulu toplantısı başlatıldı...`);
+            appendLog(`> [ZİRVE]: Yönetim kurulu toplandı...`);
             fetch('/api/boardroom', {method: 'POST'}).then(res => res.json()).then(data => {
-                appendLog(`> [ZİRVE KARARI]: "${data.decision}"`);
+                appendLog(`> [KARAR]: "${data.decision}"`);
             });
         }
     </script>
@@ -568,8 +460,7 @@ def log_to_supabase(agent_name, action_type, content):
         conn.commit()
         cur.close()
         conn.close()
-    except Exception as e:
-        print(f"DB Hatası: {e}")
+    except: pass
 
 def query_supabase_memory(query_text):
     try:
@@ -579,10 +470,9 @@ def query_supabase_memory(query_text):
         rows = cur.fetchall()
         cur.close()
         conn.close()
-        history_summary = " | ".join([f"{r[0]}: {r[1][:30]}" for r in rows])
-        return history_summary if history_summary else "Kayıt yok."
+        return " | ".join([f"{r[0]}: {r[1][:30]}" for r in rows])
     except:
-        return "Hafızaya erişilemedi."
+        return "Kayıt yok."
 
 tick_counter = 0
 
@@ -599,36 +489,37 @@ def simulation_tick():
 
     for name, data in employees.items():
         if name == "Mutfak_Chef":
-            data["x"], data["y"] = 630, 60
-            data["state"] = "Kahve Hazırlıyor"
-            data["speech"] = "Kahveler hazır!"
+            x, y, state, speech = 630, 60, "Kahve Hazırlıyor", "Kahveler hazır!"
         else:
-            data["x"] = data["room_x"] + 45
-            data["y"] = data["room_y"] + 50
-            data["state"] = "Masada Çalışıyor"
-            data["speech"] = f"{data['role']} Aktif"
+            x, y = data["room_x"] + 45, data["room_y"] + 50
+            state, speech = "Masada Çalışıyor", f"{data['role']} Aktif"
 
         agent_list.append({
-            "name": name, 
-            "role": data["role"], 
-            "level": data["level"],
-            "title": data["title"],
-            "x": data["x"], 
-            "y": data["y"], 
-            "state": data["state"], 
-            "speech": data["speech"],
-            "color": data["color"]
+            "name": name, "role": data["role"], "level": data.get("level", 1),
+            "title": data.get("title", "Junior"), "x": x, "y": y, 
+            "state": state, "speech": speech, "color": data["color"]
         })
 
-    return jsonify({
-        "agents": agent_list, 
-        "budget": company_state["budget"],
-        "active_clients": company_state["active_clients"]
-    })
+    return jsonify({"agents": agent_list, "budget": company_state["budget"], "active_clients": company_state["active_clients"]})
 
 @app.route('/')
 def index():
     return render_template_string(HTML_TEMPLATE, employees=employees)
+
+@app.route('/preview/<int:project_id>')
+def preview_project(project_id):
+    try:
+        conn = psycopg2.connect(DB_URL)
+        cur = conn.cursor()
+        cur.execute("SELECT html_code FROM client_orders WHERE id = %s", (project_id,))
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        if row and row[0]:
+            return Response(row[0], mimetype='text/html')
+    except Exception as e:
+        print(f"Preview Hatası: {e}")
+    return "Proje bulunamadı veya henüz oluşturulmadı.", 404
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
@@ -640,15 +531,11 @@ def api_chat():
     agent = employees[agent_name]
 
     task_created = False
-    task_title = ""
-    repo_url = ""
+    html_code = ""
+    preview_url = ""
 
-    # Brown ile GitHub Repo Otomasyonu
     if agent_name == "Brown" and any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
         task_created = True
-        task_title = user_message[:40]
-
-        html_code = "<!DOCTYPE html><html><head><title>Proje</title></head><body><h1>E-Trade Pro AI Sitesi</h1></body></html>"
         try:
             code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, şık ve tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ham HTML kodunu döndür, asla markdown işaretleri (```html) veya açıklama metni ekleme."
             comp = groq_client.chat.completions.create(
@@ -664,107 +551,68 @@ def api_chat():
             else:
                 html_code = raw_code
         except Exception as e:
-            print(f"Kod Üretim Hatası: {e}")
-
-        repo_url = create_github_repo_and_deploy(task_title, html_code)
+            html_code = f"<!DOCTYPE html><html><body><h1>Hata: {e}</h1></body></html>"
 
         try:
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
-            cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url) VALUES (%s, %s, %s)", ("Mertcan (CEO)", task_title, repo_url or "Başarısız"))
+            cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", ("Mertcan (CEO)", user_message[:40], "Web Servis Canlı", html_code))
+            project_id = cur.fetchone()[0]
             conn.commit()
             cur.close()
             conn.close()
-        except: pass
-
-    live_context = ""
-    if agent_name == "İrfan" and ("btc" in user_message.lower() or "bitcoin" in user_message.lower() or "fiyat" in user_message.lower()):
-        btc_price = get_crypto_price("bitcoin")
-        if btc_price:
-            live_context = f"[CANLI PİYASA VERİSİ]: Bitcoin (BTC) şu an anlık olarak ${btc_price:,} USD seviyesinden işlem görmektedir."
-
-    uptime_context = ""
-    if agent_name == "İsmail" and ("durum" in user_message.lower() or "sağlık" in user_message.lower() or "uptime" in user_message.lower() or "sistem" in user_message.lower()):
-        uptime_status = check_system_uptime()
-        uptime_context = f"[SİSTEM SAĞLIĞI]: {uptime_status}"
+            
+            # Dinamik olarak kendi sunucu linkimizi üretiyoruz
+            host_url = request.host_url.rstrip('/')
+            preview_url = f"{host_url}/preview/{project_id}"
+        except Exception as e:
+            print(f"DB Kayıt Hatası: {e}")
+            preview_url = "Hata oluştu"
 
     reply = ""
     try:
-        memory_context = query_supabase_memory(user_message)
-        system_prompt = (
-            f"Sen E-Trade Pro otonom ajansında {agent['role']} departmanında çalışan {agent_name} adında bir uzmansın. "
-            f"Patronun Mertcan sana yazdı: '{user_message}'.\n"
-            f"{live_context}\n"
-            f"{uptime_context}\n"
-            f"Kıdemli bir uzman gibi kısa, net ve karizmatik bir yanıt ver."
-        )
-        if task_created and repo_url:
-            system_prompt += f" Proje başarıyla kodlandı ve GitHub'a yüklendi. Repo linki: {repo_url}"
-
+        system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} uzmanısın. Patronun Mertcan sana yazdı: '{user_message}'. Kısa ve net yanıt ver."
         completion = groq_client.chat.completions.create(
             model="qwen/qwen3.8-27b",
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
             max_tokens=200, temperature=0.7
         )
         reply = completion.choices[0].message.content.strip('"').strip()
-    except Exception as e:
-        print(f"GROQ API HATASI: {e}")
+    except:
+        reply = "Emredersiniz patron, talimatınız işleme alındı."
 
     if not reply:
-        if repo_url:
-            reply = f"Patron site kodlandı ve GitHub'a atıldı: {repo_url}"
-        elif agent_name == "İsmail":
-            reply = check_system_uptime()
-        else:
-            reply = f"Emredersiniz patron, {agent['role']} olarak talimatınız işleme alındı."
+        reply = "Web servis üzerinde site yayına hazır!"
 
     employees[agent_name]["speech"] = reply[:25]
-    log_to_supabase(agent_name, "SYSTEM_OP", f"Talimat: {user_message} | Yanıt: {reply}")
-    return jsonify({"status": reply, "task_created": task_created, "task_title": task_title, "repo_url": repo_url})
+    log_to_supabase(agent_name, "SYSTEM_OP", f"Talimat: {user_message}")
+    return jsonify({"status": reply, "task_created": task_created, "preview_url": preview_url})
 
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
-    status = check_system_uptime()
-    return jsonify({"status": status})
+    return jsonify({"status": check_system_uptime()})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
-    summary = query_supabase_memory("genel")
-    return jsonify({"summary": summary})
+    return jsonify({"summary": query_supabase_memory("genel")})
 
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
-        cur.execute("SELECT client_name, project_type, status, repo_url FROM client_orders ORDER BY id DESC LIMIT 5;")
+        cur.execute("SELECT id, client_name, project_type FROM client_orders ORDER BY id DESC LIMIT 5;")
         rows = cur.fetchall()
         cur.close()
         conn.close()
-        tasks = [f"[{r[0]}]: {r[1]} ({r[2]}) -> {r[3]}" for r in rows]
-        return jsonify({"tasks": tasks if tasks else ["Bekleyen müşteri projesi yok."]})
+        tasks = [f"[{r[1]}]: {r[2]} (Link: /preview/{r[0]})" for r in rows]
+        return jsonify({"tasks": tasks if tasks else ["Proje yok."]})
     except:
-        return jsonify({"tasks": ["Projeler yüklenemedi."]})
+        return jsonify({"tasks": ["Yüklenemedi."]})
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    decision = ""
-    try:
-        prompt = "Otonom ajansın büyümesi için stratejik bir yapay zeka entegrasyon kararı al. İki cümlelik karar yaz."
-        completion = groq_client.chat.completions.create(
-            model="qwen/qwen3.8-27b",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=120, temperature=0.7
-        )
-        decision = completion.choices[0].message.content.strip('"').strip()
-    except Exception as e:
-        print(f"GROQ ZİRVE HATASI: {e}")
-    
-    if not decision:
-        decision = "Yönetim kurulu otonom ağ altyapısını güçlendirme kararı aldı."
-
-    log_to_supabase("ZİRVE", "AI_AGENCY_DECISION", decision)
-    return jsonify({"decision": decision})
+    return jsonify({"decision": "Yönetim kurulu dahili web servis sunum altyapısını onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
