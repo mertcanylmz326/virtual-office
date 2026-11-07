@@ -3,17 +3,17 @@ from flask import Flask, render_template_string
 
 app = Flask(__name__)
 
-# 9 Kişilik Rüya Takımımız ve Ofis İçi Oda Konumları
+# 9 Kişilik Rüya Takımımız, Başlangıç ve Gezinti Hedefleri (Ofis İçi Koordinatlar)
 employees = {
-    "Marco": {"role": "Müşteri İlişkileri", "room": "Destek Odası", "x": 120, "y": 120, "color": "#3498db"},
-    "Talisca": {"role": "Sipariş Takip", "room": "Operasyon", "x": 320, "y": 120, "color": "#e74c3c"},
-    "Brown": {"role": "Yazılım (E-Trade Pro)", "room": "Yazılım Üssü", "x": 520, "y": 120, "color": "#2ecc71"},
-    "Kante": {"role": "Pazarlama & Büyüme", "room": "Pazarlama", "x": 720, "y": 120, "color": "#f1c40f"},
-    "İrfan": {"role": "Muhasebe & Finans", "room": "Finans Odası", "x": 820, "y": 380, "color": "#9b59b6"},
-    "İsmail": {"role": "İnsan Kaynakları", "room": "İK Departmanı", "x": 120, "y": 380, "color": "#e67e22"},
-    "Alex": {"role": "Hukuk & Mevzuat", "room": "Hukuk Bürosu", "x": 320, "y": 380, "color": "#1abc9c"},
-    "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik Merkezi", "x": 520, "y": 380, "color": "#34495e"},
-    "Kerem": {"role": "Müşteri Başarı", "room": "Müşteri Başarı", "x": 720, "y": 380, "color": "#e84393"}
+    "Marco": {"role": "Müşteri İlişkileri", "room": "Destek", "x": 100, "y": 100, "color": "#3498db"},
+    "Talisca": {"role": "Sipariş Takip", "room": "Operasyon", "x": 280, "y": 100, "color": "#e74c3c"},
+    "Brown": {"role": "Yazılım (E-Trade Pro)", "room": "Yazılım", "x": 560, "y": 100, "color": "#2ecc71"},
+    "Kante": {"role": "Pazarlama & Büyüme", "room": "Pazarlama", "x": 750, "y": 100, "color": "#f1c40f"},
+    "İrfan": {"role": "Muhasebe & Finans", "room": "Finans", "x": 750, "y": 380, "color": "#9b59b6"},
+    "İsmail": {"role": "İnsan Kaynakları", "room": "İK", "x": 100, "y": 380, "color": "#e67e22"},
+    "Alex": {"role": "Hukuk & Mevzuat", "room": "Hukuk", "x": 280, "y": 380, "color": "#1abc9c"},
+    "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik", "x": 500, "y": 380, "color": "#34495e"},
+    "Kerem": {"role": "Müşteri Başarı", "room": "Müşteri Başarı", "x": 640, "y": 380, "color": "#e84393"}
 }
 
 HTML_TEMPLATE = """
@@ -21,218 +21,218 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - HQ Sanal Ofis</title>
+    <title>E-Trade Pro - Akıllı HQ Simülatörü</title>
     <style>
-        body { background-color: #0b0f19; color: #fff; font-family: 'Courier New', Courier, monospace; text-align: center; margin: 0; padding: 0; overflow: hidden; }
+        body { background-color: #030712; color: #f8fafc; font-family: 'Courier New', Courier, monospace; text-align: center; margin: 0; padding: 10px; overflow: hidden; }
         
-        /* Üst Menü Barı (Ekran görüntüsündeki gibi) */
         #top-bar {
-            background: #111827;
-            border-bottom: 2px solid #1f2937;
-            padding: 10px 20px;
+            background: #0f172a;
+            border-bottom: 2px solid #3b82f6;
+            padding: 8px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 13px;
+            font-size: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
         }
-        .menu-items span { background: #1f2937; padding: 5px 10px; border-radius: 4px; margin-right: 5px; color: #9ca3af; border: 1px solid #374151; }
-        .menu-items span.active { color: #10b981; border-color: #10b981; }
+        .badge { background: #1e293b; padding: 4px 8px; border-radius: 4px; color: #38bdf8; border: 1px solid #334155; }
 
-        /* Ofis Katı Haritası */
-        #office-hq { 
+        #office-map { 
             position: relative; 
-            width: 960px; 
-            height: 520px; 
+            width: 920px; 
+            height: 500px; 
             margin: 15px auto; 
-            background: #111827; 
-            border: 4px solid #374151; 
-            border-radius: 8px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8); 
+            background: #090d16; 
+            border: 4px solid #334155; 
+            border-radius: 12px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.9); 
+            overflow: hidden;
         }
 
         /* Odalar ve Duvarlar */
         .room {
             position: absolute;
-            border: 2px solid #374151;
-            background: rgba(17, 24, 39, 0.7);
-            border-radius: 6px;
+            border: 2px solid #334155;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
         }
-        .room-title {
+        .room-tag {
             position: absolute;
-            font-size: 10px;
-            color: #6b7280;
+            font-size: 9px;
+            color: #64748b;
             top: 5px;
             left: 10px;
             letter-spacing: 1px;
+            font-weight: bold;
         }
 
-        /* Masalar */
-        .desk {
+        /* Ofis Eşyaları */
+        .desk { position: absolute; width: 60px; height: 30px; background: #1e293b; border: 1px solid #475569; border-radius: 4px; }
+        .plant { position: absolute; font-size: 15px; }
+        .water-cooler { position: absolute; width: 24px; height: 32px; background: #0284c7; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; border: 1px solid #bae6fd; }
+        .coffee-machine { position: absolute; width: 30px; height: 30px; background: #78350f; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 1px solid #fbbf24; }
+
+        /* CEO (Mertcan) Merkezi Nokta */
+        .ceo-node {
             position: absolute;
+            left: 430px;
+            top: 215px;
             width: 65px;
-            height: 35px;
-            background: #1f2937;
-            border: 1px solid #4b5563;
-            border-radius: 4px;
+            height: 65px;
+            background: linear-gradient(135deg, #dc2626, #7f1d1d);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.8);
+            z-index: 50;
         }
 
-        /* Karakterler / Ajanlar */
+        /* Gezinen Ajanlar */
         .agent { 
             position: absolute; 
-            width: 55px; 
-            height: 55px; 
+            width: 50px; 
+            height: 50px; 
             cursor: pointer; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            transition: all 0.5s ease;
-            z-index: 10;
+            transition: left 2.5s ease-in-out, top 2.5s ease-in-out; /* Akıcı yürüme geçişi */
+            z-index: 20;
         }
-
         .agent-avatar {
-            font-size: 20px;
-            background: #1f2937;
+            font-size: 16px;
+            background: #1e293b;
             border-radius: 50%;
-            width: 34px;
-            height: 34px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 2px solid;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
         }
-
         .agent-name {
-            font-size: 9px;
+            font-size: 8px;
             font-weight: bold;
             background: rgba(0, 0, 0, 0.9);
-            padding: 1px 4px;
+            padding: 1px 3px;
             border-radius: 3px;
-            margin-top: 2px;
+            margin-top: 1px;
             white-space: nowrap;
-            border: 1px solid #4b5563;
+            border: 1px solid #475569;
         }
+        .agent:hover { transform: scale(1.3); z-index: 100; }
 
-        .agent:hover {
-            transform: scale(1.2);
-            z-index: 100;
-        }
-
-        /* CEO (Mertcan) Karakteri */
-        .ceo-avatar {
-            position: absolute;
-            left: 450px;
-            top: 240px;
-            width: 60px;
-            height: 60px;
-            background: #ef4444;
-            border: 3px solid #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: bold;
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
-            z-index: 50;
-        }
-
-        /* Alt Durum Paneli */
-        #console-log {
+        #footer-panel {
             margin: 10px auto;
-            width: 950px;
-            background: #111827;
-            border: 1px solid #374151;
-            padding: 10px;
+            width: 910px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 8px 12px;
             border-radius: 6px;
-            font-size: 12px;
-            color: #10b981;
+            font-size: 11px;
+            color: #38bdf8;
             text-align: left;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
-    <!-- Üst Kontrol Paneli -->
     <div id="top-bar">
-        <div style="font-weight: bold; color: #10b981;">🏢 E-TRADE PRO HQ</div>
-        <div class="menu-items">
-            <span class="active">Lider: Mertcan (CEO)</span>
-            <span>Operasyon: 9 Aktif Ajan</span>
-            <span>Sistem: Çevrimiçi</span>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - CANLI OFİS SİMÜLASYONU</div>
+        <div>
+            <span class="badge">CEO: Mertcan</span>
+            <span class="badge" style="color: #10b981;">Durum: Canlı Gezinti Aktif</span>
         </div>
     </div>
 
-    <!-- Ofis Haritası ve Odalar -->
-    <div id="office-hq">
+    <div id="office-map">
         <!-- Odalar -->
-        <div class="room" style="left: 20px; top: 20px; width: 440px; height: 220px;">
-            <div class="room-title">ÜST YÖNETİM & OPERASYON KANADI</div>
+        <div class="room" style="left: 15px; top: 15px; width: 420px; height: 215px;">
+            <div class="room-tag">OPERASYON & DESTEK KANADI</div>
         </div>
-        <div class="room" style="left: 480px; top: 20px; width: 460px; height: 220px;">
-            <div class="room-title">PAZARLAMA & TEKNOLOJİ ÜSSÜ</div>
+        <div class="room" style="left: 485px; top: 15px; width: 420px; height: 215px;">
+            <div class="room-tag">YAZILIM & PAZARLAMA ÜSSÜ</div>
         </div>
-        <div class="room" style="left: 20px; top: 280px; width: 440px; height: 220px;">
-            <div class="room-title">HUKUK & İK DEPARTMANI</div>
+        <div class="room" style="left: 15px; top: 265px; width: 420px; height: 215px;">
+            <div class="room-tag">HUKUK & İK BÜROSU</div>
         </div>
-        <div class="room" style="left: 480px; top: 280px; width: 460px; height: 220px;">
-            <div class="room-title">FİNANS & GÜVENLİK MERKEZİ</div>
+        <div class="room" style="left: 485px; top: 265px; width: 420px; height: 215px;">
+            <div class="room-tag">FİNANS & GÜVENLİK MERKEZİ</div>
         </div>
 
-        <!-- Masalar -->
-        <div class="desk" style="left: 100px; top: 100px;"></div>
-        <div class="desk" style="left: 300px; top: 100px;"></div>
-        <div class="desk" style="left: 500px; top: 100px;"></div>
-        <div class="desk" style="left: 700px; top: 100px;"></div>
-        <div class="desk" style="left: 100px; top: 360px;"></div>
-        <div class="desk" style="left: 300px; top: 360px;"></div>
-        <div class="desk" style="left: 500px; top: 360px;"></div>
-        <div class="desk" style="left: 700px; top: 360px;"></div>
-        <div class="desk" style="left: 800px; top: 360px;"></div>
+        <!-- Ofis Eşyaları -->
+        <div class="plant" style="left: 25px; top: 30px;">🪴</div>
+        <div class="plant" style="left: 870px; top: 30px;">🪴</div>
+        <div class="water-cooler" style="left: 445px; top: 100px;" title="Su Sebili">💧</div>
+        <div class="coffee-machine" style="left: 445px; top: 350px;" title="Kahve Makinesi">☕</div>
 
-        <!-- CEO (Sen) -->
-        <div class="ceo-avatar" title="CEO Mertcan">SEN</div>
+        <!-- Sabit Masalar -->
+        <div class="desk" style="left: 80px; top: 85px;"></div>
+        <div class="desk" style="left: 250px; top: 85px;"></div>
+        <div class="desk" style="left: 540px; top: 85px;"></div>
+        <div class="desk" style="left: 720px; top: 85px;"></div>
+        <div class="desk" style="left: 80px; top: 340px;"></div>
+        <div class="desk" style="left: 250px; top: 340px;"></div>
+        <div class="desk" style="left: 470px; top: 340px;"></div>
+        <div class="desk" style="left: 610px; top: 340px;"></div>
+        <div class="desk" style="left: 720px; top: 340px;"></div>
 
-        <!-- 9 Ajan / Karakter -->
+        <!-- CEO -->
+        <div class="ceo-node">
+            <span>👑 SEN</span>
+            <span style="font-size: 7px; color: #fca5a5;">CEO</span>
+        </div>
+
+        <!-- Ajanlar -->
         {% for name, data in employees.items() %}
         <div class="agent" id="agent-{{ name }}" style="left: {{ data.x }}px; top: {{ data.y }}px;" 
-             onclick="selectAgent('{{ name }}', '{{ data.role }}', '{{ data.room }}')">
+             onclick="inspectAgent('{{ name }}', '{{ data.role }}', '{{ data.room }}')">
             <div class="agent-avatar" style="border-color: {{ data.color }};">🤖</div>
             <div class="agent-name" style="color: {{ data.color }};">{{ name }}</div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- Alt Konsol -->
-    <div id="console-log">
-        > Sistem Başlatıldı. 9 kişilik rüya takım odalarında görev başında. Detay görmek için ajanlara tıklayın patron.
+    <div id="footer-panel">
+        > [CANLI AKIŞ]: Ajanlar odalarında çalışıyor ve ofis içinde (su sebili, kahve molası, koridorlar) geziniyor. Detay için tıklayın.
     </div>
 
     <script>
-        const consoleLog = document.getElementById('console-log');
+        const footer = document.getElementById('footer-panel');
 
-        function selectAgent(name, role, room) {
-            consoleLog.innerHTML = `> [AJAN SEÇİLDİ] İsim: <b>${name}</b> | Görev: <b>${role}</b> | Konum: <b>${room}</b> - Durum: Aktif ve çalışıyor.`;
+        function inspectAgent(name, role, room) {
+            footer.innerHTML = `> [AJAN İNCELENDİ] <b>${name}</b> (${role}) -> Odası: <b>${room}</b> | Durum: Ofis içinde aktif hareket halinde.`;
         }
 
-        // Ajanların odalar içinde hafifçe devriye gezmesi / hareket etmesi
+        // Ofis İçi Gezinti Noktaları (Masalar, Su Sebili, Kahve, Koridor)
+        const waypoints = [
+            {x: 90, y: 80}, {x: 260, y: 80}, {x: 550, y: 80}, {x: 730, y: 80},
+            {x: 90, y: 340}, {x: 260, y: 340}, {x: 480, y: 340}, {x: 620, y: 340}, {x: 730, y: 340},
+            {x: 440, y: 110}, // Su sebili noktası
+            {x: 440, y: 360}, // Kahve makinesi noktası
+            {x: 430, y: 220}  // CEO yanı koridor
+        ];
+
+        // Her 2.5 saniyede bir rastgele bir ajan ofis içinde rastgele bir noktaya yürür
         setInterval(() => {
             const keys = Object.keys({{ employees | tojson }});
             const randomKey = keys[Math.floor(Math.random() * keys.length)];
             const agentEl = document.getElementById('agent-' + randomKey);
             
             if (agentEl) {
-                let dx = (Math.random() - 0.5) * 16;
-                let dy = (Math.random() - 0.5) * 16;
-                let curX = parseFloat(agentEl.style.left);
-                let curY = parseFloat(agentEl.style.top);
-                
-                // Sınırlar içinde tut
-                agentEl.style.left = Math.max(40, Math.min(900, curX + dx)) + 'px';
-                agentEl.style.top = Math.max(40, Math.min(460, curY + dy)) + 'px';
+                const target = waypoints[Math.floor(Math.random() * waypoints.length)];
+                agentEl.style.left = target.x + 'px';
+                agentEl.style.top = target.y + 'px';
             }
-        }, 3000);
+        }, 2500);
     </script>
 </body>
 </html>
