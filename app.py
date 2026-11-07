@@ -8,7 +8,7 @@ app = Flask(__name__)
 GROQ_API_KEY = "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"
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
-# Dinamik Çalışan Kadromuz (Artık dışarıdan eklenebilir!)
+# Dinamik Çalışan Kadromuz
 employees = {
     "Marco": {"role": "Müşteri İlişkileri & Destek", "room": "Destek Odası", "home_x": 90, "home_y": 70, "color": "#3b82f6", "default": "Destek hattında..."},
     "Talisca": {"role": "Sipariş Takip & Operasyon", "room": "Operasyon Odası", "home_x": 270, "home_y": 70, "color": "#ef4444", "default": "Sipariş işliyor"},
@@ -26,7 +26,7 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - Command Center & HR</title>
+    <title>E-Trade Pro - Ultimate Command Center</title>
     <style>
         body { 
             background-color: #05070b; 
@@ -193,7 +193,6 @@ HTML_TEMPLATE = """
             100% { transform: translateY(-4px) rotate(2deg); }
         }
 
-        /* CEO Komuta ve HR Paneli */
         #command-panel {
             margin: 10px auto;
             width: 910px;
@@ -227,7 +226,6 @@ HTML_TEMPLATE = """
         }
         .send-btn:hover { background: #0369a1; }
 
-        /* Canlı Terminal */
         #activity-terminal {
             margin: 0 auto 20px auto;
             width: 910px;
@@ -262,10 +260,10 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - HR & COMMAND CENTER</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - UNIFIED BRIDGE</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">API SYNCED</span>
+            <span class="top-btn" style="color: #34d399;">WEBUI / CHAT SYNC</span>
         </div>
     </div>
 
@@ -311,7 +309,7 @@ HTML_TEMPLATE = """
         {% endfor %}
     </div>
 
-    <!-- CEO Komuta ve HR Paneli -->
+    <!-- Komuta Paneli -->
     <div id="command-panel">
         <select id="agent-select">
             {% for name, data in employees.items() %}
@@ -319,17 +317,17 @@ HTML_TEMPLATE = """
             {% endfor %}
         </select>
         <input type="text" id="ceo-message" placeholder="Komut ver (Örn: Yeni eleman al: Cem, rolü: Destek)..." onkeypress="checkEnter(event)">
-        <button class="send-btn" onclick="sendDirectMessage()">KOMUT GÖNDER</button>
+        <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
     </div>
 
-    <!-- Canlı Terminal Ekranı -->
+    <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ E-TRADE PRO HR & OPERATIONS TERMINAL</span>
-            <span style="color: #34d399;">● READY FOR COMMANDS</span>
+            <span>⚡ UNIFIED BRIDGE OPERATIONS TERMINAL</span>
+            <span style="color: #34d399;">● READY</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: İK ve Komuta merkezi aktif. Yeni eleman almak için komut yazabilirsiniz.</div>
+            <div class="log-line">[SYSTEM]: Harici chat istemcisi ve ofis köprüsü kuruldu.</div>
         </div>
     </div>
 
@@ -346,20 +344,17 @@ HTML_TEMPLATE = """
 
         function selectAgent(name) {
             document.getElementById('agent-select').value = name;
-            appendLog(`> [SEÇİM]: CEO Mertcan, <b>${name}</b> adlı ajanı seçti.`);
+            appendLog(`> [SEÇİM]: ${name} seçildi.`);
         }
 
         function checkEnter(event) {
-            if (event.key === 'Enter') {
-                sendDirectMessage();
-            }
+            if (event.key === 'Enter') sendDirectMessage();
         }
 
         function sendDirectMessage() {
             const agentName = document.getElementById('agent-select').value;
             const messageInput = document.getElementById('ceo-message');
             const messageText = messageInput.value.trim();
-
             if (!messageText) return;
 
             appendLog(`> [KOMUT]: "${messageText}"`);
@@ -370,18 +365,15 @@ HTML_TEMPLATE = """
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ agent: agentName, message: messageText })
             })
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
                 if (data.is_hr_action) {
-                    appendLog(`> [İK / SİSTEM]: ${data.status}`);
-                    setTimeout(() => { location.reload(); }, 1500); // Yeni eleman eklenirse sayfayı yenile
+                    appendLog(`> [İK]: ${data.status}`);
+                    setTimeout(() => location.reload(), 1500);
                 } else {
                     document.getElementById('bubble-' + agentName).innerText = data.short_status;
                     appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
                 }
-            })
-            .catch(err => {
-                appendLog(`> [HATA]: Komut işlenemedi.`);
             });
         }
     </script>
@@ -399,74 +391,94 @@ def api_chat():
     agent_name = data.get('agent')
     user_message = data.get('message')
 
-    if not groq_client:
-        return jsonify({"status": "API anahtarı aktif değil.", "short_status": "Offline", "is_hr_action": False})
-
-    # İK Komutu Algılama: "Yeni eleman al: [İsim], rolü: [Rol]" gibi komutlar
-    if "yeni eleman al" in user_message.lower() or "eleman ekle" in user_message.lower() or "işe al" in user_message.lower():
+    # HR Komut Kontrolü
+    if "yeni eleman al" in user_message.lower() or "eleman ekle" in user_message.lower():
         try:
-            # Basit bir parser mantığı
             parts = user_message.split(":")
             new_name = "Agent"
-            new_role = "Genel Personel"
-            
+            new_role = "Personel"
             if len(parts) > 1:
-                sub_parts = parts[1].split(",")
-                new_name = sub_parts[0].strip().split()[0] # İlk ismi al
-                if len(sub_parts) > 1:
-                    new_role = sub_parts[1].replace("rolü", "").replace(":", "").strip()
-
+                sub = parts[1].split(",")
+                new_name = sub[0].strip().split()[0]
+                if len(sub) > 1: new_role = sub[1].replace("rolü", "").replace(":", "").strip()
+            
             if new_name not in employees:
-                # Yeni elemanı sisteme ekle (Rastgele koordinatlar veriyoruz)
-                employees[new_name] = {
-                    "role": new_role, 
-                    "room": "Yeni Ofis Alanı", 
-                    "home_x": 450, 
-                    "home_y": 180, 
-                    "color": "#ec4899", 
-                    "default": "İşe başladı!"
-                }
-                return jsonify({
-                    "status": f"Yeni personel {new_name} ({new_role}) başarıyla işe alındı ve ofise yerleştirildi!", 
-                    "short_status": "İşe alındı", 
-                    "is_hr_action": True
-                })
-        except Exception as e:
-            pass
+                employees[new_name] = {"role": new_role, "room": "Ofis", "home_x": 450, "home_y": 180, "color": "#ec4899", "default": "Yeni görevde!"}
+                return jsonify({"status": f"{new_name} ({new_role}) işe alındı!", "short_status": "İşe alındı", "is_hr_action": True})
+        except: pass
 
-    if agent_name not in employees:
-        return jsonify({"status": "Bilinmeyen ajan", "short_status": "Hata", "is_hr_action": False})
-
+    if agent_name not in employees: agent_name = "İrfan" # Varsayılan
     agent = employees[agent_name]
 
     try:
         messages = [
-            {"role": "system", "content": f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {agent_name} adında profesyonel bir yapay zeka ajanısın. Patronun Mertcan sana komut verdi veya soru sordu. Ona profesyonel, akıllı ve nokta atışı bir yanıt ver. Cevabın çok uzun olmasın ama tatmin edici ve net olsun."},
+            {"role": "system", "content": f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {agent_name} adında bir yapay zeka ajanısın. Patronun Mertcan'a net, profesyonel ve kısa yanıt ver."},
             {"role": "user", "content": user_message}
         ]
+        completion = groq_client.chat.completions.create(model="openai/gpt-oss-20b", messages=messages, max_tokens=120, temperature=0.7)
+        status_text = completion.choices[0].message.content.strip('"').strip() if completion.choices else "Tamam patron."
+        return jsonify({"status": status_text, "short_status": status_text[:22] + "...", "is_hr_action": False})
+    except:
+        return jsonify({"status": "Komut işlendi.", "short_status": "Tamam", "is_hr_action": False})
+
+# --- DIŞARIDAKİ CHAT UYGULAMASI (Open WebUI vb.) İÇİN OPENAI UYUMLU ENDPOINT ---
+@app.route('/v1/chat/completions', methods=['POST'])
+def v1_chat_completions():
+    req_data = request.json
+    incoming_messages = req_data.get('messages', [])
+    
+    # Kullanıcının son mesajını al
+    last_user_msg = "Selam"
+    if incoming_messages:
+        last_user_msg = incoming_messages[-1].get('content', 'Selam')
+
+    # Mesaj içinde hangi ajana hitap edildiğini bulmaya çalışalım (Örn: "Selam İsmail", "İrfan Bitcoin ne kadar?")
+    target_agent = "İrfan" # Varsayılan trader/uzman
+    for name in employees.keys():
+        if name.lower() in last_user_msg.lower():
+            target_agent = name
+            break
+
+    agent = employees[target_agent]
+
+    try:
+        system_prompt = f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {target_agent} adında bir yapay zeka ajanısın. Patronun Mertcan sana dışarıdaki chat panelinden yazdı. Ona profesyonel, net ve nokta atışı yanıt ver."
         
+        full_messages = [{"role": "system", "content": system_prompt}] + incoming_messages
+
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
-            messages=messages,
+            messages=full_messages,
             max_tokens=150,
             temperature=0.7
         )
         
-        status_text = ""
-        if completion.choices and completion.choices[0].message.content:
-            status_text = completion.choices[0].message.content.strip('"').strip()
-            
-        if not status_text:
-            status_text = f"Emredersiniz patron, talimatınız işleniyor."
+        reply_text = completion.choices[0].message.content if completion.choices else "Emredersiniz patron."
 
+        # OpenAI formatında yanıt dönüyoruz ki harici chat uygulaması patlamasın!
         return jsonify({
-            "status": status_text, 
-            "short_status": status_text[:22] + "..." if len(status_text) > 22 else status_text,
-            "is_hr_action": False
+            "id": "chatcmpl-etrade",
+            "object": "chat.completion",
+            "created": 1700000000,
+            "model": "openai/gpt-oss-20b",
+            "choices": [{
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": f"[{target_agent} - {agent['role']}]: {reply_text}"
+                },
+                "finish_reason": "stop"
+            }],
+            "usage": {"prompt_tokens": 10, "completion_tokens": 10, "total_tokens": 20}
         })
-    
     except Exception as e:
-        return jsonify({"status": f"Komut işlendi patron.", "short_status": "Tamamlandı", "is_hr_action": False})
+        return jsonify({
+            "choices": [{
+                "index": 0,
+                "message": {"role": "assistant", "content": f"[Sistem Hatası]: {str(e)}"},
+                "finish_reason": "stop"
+            }]
+        })
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
