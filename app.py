@@ -13,7 +13,7 @@ GROQ_API_KEY = "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"
 COINGECKO_API_KEY = "CG-rU5NZkTSGvA1dXfNV58J26fK"
 
 UPTIMEROBOT_API_KEY = "u3671342-858d5db4b2fd40032fce3ce6"
-SUPABASE_REST_URL = "https://prphsmgaujdwrqqdmmrd.supabase.co/rest/v1/"
+SUPABASE_REST_URL = "[https://prphsmgaujdwrqqdmmrd.supabase.co/rest/v1/](https://prphsmgaujdwrqqdmmrd.supabase.co/rest/v1/)"
 
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
@@ -56,7 +56,7 @@ init_db()
 def get_crypto_price(coin_id="bitcoin"):
     try:
         import requests
-        url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd"
+        url = f"[https://api.coingecko.com/api/v3/simple/price?ids=](https://api.coingecko.com/api/v3/simple/price?ids=){coin_id}&vs_currencies=usd"
         headers = {"x-cg-demo-api-key": COINGECKO_API_KEY}
         response = requests.get(url, headers=headers, timeout=5)
         data = response.json()
@@ -69,7 +69,7 @@ def get_crypto_price(coin_id="bitcoin"):
 def check_system_uptime():
     try:
         import requests
-        url = "https://api.uptimerobot.com/v2/getMonitors"
+        url = "[https://api.uptimerobot.com/v2/getMonitors](https://api.uptimerobot.com/v2/getMonitors)"
         payload = {"api_key": UPTIMEROBOT_API_KEY, "format": "json"}
         response = requests.post(url, data=payload, timeout=5)
         data = response.json()
@@ -84,7 +84,7 @@ def check_system_uptime():
     return "UptimeRobot API aktif."
 
 employees = {
-    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri talebi alıyor"},
+    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
     "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Tek Tıkla Link Üretiyor"},
     
@@ -171,7 +171,7 @@ HTML_TEMPLATE = """
             margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
         .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
-        .terminal-body { padding: 10px; height: 140px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
+        .terminal-body { padding: 10px; height: 150px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
         .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
 
         @media (max-width: 768px) {
@@ -198,7 +198,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 OTOMATİK LİNK SUNUCUSU AKTİF</span>
+        <span style="color: #fbbf24;">🚀 BROWN TEK TIKLA LİNK MODU</span>
     </div>
 
     <div id="game-container">
@@ -212,7 +212,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Örn: Bana şık bir çiçekçi sitesi kur..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Brown seçiliyken çiçekçi sitesi kurdur..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -220,10 +220,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● DİREK TIKLANABİLİR LİNK MODU</span>
+            <span style="color: #38bdf8; font-weight: bold;">● CLEAN LINK OUTPUT ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Ajanlar hazır. Hangi ajana yazarsan yaz, site kurulduğu an tıklanabilir link ekrana düşecek!</div>
+            <div class="log-line">[SYSTEM]: Brown hazır. Site tamamlandığında devasa kodlar ekrana basılmayacak, doğrudan tıklanabilir canlı web servis linki çıkacak!</div>
         </div>
     </div>
 
@@ -240,6 +240,7 @@ HTML_TEMPLATE = """
             logDiv.className = 'log-line';
             logDiv.innerHTML = `[${time}] ${text}`;
             terminalLogs.prepend(logDiv);
+            terminalLogs.scrollTop = 0; // En üste kaydır
         }
 
         function selectAgent(name) {
@@ -401,7 +402,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor ve canlı link hazırlıyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -412,7 +413,7 @@ HTML_TEMPLATE = """
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
                 if(data.preview_url) {
-                    appendLog(`> 🚀 <b style="color: #38bdf8; font-size: 13px;">CANLI WEBSERVİS LİNKİ (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 13px;">${data.preview_url}</a>`);
+                    appendLog(`> 🚀 <b style="color: #38bdf8; font-size: 14px;">CANLI WEBSERVİS LİNKİ (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">${data.preview_url}</a>`);
                 }
             })
             .catch(err => {
@@ -532,9 +533,10 @@ def api_chat():
 
     preview_url = ""
     reply = ""
+    html_code = ""
 
-    # Hangi ajana yazılırsa yazırılsın site/kur/yap/tasarla geçtiği an otomatik web servis kodu üretilir!
-    if any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
+    # SADECE BROWN KOD ÜRETİR
+    if agent_name == "Brown" and any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
         try:
             code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, şık ve tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ham HTML kodunu döndür, asla markdown işaretleri (```html) veya açıklama metni ekleme."
             comp = groq_client.chat.completions.create(
@@ -556,7 +558,7 @@ def api_chat():
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
             cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
-                        (f"{agent_name} (Otonom)", user_message[:40], "Web Servis Canlı", html_code))
+                        ("Brown (Yazılımcı)", user_message[:40], "Web Servis Canlı", html_code))
             project_id = cur.fetchone()[0]
             conn.commit()
             cur.close()
@@ -568,21 +570,21 @@ def api_chat():
             print(f"DB Kayıt Hatası: {e}")
 
     try:
-        system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} uzmanısın. Patronun sana yazdı: '{user_message}'. Kısa ve karizmatik yanıt ver."
-        if preview_url:
-            system_prompt += f" Proje kodlandı, web servis linki hazır: {preview_url}"
-
-        completion = groq_client.chat.completions.create(
-            model="qwen/qwen3.8-27b",
-            messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
-            max_tokens=200, temperature=0.7
-        )
-        reply = completion.choices[0].message.content.strip('"').strip()
+        if agent_name == "Brown" and preview_url:
+            reply = "Patron, site kodlandı ve web servis üzerinde yayına alındı!"
+        else:
+            system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} departmanında çalışan {agent_name} adında bir uzmansın. Patronun sana yazdı: '{user_message}'. Kendi departmanına uygun, kısa ve net bir yanıt ver."
+            completion = groq_client.chat.completions.create(
+                model="qwen/qwen3.8-27b",
+                messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
+                max_tokens=200, temperature=0.7
+            )
+            reply = completion.choices[0].message.content.strip('"').strip()
     except:
-        reply = f"Emredersiniz patron, talimatınız işleme alındı."
+        reply = f"Emredersiniz patron, {agent['role']} olarak buradayım."
 
     if not reply:
-        reply = f"İşlem tamamlandı patron, link aşağıda hazır."
+        reply = f"İşlem tamamlandı patron."
 
     employees[agent_name]["speech"] = reply[:25]
     log_to_supabase(agent_name, "SYSTEM_OP", f"Talimat: {user_message}")
@@ -612,7 +614,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu tek tıkla önizleme altyapısını onayladı."})
+    return jsonify({"decision": "Yönetim kurulu yazılım görevlerinin sadece Brown tarafından yürütülmesini onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
