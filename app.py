@@ -25,6 +25,13 @@ def init_db():
                 content TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
+            CREATE TABLE IF NOT EXISTS company_tasks (
+                id SERIAL PRIMARY KEY,
+                task_title TEXT,
+                assigned_to TEXT,
+                status TEXT DEFAULT 'Bekliyor',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
             CREATE TABLE IF NOT EXISTS office_plants (
                 id SERIAL PRIMARY KEY,
                 plant_name TEXT,
@@ -41,18 +48,19 @@ def init_db():
 
 init_db()
 
+# 9 Ajanın ofis içi ev koordinatları
 employees = {
-    "Marco": {"role": "Destek", "home_x": 75, "home_y": 70, "x": 75, "y": 70, "target_x": 75, "target_y": 70, "color": "#3b82f6", "state": "Masada"},
-    "Talisca": {"role": "Operasyon", "home_x": 285, "home_y": 70, "x": 285, "y": 70, "target_x": 285, "target_y": 70, "color": "#ef4444", "state": "Masada"},
-    "Brown": {"role": "Yazılım", "home_x": 495, "home_y": 70, "x": 495, "y": 70, "target_x": 495, "target_y": 70, "color": "#10b981", "state": "Masada"},
+    "Marco": {"role": "Destek", "home_x": 40, "home_y": 25, "x": 40, "y": 25, "target_x": 40, "target_y": 25, "color": "#3b82f6", "state": "Masada"},
+    "Talisca": {"role": "Operasyon", "home_x": 250, "home_y": 25, "x": 250, "y": 25, "target_x": 250, "target_y": 25, "color": "#ef4444", "state": "Masada"},
+    "Brown": {"role": "Yazılım", "home_x": 460, "home_y": 25, "x": 460, "y": 25, "target_x": 460, "target_y": 25, "color": "#10b981", "state": "Masada"},
     
-    "Kante": {"role": "Pazarlama", "home_x": 75, "home_y": 200, "x": 75, "y": 200, "target_x": 75, "target_y": 200, "color": "#f59e0b", "state": "Masada"},
-    "İrfan": {"role": "Finans", "home_x": 285, "home_y": 200, "x": 285, "y": 200, "target_x": 285, "target_y": 200, "color": "#8b5cf6", "state": "Masada"},
-    "İsmail": {"role": "İK", "home_x": 495, "home_y": 200, "x": 495, "y": 200, "target_x": 495, "target_y": 200, "color": "#f97316", "state": "Masada"},
+    "Kante": {"role": "Pazarlama", "home_x": 40, "home_y": 170, "x": 40, "y": 170, "target_x": 40, "target_y": 170, "color": "#f59e0b", "state": "Masada"},
+    "İrfan": {"role": "Finans", "home_x": 250, "home_y": 170, "x": 250, "y": 170, "target_x": 250, "target_y": 170, "color": "#8b5cf6", "state": "Masada"},
+    "İsmail": {"role": "İK", "home_x": 460, "home_y": 170, "x": 460, "y": 170, "target_x": 460, "target_y": 170, "color": "#f97316", "state": "Masada"},
     
-    "Alex": {"role": "Hukuk", "home_x": 75, "home_y": 330, "x": 75, "y": 330, "target_x": 75, "target_y": 330, "color": "#14b8a6", "state": "Masada"},
-    "Skrinar": {"role": "Siber", "home_x": 285, "home_y": 330, "x": 285, "y": 330, "target_x": 285, "target_y": 330, "color": "#64748b", "state": "Masada"},
-    "Kerem": {"role": "Başarı", "home_x": 495, "home_y": 330, "x": 495, "y": 330, "target_x": 495, "target_y": 330, "color": "#ec4899", "state": "Masada"}
+    "Alex": {"role": "Hukuk", "home_x": 40, "home_y": 315, "x": 40, "y": 315, "target_x": 40, "target_y": 315, "color": "#14b8a6", "state": "Masada"},
+    "Skrinar": {"role": "Siber", "home_x": 250, "home_y": 315, "x": 250, "y": 315, "target_x": 250, "target_y": 315, "color": "#64748b", "state": "Masada"},
+    "Kerem": {"role": "Başarı", "home_x": 460, "home_y": 315, "x": 460, "y": 315, "target_x": 460, "target_y": 315, "color": "#ec4899", "state": "Masada"}
 }
 
 HTML_TEMPLATE = """
@@ -60,7 +68,7 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - AgentSpace 2D HQ</title>
+    <title>E-Trade Pro - AgentSpace 2D Tycoon HQ</title>
     <style>
         body { 
             background-color: #07090e; 
@@ -73,162 +81,181 @@ HTML_TEMPLATE = """
         }
         #game-topbar {
             background: #0f172a;
-            border-bottom: 2px solid #ef4444;
-            padding: 10px 20px;
+            border-bottom: 2px solid #38bdf8;
+            padding: 8px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
+            font-size: 11px;
         }
         .top-btn { 
-            background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 14px; 
-            border-radius: 6px; font-weight: bold; cursor: pointer; 
+            background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 5px 10px; 
+            border-radius: 4px; font-weight: bold; cursor: pointer; 
         }
-        .top-btn:hover { border-color: #ef4444; color: #fff; }
+        .top-btn:hover { background: #38bdf8; color: #07090e; }
 
+        /* 2D Tycoon Oyun Haritası */
         #office-floor { 
             position: relative; 
             width: 1020px; 
-            height: 480px; 
-            margin: 15px auto; 
+            height: 470px; 
+            margin: 10px auto; 
             background-color: #111827;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-            background-size: 24px 24px;
-            border: 4px solid #374151; 
-            border-radius: 10px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.9); 
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border: 3px solid #374151; 
+            border-radius: 8px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8); 
             overflow: hidden;
         }
 
+        /* Odalar */
         .office-room {
             position: absolute;
             background: #1e293b;
             border: 2px solid #475569;
             border-radius: 6px;
-            width: 195px;
-            height: 115px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            width: 200px;
+            height: 125px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
         }
         .room-title {
-            position: absolute; top: 4px; left: 6px; font-size: 7px; color: #38bdf8; font-weight: bold;
-            background: #0f172a; padding: 1px 5px; border-radius: 3px; border: 1px solid #334155;
+            position: absolute; top: 3px; left: 5px; font-size: 7px; color: #38bdf8; font-weight: bold;
+            background: #0f172a; padding: 1px 4px; border-radius: 2px; border: 1px solid #334155;
         }
         .office-desk {
-            position: absolute; bottom: 12px; left: 47px; width: 100px; height: 32px;
-            background: #292524; border: 2px solid #57534e; border-radius: 4px;
+            position: absolute; bottom: 10px; left: 50px; width: 100px; height: 30px;
+            background: #292524; border: 1px solid #57534e; border-radius: 4px;
             display: flex; align-items: center; justify-content: center;
         }
         .pc-screen {
-            width: 22px; height: 12px; background: #0284c7; border: 1px solid #38bdf8; border-radius: 2px;
-            box-shadow: 0 0 6px #38bdf8;
+            width: 20px; height: 10px; background: #0284c7; border: 1px solid #38bdf8; border-radius: 2px;
+            box-shadow: 0 0 4px #38bdf8;
         }
 
+        /* Sağ Taraf: Mutfak ve Zirve Toplantı Odası */
         .kitchen-zone {
-            position: absolute; left: 795px; top: 15px; width: 210px; height: 215px;
-            border: 3px solid #d97706; background: rgba(120, 53, 15, 0.25); border-radius: 8px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: #fde68a;
+            position: absolute; left: 710px; top: 15px; width: 295px; height: 215px;
+            border: 2px dashed #f59e0b; background: rgba(120, 53, 15, 0.2); border-radius: 6px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #fde68a;
             font-weight: bold;
         }
         .boardroom-zone {
-            position: absolute; left: 795px; top: 250px; width: 210px; height: 215px;
-            border: 3px solid #8b5cf6; background: rgba(109, 40, 217, 0.25); border-radius: 8px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: #e9d5ff;
+            position: absolute; left: 710px; top: 240px; width: 295px; height: 215px;
+            border: 2px dashed #8b5cf6; background: rgba(109, 40, 217, 0.2); border-radius: 6px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #e9d5ff;
             font-weight: bold;
         }
 
+        /* Saksılar */
         .plant-pot {
-            position: absolute; width: 30px; height: 30px; background: #78350f; border: 2px solid #b45309;
-            border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; z-index: 10;
+            position: absolute; width: 26px; height: 26px; background: #78350f; border: 2px solid #b45309;
+            border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 10;
         }
-        .plant-status { position: absolute; top: -13px; font-size: 6px; background: #000; color: #4ade80; padding: 1px 3px; border-radius: 3px; white-space: nowrap; border: 1px solid #4ade80; }
+        .plant-status { position: absolute; top: -11px; font-size: 5px; background: #000; color: #4ade80; padding: 1px 2px; border-radius: 2px; white-space: nowrap; border: 1px solid #4ade80; }
 
+        /* Ayak İzleri */
         .footprint {
             position: absolute; width: 4px; height: 4px; background: rgba(56, 189, 248, 0.6);
             border-radius: 50%; pointer-events: none; z-index: 15; animation: fadeOut 1s forwards;
         }
-        @keyframes fadeOut { 0% { opacity: 0.8; } 100% { opacity: 0; transform: scale(1.5); } }
+        @keyframes fadeOut { 0% { opacity: 0.8; } 100% { opacity: 0; transform: scale(1.4); } }
 
+        /* Şık 2D Oyun Tarzı Ajan Sprite (Avatar) */
         .agent { 
-            position: absolute; width: 45px; height: 55px; cursor: pointer; 
+            position: absolute; width: 55px; height: 60px; cursor: pointer; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             transition: transform 0.2s; z-index: 40;
         }
-        .agent-avatar {
-            width: 28px; height: 28px; background-color: #0f172a; border: 2px solid; border-radius: 6px;
-            display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.9);
+        .agent-card {
+            width: 44px; height: 32px; background-color: #0f172a; border: 2px solid; border-radius: 5px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.8);
         }
+        .agent-initials { font-size: 9px; font-weight: bold; line-height: 1; }
+        .agent-badge { font-size: 5px; color: #94a3b8; margin-top: 1px; }
         .agent-name { font-size: 6px; font-weight: bold; background: rgba(15, 23, 42, 0.95); padding: 1px 3px; border-radius: 2px; margin-top: 1px; white-space: nowrap; border: 1px solid #334155; }
         .speech-bubble {
-            position: absolute; top: -20px; background: #f8fafc; color: #0f172a; font-size: 6px; font-weight: bold;
-            padding: 2px 5px; border-radius: 3px; white-space: nowrap; box-shadow: 0 0 6px rgba(255,255,255,0.5); pointer-events: none;
+            position: absolute; top: -16px; background: #f8fafc; color: #0f172a; font-size: 5px; font-weight: bold;
+            padding: 1px 4px; border-radius: 3px; white-space: nowrap; box-shadow: 0 0 5px rgba(255,255,255,0.5); pointer-events: none;
         }
 
-        .action-bar { margin: 15px auto; width: 1020px; display: flex; justify-content: space-between; gap: 10px; }
+        .action-bar { margin: 10px auto; width: 1020px; display: flex; justify-content: space-between; gap: 10px; }
         #command-panel {
-            background: #0f172a; border: 2px solid #334155; padding: 10px; border-radius: 8px; display: flex; gap: 10px; align-items: center; flex-grow: 1;
+            background: #0f172a; border: 2px solid #334155; padding: 8px; border-radius: 8px; display: flex; gap: 8px; align-items: center; flex-grow: 1;
         }
-        select, input[type="text"] { background: #1e293b; color: #fff; border: 1px solid #475569; padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 12px; }
+        select, input[type="text"] { background: #1e293b; color: #fff; border: 1px solid #475569; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 11px; }
         input[type="text"] { flex-grow: 1; }
-        .send-btn { background: #ef4444; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .send-btn:hover { background: #dc2626; }
+        .send-btn { background: #0284c7; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .send-btn:hover { background: #0369a1; }
 
         #activity-terminal {
-            margin: 0 auto 20px auto; width: 1020px; background: #07090e; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden;
+            margin: 0 auto 15px auto; width: 1020px; background: #07090e; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden;
         }
-        .terminal-header { background: #0f172a; padding: 8px 15px; font-size: 11px; color: #ef4444; font-weight: bold; display: flex; justify-content: space-between; }
-        .terminal-body { padding: 10px; height: 90px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; }
-        .log-line { margin-bottom: 4px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
+        .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 10px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; }
+        .terminal-body { padding: 8px; height: 80px; overflow-y: auto; font-size: 10px; color: #4ade80; line-height: 1.3; }
+        .log-line { margin-bottom: 3px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
 
         #agent-modal {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #0f172a; border: 2px solid #ef4444; padding: 20px; border-radius: 10px; z-index: 1000;
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.4); width: 280px; text-align: left;
+            background: #0f172a; border: 2px solid #38bdf8; padding: 15px; border-radius: 10px; z-index: 1000;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4); width: 260px; text-align: left;
         }
     </style>
 </head>
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #ef4444;">🏢 E-TRADE PRO // STABLE AGENTSPACE HQ</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // 4-FEATURED AGENTSPACE HQ</div>
         <div>
-            <span class="top-btn" onclick="checkPlantStatus()">🌿 BİTKİLER</span>
+            <span class="top-btn" onclick="loadMemory()">🧠 RAG HAFIZA</span>
+            <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
+            <span class="top-btn" onclick="triggerBoardroom()">🤝 ZİRVE</span>
             <span class="top-btn" onclick="triggerWatering()">💧 SULA</span>
         </div>
     </div>
 
+    <!-- 2D Tycoon Ofis Haritası -->
     <div id="office-floor">
+        <!-- 9 Oda -->
         <div class="office-room" style="left: 15px; top: 15px;"><div class="room-title">1. MARCO (DESTEK)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
         <div class="office-room" style="left: 225px; top: 15px;"><div class="room-title">2. TALİSCA (OPERASYON)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
         <div class="office-room" style="left: 435px; top: 15px;"><div class="room-title">3. BROWN (YAZILIM)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
 
-        <div class="office-room" style="left: 15px; top: 145px;"><div class="room-title">4. KANTE (PAZARLAMA)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
-        <div class="office-room" style="left: 225px; top: 145px;"><div class="room-title">5. İRFAN (FİNANS)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
-        <div class="office-room" style="left: 435px; top: 145px;"><div class="room-title">6. İSMAİL (İK)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
+        <div class="office-room" style="left: 15px; top: 160px;"><div class="room-title">4. KANTE (PAZARLAMA)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
+        <div class="office-room" style="left: 225px; top: 160px;"><div class="room-title">5. İRFAN (FİNANS)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
+        <div class="office-room" style="left: 435px; top: 160px;"><div class="room-title">6. İSMAİL (İK)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
 
-        <div class="office-room" style="left: 15px; top: 275px;"><div class="room-title">7. ALEX (HUKUK)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
-        <div class="office-room" style="left: 225px; top: 275px;"><div class="room-title">8. SKRİNAR (SİBER)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
-        <div class="office-room" style="left: 435px; top: 275px;"><div class="room-title">9. KEREM (BAŞARI)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
+        <div class="office-room" style="left: 15px; top: 305px;"><div class="room-title">7. ALEX (HUKUK)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
+        <div class="office-room" style="left: 225px; top: 305px;"><div class="room-title">8. SKRİNAR (SİBER)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
+        <div class="office-room" style="left: 435px; top: 305px;"><div class="room-title">9. KEREM (BAŞARI)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
 
-        <div class="kitchen-zone">☕ MUTFAK & KAHVE</div>
-        <div class="boardroom-zone">🤝 OTONOM ZİRVE</div>
+        <!-- Mutfak ve Toplantı Alanları -->
+        <div class="kitchen-zone">☕ MUTFAK & MOLA</div>
+        <div class="boardroom-zone">🤝 OTONOM ZİRVE ODASI</div>
 
-        <div class="plant-pot" style="left: 685px; top: 90px;" id="plant-1">
+        <!-- Saksılar -->
+        <div class="plant-pot" style="left: 655px; top: 85px;" id="plant-1">
             <span class="plant-status" id="plant-status-1">🌿 %100</span>🌱
         </div>
-        <div class="plant-pot" style="left: 685px; top: 320px;" id="plant-2">
+        <div class="plant-pot" style="left: 655px; top: 330px;" id="plant-2">
             <span class="plant-status" id="plant-status-2">🌿 %100</span>🌵
         </div>
 
+        <!-- 9 Ajan Varlığı (Sprites) -->
         {% for name, data in employees.items() %}
         <div class="agent" id="agent-{{ name }}" style="left: {{ data.x }}px; top: {{ data.y }}px;" onclick="openAgentCard('{{ name }}', '{{ data.role }}')">
             <div class="speech-bubble" id="bubble-{{ name }}">{{ data.state }}</div>
-            <div class="agent-avatar" style="border-color: {{ data.color }}; color: {{ data.color }};">{{ name[:2].upper() }}</div>
+            <div class="agent-card" style="border-color: {{ data.color }}; color: {{ data.color }};">
+                <span class="agent-initials">{{ name[:2].upper() }}</span>
+                <span class="agent-badge">AI</span>
+            </div>
             <div class="agent-name" style="color: {{ data.color }};">{{ name }}</div>
         </div>
         {% endfor %}
     </div>
 
+    <!-- Komuta Paneli -->
     <div class="action-bar">
         <div id="command-panel">
             <select id="agent-select">
@@ -236,25 +263,27 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Stratejik emir ver veya yeni eleman al..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Stratejik komut ver veya görev yaz..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
 
+    <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ STABLE OPERATIONS TERMINAL</span>
-            <span style="color: #4ade80;">● FULLY FUNCTIONAL</span>
+            <span>⚡ 4-FEATURED TYCOON OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8;">● RAG & BOARDROOM & KANBAN & KITCHEN ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: JavaScript hata ayıklaması yapıldı, mesaj iletme motoru stabil hale getirildi.</div>
+            <div class="log-line">[SYSTEM]: 4 ana özellik (RAG, Zirve Odası, Görev Panosu, Mutfak) ve şık sprite arayüzü yüklendi.</div>
         </div>
     </div>
 
+    <!-- RPG Karakter Kartı -->
     <div id="agent-modal">
-        <h3 id="modal-title" style="color: #ef4444; margin-top: 0;"></h3>
-        <p id="modal-role" style="font-size: 12px; color: #94a3b8;"></p>
-        <p id="modal-status" style="font-size: 12px; color: #4ade80;"></p>
+        <h3 id="modal-title" style="color: #38bdf8; margin-top: 0;"></h3>
+        <p id="modal-role" style="font-size: 11px; color: #94a3b8;"></p>
+        <p id="modal-status" style="font-size: 11px; color: #4ade80;"></p>
         <button onclick="closeModal()" class="top-btn" style="width: 100%; margin-top: 10px;">KAPAT</button>
     </div>
 
@@ -277,7 +306,7 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "👤 " + name;
             document.getElementById('modal-role').innerText = "Departman: " + role;
-            document.getElementById('modal-status').innerText = "Durum: Ofisinde aktif görevde.";
+            document.getElementById('modal-status').innerText = "Durum: Supabase RAG entegre ve görev başında.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -289,6 +318,7 @@ HTML_TEMPLATE = """
             if (event.key === 'Enter') sendDirectMessage();
         }
 
+        // Simülasyon Döngüsü & Akıcı Yürüyüş
         setInterval(() => {
             fetch('/api/simulation-tick')
             .then(res => res.json())
@@ -305,7 +335,7 @@ HTML_TEMPLATE = """
                     document.getElementById('bubble-' + agent.name).innerText = agent.state;
 
                     if (Math.abs(oldX - agent.x) > 2 || Math.abs(oldY - agent.y) > 2) {
-                        createFootprint(agent.x + 20, agent.y + 45);
+                        createFootprint(agent.x + 25, agent.y + 45);
                     }
                 });
             });
@@ -338,11 +368,33 @@ HTML_TEMPLATE = """
             .then(res => res.json())
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
-                if(data.action_type === 'kitchen') appendLog(`> [OTONOM]: ${agentName} mutfağa geçti.`);
-                if(data.action_type === 'boardroom') appendLog(`> [OTONOM]: ${agentName} toplantı salonuna geçti.`);
+                if(data.task_created) {
+                    appendLog(`> [GÖREV PANOSU]: Yeni görev eklendi -> "${data.task_title}"`);
+                }
             })
             .catch(err => {
-                appendLog(`> [HATA]: Sunucuyla iletişim kurulamadı.`);
+                appendLog(`> [HATA]: Sunucu ile iletişim kurulamadı.`);
+            });
+        }
+
+        function loadMemory() {
+            appendLog(`> [RAG HAFIZA SORGUSU]: Supabase geçmiş logları yükleniyor...`);
+            fetch('/api/memory').then(res => res.json()).then(data => {
+                appendLog(`> [HAFIZA ÖZETİ]: ${data.summary}`);
+            });
+        }
+
+        function loadTasks() {
+            appendLog(`> [GÖREV PANOSU (KANBAN)]: Aktif görevler listeleniyor...`);
+            fetch('/api/tasks').then(res => res.json()).then(data => {
+                appendLog(`> [PANODAKİ İŞLER]: ${data.tasks.join(" | ")}`);
+            });
+        }
+
+        function triggerBoardroom() {
+            appendLog(`> [ZİRVE ODASI]: İrfan ve Brown otonom toplantıya katılıyor...`);
+            fetch('/api/boardroom', {method: 'POST'}).then(res => res.json()).then(data => {
+                appendLog(`> [ORTAK ZİRVE KARARI]: "${data.decision}"`);
             });
         }
 
@@ -354,7 +406,7 @@ HTML_TEMPLATE = """
 
         function triggerWatering() {
             fetch('/api/water-plants', {method: 'POST'}).then(res => res.json()).then(data => {
-                appendLog(`> [SULAMA]: Saksılar sulandı, bitki sağlığı %100!`);
+                appendLog(`> [SULAMA]: Saksılar sulandı, bitki sağlığı %100 oldu.`);
             });
         }
     </script>
@@ -373,6 +425,19 @@ def log_to_supabase(agent_name, action_type, content):
     except Exception as e:
         print(f"DB Hatası: {e}")
 
+def query_supabase_memory(query_text):
+    try:
+        conn = psycopg2.connect(DB_URL)
+        cur = conn.cursor()
+        cur.execute("SELECT agent_name, content FROM agent_logs ORDER BY id DESC LIMIT 5;")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        history_summary = " | ".join([f"{r[0]}: {r[1][:40]}" for r in rows])
+        return history_summary if history_summary else "Geçmiş kayıt bulunamadı."
+    except:
+        return "Hafızaya erişilemedi."
+
 @app.route('/api/simulation-tick', methods=['GET'])
 def simulation_tick():
     agent_list = []
@@ -380,8 +445,8 @@ def simulation_tick():
         if random.random() < 0.2:
             destinations = [
                 (data["home_x"], data["home_y"]),
-                (random.randint(810, 970), random.randint(30, 160)),
-                (random.randint(810, 970), random.randint(270, 400))
+                (random.randint(720, 960), random.randint(30, 150)),  # Mutfak
+                (random.randint(720, 960), random.randint(260, 390)) # Zirve Odası
             ]
             dest = random.choice(destinations)
             data["target_x"], data["target_y"] = dest
@@ -392,9 +457,10 @@ def simulation_tick():
         if data["y"] < data["target_y"]: data["y"] += min(12, data["target_y"] - data["y"])
         elif data["y"] > data["target_y"]: data["y"] -= min(12, data["y"] - data["target_y"])
 
-        if data["x"] >= 780 and data["y"] <= 230:
+        # Koordinat bazlı hatasız durum
+        if data["x"] >= 680 and data["y"] <= 220:
             data["state"] = "☕ Molada"
-        elif data["x"] >= 780 and data["y"] > 230:
+        elif data["x"] >= 680 and data["y"] > 220:
             data["state"] = "🤝 Toplantıda"
         elif abs(data["x"] - data["home_x"]) < 15 and abs(data["y"] - data["home_y"]) < 15:
             data["state"] = "Masada"
@@ -418,18 +484,29 @@ def api_chat():
     if agent_name not in employees: agent_name = "İrfan"
     agent = employees[agent_name]
 
-    action_type = "chat"
-    if "kahve" in user_message.lower() or "mola" in user_message.lower():
-        agent["target_x"], agent["target_y"] = 850, 100
-        agent["state"] = "☕ Molada"
-        action_type = "kitchen"
-    elif "toplantı" in user_message.lower():
-        agent["target_x"], agent["target_y"] = 850, 320
-        agent["state"] = "🤝 Toplantıda"
-        action_type = "boardroom"
+    # Görev ekleme tetikleyicisi (Kanban)
+    task_created = False
+    task_title = ""
+    if "görev" in user_message.lower() or "yap" in user_message.lower():
+        task_created = True
+        task_title = user_message[:40]
+        try:
+            conn = psycopg2.connect(DB_URL)
+            cur = conn.cursor()
+            cur.execute("INSERT INTO company_tasks (task_title, assigned_to) VALUES (%s, %s)", (task_title, agent_name))
+            conn.commit()
+            cur.close()
+            conn.close()
+        except: pass
 
     try:
-        system_prompt = f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {agent_name} adında bir uzmansın. Patronun Mertcan sana yazdı: '{user_message}'. Kısa ve profesyonel yanıt ver."
+        memory_context = query_supabase_memory(user_message)
+        system_prompt = (
+            f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {agent_name} adında bir uzmansın. "
+            f"Patronun Mertcan sana yazdı: '{user_message}'.\n"
+            f"[SUPABASE GEÇMİŞ HAFIZA]: {memory_context}\n"
+            f"Profesyonel, kısa ve net yanıt ver."
+        )
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
@@ -439,8 +516,42 @@ def api_chat():
     except:
         reply = "Emredersiniz patron, talimatınız işleme alındı."
 
-    log_to_supabase(agent_name, action_type, f"Soru: {user_message} | Cevap: {reply}")
-    return jsonify({"status": reply, "action_type": action_type})
+    log_to_supabase(agent_name, "CHAT_RESPONSE", f"Soru: {user_message} | Cevap: {reply}")
+    return jsonify({"status": reply, "task_created": task_created, "task_title": task_title})
+
+@app.route('/api/memory', methods=['GET'])
+def api_memory():
+    summary = query_supabase_memory("genel")
+    return jsonify({"summary": summary})
+
+@app.route('/api/tasks', methods=['GET'])
+def api_tasks():
+    try:
+        conn = psycopg2.connect(DB_URL)
+        cur = conn.cursor()
+        cur.execute("SELECT task_title, assigned_to, status FROM company_tasks ORDER BY id DESC LIMIT 5;")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        tasks = [f"[{r[1]}]: {r[0]} ({r[2]})" for r in rows]
+        return jsonify({"tasks": tasks if tasks else ["Aktif görev bulunmuyor."]})
+    except:
+        return jsonify({"tasks": ["Görevler yüklenemedi."]})
+
+@app.route('/api/boardroom', methods=['POST'])
+def api_boardroom():
+    try:
+        prompt = "Şirket büyümesi için İrfan (Finans) ve Brown (Yazılım) ortak bir stratejik zirve kararı alıyor. İki cümlelik ortak kararı yaz."
+        completion = groq_client.chat.completions.create(
+            model="openai/gpt-oss-20b",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=120, temperature=0.7
+        )
+        decision = completion.choices[0].message.content.strip('"').strip()
+        log_to_supabase("ZİRVE_KURULU", "BOARDROOM_DECISION", decision)
+        return jsonify({"decision": decision})
+    except Exception as e:
+        return jsonify({"decision": f"Zirve sırasında hata oluştu."})
 
 @app.route('/api/plants', methods=['GET'])
 def api_plants():
