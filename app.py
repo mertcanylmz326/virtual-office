@@ -8,17 +8,17 @@ app = Flask(__name__)
 GROQ_API_KEY = "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"
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
-# Dinamik Çalışan Kadromuz
+# Her birinin kendine ait odası ve koordinatları olan kadromuz
 employees = {
     "Marco": {"role": "Müşteri İlişkileri & Destek", "room": "Destek Odası", "home_x": 90, "home_y": 70, "color": "#3b82f6", "default": "Destek hattında..."},
-    "Talisca": {"role": "Sipariş Takip & Operasyon", "room": "Operasyon Odası", "home_x": 270, "home_y": 70, "color": "#ef4444", "default": "Sipariş işliyor"},
-    "Brown": {"role": "Yazılım Mühendisi", "room": "Yazılım Üssü", "home_x": 560, "home_y": 70, "color": "#10b981", "default": "Kod derleniyor..."},
-    "Kante": {"role": "Pazarlama & Büyüme Uzmanı", "room": "Pazarlama Odası", "home_x": 740, "home_y": 70, "color": "#f59e0b", "default": "Kampanya kurguluyor"},
-    "İrfan": {"role": "Finans & Trader / Kripto Uzmanı", "room": "Finans Odası", "home_x": 820, "home_y": 330, "color": "#8b5cf6", "default": "Bütçe kontrolü"},
-    "İsmail": {"role": "İnsan Kaynakları", "room": "İK Odası", "home_x": 90, "home_y": 330, "color": "#f97316", "default": "Mülakatta..."},
-    "Alex": {"role": "Hukuk & Mevzuat Danışmanı", "room": "Hukuk Bürosu", "home_x": 270, "home_y": 330, "color": "#14b8a6", "default": "Sözleşme inceliyor"},
-    "Skrinar": {"role": "Siber Güvenlik Uzmanı", "room": "Güvenlik Odası", "home_x": 530, "home_y": 330, "color": "#64748b", "default": "Sistem taranıyor"},
-    "Kerem": {"role": "Müşteri Başarı Uzmanı", "room": "Müşteri Başarı Odası", "home_x": 670, "home_y": 330, "color": "#ec4899", "default": "Onboarding aktif"}
+    "Talisca": {"role": "Sipariş Takip & Operasyon", "room": "Operasyon Odası", "home_x": 390, "home_y": 70, "color": "#ef4444", "default": "Sipariş işliyor"},
+    "Brown": {"role": "Yazılım Mühendisi", "room": "Yazılım Üssü", "home_x": 690, "home_y": 70, "color": "#10b981", "default": "Kod derleniyor..."},
+    "Kante": {"role": "Pazarlama Uzmanı", "room": "Pazarlama Odası", "home_x": 90, "home_y": 200, "color": "#f59e0b", "default": "Kampanya kurguluyor"},
+    "İrfan": {"role": "Finans & Trader", "room": "Finans Odası", "home_x": 390, "home_y": 200, "color": "#8b5cf6", "default": "Bütçe kontrolü"},
+    "İsmail": {"role": "İnsan Kaynakları", "room": "İK Odası", "home_x": 690, "home_y": 200, "color": "#f97316", "default": "Mülakatta..."},
+    "Alex": {"role": "Hukuk Danışmanı", "room": "Hukuk Bürosu", "home_x": 90, "home_y": 330, "color": "#14b8a6", "default": "Sözleşme inceliyor"},
+    "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik Odası", "home_x": 390, "home_y": 330, "color": "#64748b", "default": "Sistem taranıyor"},
+    "Kerem": {"role": "Müşteri Başarı", "room": "Başarı Odası", "home_x": 690, "home_y": 330, "color": "#ec4899", "default": "Onboarding aktif"}
 }
 
 HTML_TEMPLATE = """
@@ -26,7 +26,7 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - Ultimate Command Center</title>
+    <title>E-Trade Pro - Private Offices HQ</title>
     <style>
         body { 
             background-color: #05070b; 
@@ -51,13 +51,13 @@ HTML_TEMPLATE = """
 
         #office-floor { 
             position: relative; 
-            width: 920px; 
+            width: 960px; 
             height: 480px; 
             margin: 10px auto; 
-            background-color: #2c1d11;
+            background-color: #1a120b;
             background-image: 
-                linear-gradient(90deg, rgba(255,255,255,0.06) 2px, transparent 2px),
-                linear-gradient(rgba(0,0,0,0.35) 2px, transparent 2px);
+                linear-gradient(90deg, rgba(255,255,255,0.04) 2px, transparent 2px),
+                linear-gradient(rgba(0,0,0,0.3) 2px, transparent 2px);
             background-size: 60px 30px;
             border: 6px solid #1e293b; 
             border-radius: 10px; 
@@ -65,69 +65,50 @@ HTML_TEMPLATE = """
             overflow: hidden;
         }
 
-        .hq-room {
+        .private-room {
             position: absolute;
-            border: 4px solid #334155;
-            background: rgba(30, 20, 14, 0.92);
+            border: 3px solid #475569;
+            background: rgba(30, 41, 59, 0.75);
             border-radius: 6px;
+            width: 280px;
+            height: 115px;
         }
-        .hq-room-title {
+        .room-label {
             position: absolute;
-            font-size: 7px;
-            color: #94a3b8;
+            font-size: 8px;
+            color: #38bdf8;
             top: 4px;
-            left: 6px;
+            left: 8px;
             font-weight: bold;
             text-transform: uppercase;
         }
-
-        .hq-door {
+        .room-door {
             position: absolute;
+            right: 0;
+            top: 40px;
+            width: 8px;
+            height: 35px;
             background: #78350f;
-            border: 2px solid #451a03;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 6px;
-            color: #fde68a;
-            font-weight: bold;
+            border: 1px solid #451a03;
         }
 
         .desk { position: absolute; width: 45px; height: 24px; background: #1c1917; border: 2px solid #44403c; border-radius: 3px; }
         .pc-monitor { position: absolute; width: 16px; height: 9px; background: #38bdf8; top: 3px; left: 14px; border-radius: 2px; box-shadow: 0 0 6px #38bdf8; }
         
-        .lounge-area {
+        .ceo-hq {
             position: absolute;
-            left: 410px;
-            top: 200px;
-            width: 100px;
-            height: 80px;
-            background: rgba(14, 165, 233, 0.12);
-            border: 2px dashed #0284c7;
+            left: 440px;
+            top: 400px;
+            width: 80px;
+            height: 65px;
+            background: radial-gradient(circle, #dc2626 0%, #7f1d1d 100%);
+            border: 3px solid #fff;
             border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
-            color: #38bdf8;
-            font-weight: bold;
-        }
-
-        .ceo-hq {
-            position: absolute;
-            left: 425px;
-            top: 105px;
-            width: 70px;
-            height: 70px;
-            background: radial-gradient(circle, #dc2626 0%, #7f1d1d 100%);
-            border: 3px solid #fff;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: bold;
             box-shadow: 0 0 25px rgba(220, 38, 38, 0.9);
             z-index: 50;
@@ -147,15 +128,15 @@ HTML_TEMPLATE = """
         }
         
         .robot-sprite {
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             background-color: #18181b;
             border: 2px solid;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 13px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.8);
             animation: robotStep 0.4s infinite alternate;
         }
@@ -173,7 +154,7 @@ HTML_TEMPLATE = """
         
         .speech-bubble {
             position: absolute;
-            top: -24px;
+            top: -22px;
             background: #f8fafc;
             color: #0f172a;
             font-size: 6px;
@@ -183,7 +164,7 @@ HTML_TEMPLATE = """
             white-space: nowrap;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
             pointer-events: none;
-            max-width: 120px;
+            max-width: 110px;
         }
 
         .agent:hover { transform: scale(1.3); z-index: 100; }
@@ -195,7 +176,7 @@ HTML_TEMPLATE = """
 
         #command-panel {
             margin: 10px auto;
-            width: 910px;
+            width: 950px;
             background: #0f172a;
             border: 2px solid #334155;
             padding: 10px;
@@ -228,7 +209,7 @@ HTML_TEMPLATE = """
 
         #activity-terminal {
             margin: 0 auto 20px auto;
-            width: 910px;
+            width: 950px;
             background: #020617;
             border: 2px solid #334155;
             border-radius: 6px;
@@ -248,7 +229,7 @@ HTML_TEMPLATE = """
         }
         .terminal-body {
             padding: 10px;
-            height: 110px;
+            height: 100px;
             overflow-y: auto;
             font-size: 10px;
             color: #4ade80;
@@ -260,43 +241,40 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - UNIFIED BRIDGE</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - PRIVATE OFFICES</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">GUARDED SYNC</span>
+            <span class="top-btn" style="color: #34d399;">ANTI-BULLSHIT MODE</span>
         </div>
     </div>
 
     <!-- Ofis Haritası -->
     <div id="office-floor">
-        <div class="hq-room" style="left: 15px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">MARCO (DESTEK)</div></div>
-        <div class="hq-room" style="left: 225px; top: 15px; width: 195px; height: 215px;"><div class="hq-room-title">TALİSCA (SİPARİŞ)</div></div>
-        <div class="hq-room" style="left: 495px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">BROWN (YAZILIM)</div></div>
-        <div class="hq-room" style="left: 705px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">KANTE (PAZARLAMA)</div></div>
+        <div class="private-room" style="left: 20px; top: 15px;"><div class="room-label">MARCO (DESTEK)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 340px; top: 15px;"><div class="room-label">TALİSCA (OPERASYON)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 660px; top: 15px;"><div class="room-label">BROWN (YAZILIM)</div><div class="room-door"></div></div>
         
-        <div class="hq-room" style="left: 15px; top: 255px; width: 200px; height: 215px;"><div class="hq-room-title">İSMAİL (İK)</div></div>
-        <div class="hq-room" style="left: 225px; top: 255px; width: 195px; height: 215px;"><div class="hq-room-title">ALEX (HUKUK)</div></div>
-        <div class="hq-room" style="left: 495px; top: 255px; width: 150px; height: 215px;"><div class="hq-room-title">SKRİNAR (SİBER)</div></div>
-        <div class="hq-room" style="left: 655px; top: 255px; width: 115px; height: 215px;"><div class="hq-room-title">KEREM (BAŞARI)</div></div>
-        <div class="hq-room" style="left: 780px; top: 255px; width: 125px; height: 215px;"><div class="hq-room-title">İRFAN (FİNANS)</div></div>
+        <div class="private-room" style="left: 20px; top: 145px;"><div class="room-label">KANTE (PAZARLAMA)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 340px; top: 145px;"><div class="room-label">İRFAN (FİNANS & TRADER)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 660px; top: 145px;"><div class="room-label">İSMAİL (İK)</div><div class="room-door"></div></div>
 
-        <div class="hq-door" style="left: 425px; top: 110px; width: 65px; height: 15px;">KAPI</div>
-        <div class="hq-door" style="left: 425px; top: 350px; width: 65px; height: 15px;">KAPI</div>
-        <div class="lounge-area">☕ ORTAK MOLA</div>
+        <div class="private-room" style="left: 20px; top: 275px;"><div class="room-label">ALEX (HUKUK)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 340px; top: 275px;"><div class="room-label">SKRİNAR (SİBER)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 660px; top: 275px;"><div class="room-label">KEREM (BAŞARI)</div><div class="room-door"></div></div>
 
-        <div class="desk" style="left: 90px; top: 75px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 295px; top: 75px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 570px; top: 75px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 770px; top: 75px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 90px; top: 315px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 295px; top: 315px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 545px; top: 315px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 690px; top: 315px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 820px; top: 315px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 135px; top: 60px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 455px; top: 60px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 775px; top: 60px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 135px; top: 190px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 455px; top: 190px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 775px; top: 190px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 135px; top: 320px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 455px; top: 320px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 775px; top: 320px;"><div class="pc-monitor"></div></div>
 
         <div class="ceo-hq">
             <span>👑 SEN</span>
-            <span style="font-size: 7px; color: #fca5a5;">CEO</span>
+            <span style="font-size: 7px; color: #fca5a5;">CEO OFİSİ</span>
         </div>
 
         {% for name, data in employees.items() %}
@@ -316,18 +294,18 @@ HTML_TEMPLATE = """
             <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
             {% endfor %}
         </select>
-        <input type="text" id="ceo-message" placeholder="Komut ver (Örn: Kaç personelimiz var?)..." onkeypress="checkEnter(event)">
+        <input type="text" id="ceo-message" placeholder="Komut ver (Örn: Rapor ver veya görevini yap)..." onkeypress="checkEnter(event)">
         <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
     </div>
 
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ UNIFIED BRIDGE OPERATIONS TERMINAL</span>
-            <span style="color: #34d399;">● READY</span>
+            <span>⚡ PRIVATE OFFICES OPERATIONS TERMINAL</span>
+            <span style="color: #34d399;">● ONLINE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Sistem hazır. Boş yanıt koruması aktif.</div>
+            <div class="log-line">[SYSTEM]: Kesin kurallı akıllı yanıt motoru devreye girdi.</div>
         </div>
     </div>
 
@@ -344,7 +322,7 @@ HTML_TEMPLATE = """
 
         function selectAgent(name) {
             document.getElementById('agent-select').value = name;
-            appendLog(`> [SEÇİM]: ${name} seçildi.`);
+            appendLog(`> [SEÇİM]: ${name} odasına bağlanıldı.`);
         }
 
         function checkEnter(event) {
@@ -383,8 +361,13 @@ HTML_TEMPLATE = """
 
 def generate_agent_reply(agent_name, role, user_message):
     try:
-        # Eğer soru personel sayısı vb. durumlar içeriyorsa doğrudan net yanıt verelim
-        system_prompt = f"Sen E-Trade Pro şirketinde {role} olarak çalışan {agent_name} adında bir yapay zeka ajanısın. Patronun Mertcan sana soru sordu. Ona kısa, net ve esprili bir yanıt ver. Kesinlikle boş bırakma."
+        # Kesin kural: Asla uydurma veri verme, net ve profesyonel ol, saçmalama!
+        system_prompt = (
+            f"Sen E-Trade Pro şirketinde {role} olarak çalışan {agent_name} adında profesyonel bir yapay zeka ajanısın. "
+            f"Kendi müstakil odandasın. Patronun Mertcan sana bir komut verdi veya soru sordu. "
+            f"KESİN KURALLAR: Asla anlık borsa, kripto veya dış dünya fiyatı uydurma. Eğer fiyat sorulursa 'Anlık veri bağlantım yok patron' de. "
+            f"Asla boş veya saçma sapan yanıtlar verme. Sadece kendi departmanının işiyle ilgili profesyonel, net, kısa ve ciddi bir yanıt ver."
+        )
         
         messages = [
             {"role": "system", "content": system_prompt},
@@ -394,19 +377,19 @@ def generate_agent_reply(agent_name, role, user_message):
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
             messages=messages,
-            max_tokens=150,
-            temperature=0.7
+            max_tokens=100,
+            temperature=0.2  # Düşük sıcaklık = Saçmalamayı tamamen keser
         )
         
         reply = ""
         if completion.choices and completion.choices[0].message and completion.choices[0].message.content:
             reply = completion.choices[0].message.content.strip('"').strip()
             
-        if not reply:
-            reply = f"Emredersiniz patron, {role} olarak görevdeyim!"
+        if not reply or len(reply) < 3:
+            reply = f"Emredersiniz patron, {role} olarak görev başındayım."
         return reply
     except Exception as e:
-        return f"Şu an görev başındayım patron! ({str(e)[:30]})"
+        return f"Görev başındayım patron."
 
 @app.route('/')
 def index():
@@ -429,11 +412,11 @@ def api_chat():
                 if len(sub) > 1: new_role = sub[1].replace("rolü", "").replace(":", "").strip()
             
             if new_name not in employees:
-                employees[new_name] = {"role": new_role, "room": "Ofis", "home_x": 450, "home_y": 180, "color": "#ec4899", "default": "Yeni görevde!"}
-                return jsonify({"status": f"{new_name} ({new_role}) işe alındı!", "short_status": "İşe alındı", "is_hr_action": True})
+                employees[new_name] = {"role": new_role, "room": "Yeni Oda", "home_x": 450, "home_y": 200, "color": "#ec4899", "default": "Yeni odasında!"}
+                return jsonify({"status": f"{new_name} ({new_role}) için yeni oda hazırlandı ve işe alındı!", "short_status": "Oda verildi", "is_hr_action": True})
         except: pass
 
-    if agent_name not in employees: agent_name = "İsmail"
+    if agent_name not in employees: agent_name = "İrfan"
     agent = employees[agent_name]
 
     status_text = generate_agent_reply(agent_name, agent['role'], user_message)
@@ -453,7 +436,7 @@ def v1_chat_completions():
     if incoming_messages:
         last_user_msg = incoming_messages[-1].get('content', 'Selam')
 
-    target_agent = "İsmail"
+    target_agent = "İrfan"
     for name in employees.keys():
         if name.lower() in last_user_msg.lower():
             target_agent = name
