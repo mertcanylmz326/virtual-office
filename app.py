@@ -12,6 +12,7 @@ app = Flask(__name__)
 
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
 GROQ_API_KEY = "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"
+COINGECKO_API_KEY = "CG-rU5NZkTSGvA1dXfNV58J26fK"
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 company_state = {
@@ -54,6 +55,18 @@ def init_db():
         print(f"DB Hatası: {e}")
 
 init_db()
+
+def get_crypto_price(coin_id="bitcoin"):
+    try:
+        url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd"
+        headers = {"x-cg-demo-api-key": COINGECKO_API_KEY}
+        response = requests.get(url, headers=headers, timeout=5)
+        data = response.json()
+        if coin_id in data:
+            return data[coin_id]["usd"]
+    except Exception as e:
+        print(f"CoinGecko API Hatası: {e}")
+    return None
 
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "x": 60, "y": 65, "target_x": 60, "target_y": 65, "color": "#3b82f6", "state": "Masada", "speech": "Destek hazır"},
@@ -168,7 +181,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // AI AGENCY HQ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // LIVE CRYPTO AI HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
@@ -180,7 +193,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">⚡ MODEL: Qwen-27B</span>
+        <span style="color: #fbbf24;">⚡ COINGECKO API: Aktif</span>
     </div>
 
     <!-- Canvas Haritası -->
@@ -196,7 +209,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Ajana talimat ver veya soru sor..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="İrfan'a btc fiyatını sor veya talimat ver..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -205,10 +218,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● QWEN AI READY</span>
+            <span style="color: #38bdf8;">● LIVE DATA ENGINE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Qwen 27B modeli aktif, ajanlar tam performansla çalışıyor.</div>
+            <div class="log-line">[SYSTEM]: CoinGecko API entegrasyonu ve Qwen AI aktif edildi.</div>
         </div>
     </div>
 
@@ -284,7 +297,7 @@ HTML_TEMPLATE = """
                 {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444"},
                 {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN", glow: "#10b981"},
                 {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b"},
-                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6"},
+                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN (FİNANS)", glow: "#8b5cf6"},
                 {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL", glow: "#f97316"},
                 {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX", glow: "#14b8a6"},
                 {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR", glow: "#64748b"},
@@ -575,13 +588,21 @@ def api_chat():
             conn.close()
         except: pass
 
+    # Canlı Veri Entegrasyonu (CoinGecko)
+    live_context = ""
+    if agent_name == "İrfan" and ("btc" in user_message.lower() or "bitcoin" in user_message.lower() or "fiyat" in user_message.lower()):
+        btc_price = get_crypto_price("bitcoin")
+        if btc_price:
+            live_context = f"[CANLI PİYASA VERİSİ]: Bitcoin (BTC) şu an anlık olarak ${btc_price:,} USD seviyesinden işlem görmektedir."
+
     reply = ""
     try:
         memory_context = query_supabase_memory(user_message)
         system_prompt = (
             f"Sen E-Trade Pro otonom ajansında {agent['role']} departmanında çalışan {agent_name} adında bir uzmansın. "
-            f"Patronun Mertcan sana yazdı: '{user_message}'. "
-            f"Kendi departmanının uzmanlık alanına göre kısa, net, zekice ve doğrudan soruya odaklanan bir yanıt ver."
+            f"Patronun Mertcan sana yazdı: '{user_message}'.\n"
+            f"{live_context}\n"
+            f"Kendi departmanının uzmanlık alanına göre kısa, net, canlı verileri de kullanarak zekice bir yanıt ver."
         )
         completion = groq_client.chat.completions.create(
             model="qwen/qwen3.8-27b",
@@ -639,8 +660,8 @@ def api_boardroom():
         prompt = "Otonom ajansın büyümesi için stratejik bir yapay zeka entegrasyon kararı al. İki cümlelik karar yaz."
         completion = groq_client.chat.completions.create(
             model="qwen/qwen3.8-27b",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=120, temperature=0.7
+            messages=[{"role": "system", "content": prompt}],
+            max_titles=120, temperature=0.7
         )
         decision = completion.choices[0].message.content.strip('"').strip()
     except Exception as e:
