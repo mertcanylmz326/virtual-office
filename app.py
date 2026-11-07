@@ -39,7 +39,7 @@ def init_db():
                 water_status TEXT DEFAULT 'Mükemmel'
             );
         """)
-        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Merkezi Üs Saksısı', 100) ON CONFLICT (id) DO NOTHING;")
+        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Parkeli Üs Saksısı', 100) ON CONFLICT (id) DO NOTHING;")
         conn.commit()
         cur.close()
         conn.close()
@@ -48,20 +48,20 @@ def init_db():
 
 init_db()
 
-# 9 Ajan + Mutfak Personeli ve Saksı Eşleşmeleri
+# 9 Ajan + Mutfak Personeli
 employees = {
-    "Marco": {"role": "Destek", "room_x": 15, "room_y": 15, "x": 60, "y": 55, "target_x": 60, "target_y": 55, "color": "#3b82f6", "state": "Masada", "plant_health": 100},
-    "Talisca": {"role": "Operasyon", "room_x": 175, "room_y": 15, "x": 220, "y": 55, "target_x": 220, "target_y": 55, "color": "#ef4444", "state": "Masada", "plant_health": 95},
-    "Brown": {"role": "Yazılım", "room_x": 335, "room_y": 15, "x": 380, "y": 55, "target_x": 380, "target_y": 55, "color": "#10b981", "state": "Masada", "plant_health": 100},
+    "Marco": {"role": "Destek", "room_x": 15, "room_y": 15, "x": 60, "y": 65, "target_x": 60, "target_y": 65, "color": "#3b82f6", "state": "Masada"},
+    "Talisca": {"role": "Operasyon", "room_x": 195, "room_y": 15, "x": 240, "y": 65, "target_x": 240, "target_y": 65, "color": "#ef4444", "state": "Masada"},
+    "Brown": {"role": "Yazılım", "room_x": 375, "room_y": 15, "x": 420, "y": 65, "target_x": 420, "target_y": 65, "color": "#10b981", "state": "Masada"},
     
-    "Kante": {"role": "Pazarlama", "room_x": 15, "room_y": 145, "x": 60, "y": 185, "target_x": 60, "target_y": 185, "color": "#f59e0b", "state": "Masada", "plant_health": 90},
-    "İrfan": {"role": "Finans", "room_x": 175, "room_y": 145, "x": 220, "y": 185, "target_x": 220, "target_y": 185, "color": "#8b5cf6", "state": "Masada", "plant_health": 100},
-    "İsmail": {"role": "İK", "room_x": 335, "room_y": 145, "x": 380, "y": 185, "target_x": 380, "target_y": 185, "color": "#f97316", "state": "Masada", "plant_health": 85},
+    "Kante": {"role": "Pazarlama", "room_x": 15, "room_y": 155, "x": 60, "y": 205, "target_x": 60, "target_y": 205, "color": "#f59e0b", "state": "Masada"},
+    "İrfan": {"role": "Finans", "room_x": 195, "room_y": 155, "x": 240, "y": 205, "target_x": 240, "target_y": 205, "color": "#8b5cf6", "state": "Masada"},
+    "İsmail": {"role": "İK", "room_x": 375, "room_y": 155, "x": 420, "y": 205, "target_x": 420, "target_y": 205, "color": "#f97316", "state": "Masada"},
     
-    "Alex": {"role": "Hukuk", "room_x": 15, "room_y": 275, "x": 60, "y": 315, "target_x": 60, "target_y": 315, "color": "#14b8a6", "state": "Masada", "plant_health": 100},
-    "Skrinar": {"role": "Siber", "room_x": 175, "room_y": 275, "x": 220, "y": 315, "target_x": 220, "target_y": 315, "color": "#64748b", "state": "Masada", "plant_health": 95},
-    "Kerem": {"role": "Başarı", "room_x": 335, "room_y": 275, "x": 380, "y": 315, "target_x": 380, "target_y": 315, "color": "#ec4899", "state": "Masada", "plant_health": 100},
-    "Mutfak_Chef": {"role": "Mutfak Personeli", "room_x": 530, "room_y": 15, "x": 560, "y": 55, "target_x": 560, "target_y": 55, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "plant_health": 100}
+    "Alex": {"role": "Hukuk", "room_x": 15, "room_y": 295, "x": 60, "y": 345, "target_x": 60, "target_y": 345, "color": "#14b8a6", "state": "Masada"},
+    "Skrinar": {"role": "Siber", "room_x": 195, "room_y": 295, "x": 240, "y": 345, "target_x": 240, "target_y": 345, "color": "#64748b", "state": "Masada"},
+    "Kerem": {"role": "Başarı", "room_x": 375, "room_y": 295, "x": 420, "y": 345, "target_x": 420, "target_y": 345, "color": "#ec4899", "state": "Masada"},
+    "Mutfak_Chef": {"role": "Mutfak Personeli", "room_x": 570, "room_y": 15, "x": 630, "y": 70, "target_x": 630, "target_y": 70, "color": "#f43f5e", "state": "Kahve Hazırlıyor"}
 }
 
 HTML_TEMPLATE = """
@@ -70,7 +70,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - AAA Indie Tycoon HQ</title>
+    <title>E-Trade Pro - Detailed Parquet Tycoon HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -98,8 +98,8 @@ HTML_TEMPLATE = """
 
         #game-container {
             position: relative;
-            width: 1020px;
-            height: 410px;
+            width: 1080px;
+            height: 440px;
             max-width: 100%;
             margin: 10px auto;
             border: 3px solid #38bdf8;
@@ -114,7 +114,7 @@ HTML_TEMPLATE = """
             height: auto;
         }
 
-        .action-bar { margin: 10px auto; width: 1020px; max-width: 100%; display: flex; justify-content: space-between; gap: 10px; padding: 0 10px; box-sizing: border-box; }
+        .action-bar { margin: 10px auto; width: 1080px; max-width: 100%; display: flex; justify-content: space-between; gap: 10px; padding: 0 10px; box-sizing: border-box; }
         #command-panel {
             background: #0f172a; border: 2px solid #334155; padding: 8px; border-radius: 8px; display: flex; gap: 8px; align-items: center; flex-grow: 1;
         }
@@ -124,7 +124,7 @@ HTML_TEMPLATE = """
         .send-btn:hover { background: #0369a1; }
 
         #activity-terminal {
-            margin: 0 auto 15px auto; width: 1020px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
+            margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
         .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 10px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; }
         .terminal-body { padding: 8px; height: 85px; overflow-y: auto; font-size: 10px; color: #4ade80; line-height: 1.3; }
@@ -140,7 +140,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // AAA INDE TYCOON HQ</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // DETAILED PARQUET TYCOON HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
@@ -151,7 +151,7 @@ HTML_TEMPLATE = """
 
     <!-- Canvas Haritası -->
     <div id="game-container">
-        <canvas id="officeCanvas" width="1020" height="410"></canvas>
+        <canvas id="officeCanvas" width="1080" height="440"></canvas>
     </div>
 
     <!-- Komuta Paneli -->
@@ -170,11 +170,11 @@ HTML_TEMPLATE = """
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ AAA TYCOON LIVE OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● TILE FLOORS & PARTICLES & BUBBLES ACTIVE</span>
+            <span>⚡ PARQUET & DOORS LIVE OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8;">● REALISTIC TYCOON ENGINE ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Departman zemin motifleri, kahve buharı, saksı barları ve konuşma balonları yüklendi.</div>
+            <div class="log-line">[SYSTEM]: Geniş parke koridorlar, açılır kapanır kapılar ve dolu mutfak tasarımı yüklendi.</div>
         </div>
     </div>
 
@@ -193,7 +193,7 @@ HTML_TEMPLATE = """
 
         let agentsData = {};
         let footprints = [];
-        let steamParticles = []; // Kahve makinesi buhar parçacıkları
+        let steamParticles = [];
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
@@ -211,7 +211,7 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "🤖 " + name;
             document.getElementById('modal-role').innerText = "Rol: " + role;
-            document.getElementById('modal-status').innerText = "Durum: Görev başında, saksısı ve masası aktif.";
+            document.getElementById('modal-status').innerText = "Durum: Ofiste aktif.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -224,90 +224,109 @@ HTML_TEMPLATE = """
         }
 
         function drawOffice() {
-            const w = 1020;
-            const h = 410;
+            const w = 1080;
+            const h = 440;
             ctx.clearRect(0, 0, w, h);
 
-            // Zemin
-            ctx.fillStyle = "#0b0f19";
+            // 1. Zemin - Geniş Parke Koridorlar
+            ctx.fillStyle = "#1e1b18";
             ctx.fillRect(0, 0, w, h);
+            
+            // Parke tahta çizgileri (Ahşap doku efekti)
+            ctx.strokeStyle = "#292524";
+            ctx.lineWidth = 1;
+            for (let i = 0; i < w; i += 30) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, h);
+                ctx.stroke();
+            }
 
-            // Parke Koridorlar
-            ctx.fillStyle = "#151c2c";
-            ctx.fillRect(0, 120, w, 25);
-            ctx.fillRect(0, 245, w, 25);
-            ctx.fillRect(480, 0, 30, h);
+            // Ana Koridorlar (Yatay ve Dikey Geniş Alanlar)
+            ctx.fillStyle = "#292524";
+            ctx.fillRect(0, 130, w, 35);  // Üst koridor
+            ctx.fillRect(0, 270, w, 35);  // Alt koridor
+            ctx.fillRect(530, 0, 35, h);  // Orta dikey koridor
 
-            // 9 Ofis Odası (Departmana Özel Zemin Motifleri)
+            // 9 Ofis Odası
             const rooms = [
-                {x: 15, y: 15, w: 145, h: 95, name: "1. MARCO", theme: "#111827"},
-                {x: 175, y: 15, w: 145, h: 95, name: "2. TALİSCA", theme: "#111827"},
-                {x: 335, y: 15, w: 145, h: 95, name: "3. BROWN (YAZILIM)", theme: "#064e3b"}, // Yazılım yeşilimsi zemin
-                {x: 15, y: 145, w: 145, h: 95, name: "4. KANTE", theme: "#111827"},
-                {x: 175, y: 145, w: 145, h: 95, name: "5. İRFAN (FİNANS)", theme: "#3b0764"}, // Finans morumsu zemin
-                {x: 335, y: 145, w: 145, h: 95, name: "6. İSMAİL", theme: "#111827"},
-                {x: 15, y: 275, w: 145, h: 95, name: "7. ALEX", theme: "#111827"},
-                {x: 175, y: 275, w: 145, h: 95, name: "8. SKRİNAR", theme: "#111827"},
-                {x: 335, y: 275, w: 145, h: 95, name: "9. KEREM", theme: "#111827"}
+                {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO"},
+                {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA"},
+                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN"},
+                {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE"},
+                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN"},
+                {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL"},
+                {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX"},
+                {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR"},
+                {x: 375, y: 295, w: 160, h: 105, name: "9. KEREM"}
             ];
 
             rooms.forEach(r => {
-                ctx.fillStyle = r.theme;
+                ctx.fillStyle = "#111827";
                 ctx.fillRect(r.x, r.y, r.w, r.h);
                 ctx.strokeStyle = "#475569";
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 4;
                 ctx.strokeRect(r.x, r.y, r.w, r.h);
 
                 // Oda Başlığı
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 8px 'Courier New'";
-                ctx.fillText(r.name, r.x + 6, r.y + 12);
+                ctx.fillText(r.name, r.x + 8, r.y + 14);
 
                 // Çalışma Masası ve Monitör
                 ctx.fillStyle = "#292524";
-                ctx.fillRect(r.x + 45, r.y + 50, 55, 20);
+                ctx.fillRect(r.x + 50, r.y + 55, 60, 24);
                 ctx.fillStyle = "#0284c7";
-                ctx.fillRect(r.x + 60, r.y + 54, 22, 10);
+                ctx.fillRect(r.x + 68, r.y + 60, 24, 12);
 
-                // Odalara Özel Saksı 🌱 ve Sağlık Barı
+                // Saksı 🌱
                 ctx.fillStyle = "#78350f";
-                ctx.fillRect(r.x + 15, r.y + 50, 14, 16);
+                ctx.fillRect(r.x + 15, r.y + 55, 16, 18);
                 ctx.fillStyle = "#4ade80";
-                ctx.font = "10px sans-serif";
-                ctx.fillText("🌿", r.x + 13, r.y + 45);
+                ctx.font = "11px sans-serif";
+                ctx.fillText("🌿", r.x + 13, r.y + 50);
 
-                // Sağlık Barı
-                ctx.fillStyle = "#1e293b";
-                ctx.fillRect(r.x + 12, r.y + 70, 20, 4);
-                ctx.fillStyle = "#4ade80";
-                ctx.fillRect(r.x + 12, r.y + 70, 16, 4);
+                // Kapı Eşiği (Ajan içeride mi dışarıda mı kontrolüne göre açık/kapalı)
+                let doorOpen = false;
+                for (let name in agentsData) {
+                    let ag = agentsData[name];
+                    if (ag.x >= r.x && ag.x <= r.x + r.w && ag.y >= r.y && ag.y <= r.y + r.h) {
+                        doorOpen = true; // İçeride biri varsa kapı açık yeşil
+                    }
+                }
 
-                // Kapı Eşiği
-                ctx.fillStyle = "#38bdf8";
-                if (r.y < 120) ctx.fillRect(r.x + 60, r.y + r.h - 2, 25, 4);
-                else if (r.y > 200) ctx.fillRect(r.x + 60, r.y - 2, 25, 4);
-                else ctx.fillRect(r.x + r.w - 2, r.y + 40, 4, 20);
+                ctx.fillStyle = doorOpen ? "#4ade80" : "#ef4444";
+                if (r.y < 130) ctx.fillRect(r.x + 65, r.y + r.h - 3, 30, 6);
+                else if (r.y > 250) ctx.fillRect(r.x + 65, r.y - 3, 30, 6);
+                else ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
             });
 
-            // Sağ Taraf: Mutfak (Karo Fayans Zemin ve Kahve Makinesi + Buhar)
-            ctx.fillStyle = "rgba(120, 53, 15, 0.35)";
-            ctx.fillRect(530, 15, 475, 185);
+            // Sağ Taraf: Dolu Dolu Mutfak (Fayans zemin + Masa + Sebil + Kahve Makinesi)
+            ctx.fillStyle = "rgba(120, 53, 15, 0.45)";
+            ctx.fillRect(580, 15, 485, 195);
             ctx.strokeStyle = "#d97706";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(530, 15, 475, 185);
+            ctx.lineWidth = 4;
+            ctx.strokeRect(580, 15, 485, 195);
             ctx.fillStyle = "#fde68a";
-            ctx.font = "bold 9px 'Courier New'";
-            ctx.fillText("☕ MUTFAK & KAHVE MAKİNESİ (FAYANS ZEMİN)", 545, 35);
-            
-            // Kahve Makinesi
-            ctx.fillStyle = "#451a03";
-            ctx.fillRect(920, 50, 40, 50);
-            ctx.fillStyle = "#fbbf24";
-            ctx.fillRect(930, 60, 20, 15);
+            ctx.font = "bold 10px 'Courier New'";
+            ctx.fillText("☕ MUTFAK (FAYANS DÖŞEME & KAHVE ALANI)", 600, 35);
 
-            // Kahve Buharı Parçacıkları (Animasyonlu)
+            // Mutfak Masası ve Sandalyeler
+            ctx.fillStyle = "#451a03";
+            ctx.fillRect(720, 80, 120, 50);
+            ctx.fillStyle = "#78350f";
+            ctx.fillRect(700, 95, 18, 20);
+            ctx.fillRect(842, 95, 18, 20);
+
+            // Kahve Makinesi & Sebil
+            ctx.fillStyle = "#1e293b";
+            ctx.fillRect(980, 40, 50, 60);
+            ctx.fillStyle = "#fbbf24";
+            ctx.fillRect(995, 55, 20, 20);
+
+            // Buhar Parçacıkları
             if (Math.random() < 0.4) {
-                steamParticles.push({x: 940 + randomRange(-5, 5), y: 50, alpha: 1.0});
+                steamParticles.push({x: 1005 + (Math.random()*10 - 5), y: 40, alpha: 1.0});
             }
             steamParticles.forEach((p, index) => {
                 p.y -= 0.8;
@@ -318,14 +337,18 @@ HTML_TEMPLATE = """
             });
 
             // Zirve Odası
-            ctx.fillStyle = "rgba(109, 40, 217, 0.3)";
-            ctx.fillRect(530, 215, 475, 185);
+            ctx.fillStyle = "rgba(109, 40, 217, 0.35)";
+            ctx.fillRect(580, 230, 485, 195);
             ctx.strokeStyle = "#8b5cf6";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(530, 215, 475, 185);
+            ctx.lineWidth = 4;
+            ctx.strokeRect(580, 230, 485, 195);
             ctx.fillStyle = "#e9d5ff";
-            ctx.font = "bold 9px 'Courier New'";
-            ctx.fillText("🤝 OTONOM ZİRVE TOPLANTI ODASI", 545, 235);
+            ctx.font = "bold 10px 'Courier New'";
+            ctx.fillText("🤝 OTONOM ZİRVE TOPLANTI ODASI", 600, 250);
+
+            // Büyük Toplantı Masası
+            ctx.fillStyle = "#3b0764";
+            ctx.fillRect(740, 305, 160, 60);
 
             // Ayak İzleri
             footprints.forEach(fp => {
@@ -333,82 +356,63 @@ HTML_TEMPLATE = """
                 ctx.fillRect(fp.x, fp.y, 2, 2);
             });
 
-            // Robot Ajanları Çiz (Animasyonlu Eller, Bacaklar ve Konuşma Baloncukları)
+            // Robot Ajanları Çiz
             for (let name in agentsData) {
                 let ag = agentsData[name];
                 
-                // Robot Kafa/Gövde
                 ctx.fillStyle = ag.color;
-                ctx.fillRect(ag.x, ag.y, 22, 22);
+                ctx.fillRect(ag.x, ag.y, 24, 24);
                 ctx.strokeStyle = "#ffffff";
                 ctx.lineWidth = 1;
-                ctx.strokeRect(ag.x, ag.y, 22, 22);
+                ctx.strokeRect(ag.x, ag.y, 24, 24);
 
                 // Anten
                 ctx.fillStyle = "#38bdf8";
-                ctx.fillRect(ag.x + 10, ag.y - 4, 2, 4);
+                ctx.fillRect(ag.x + 11, ag.y - 4, 2, 4);
 
-                // Robot Gözleri
+                // Gözler
                 ctx.fillStyle = "#ffffff";
-                ctx.fillRect(ag.x + 4, ag.y + 6, 4, 4);
-                ctx.fillRect(ag.x + 14, ag.y + 6, 4, 4);
+                ctx.fillRect(ag.x + 5, ag.y + 7, 4, 4);
+                ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
 
-                // Hareketli Bacaklar
+                // Bacaklar
                 let legOffset = (ag.state === "Yürüyor...") ? (Math.floor(Date.now() / 150) % 2 === 0 ? 3 : -3) : 0;
                 ctx.fillStyle = ag.color;
-                ctx.fillRect(ag.x + 4, ag.y + 22, 3, 6 + legOffset);
-                ctx.fillRect(ag.x + 15, ag.y + 22, 3, 6 - legOffset);
+                ctx.fillRect(ag.x + 5, ag.y + 24, 3, 6 + legOffset);
+                ctx.fillRect(ag.x + 16, ag.y + 24, 3, 6 - legOffset);
 
-                // Çalışırken veya kahvedeyken eller / kupa simgesi
-                if (ag.state === "Masada") {
-                    ctx.fillStyle = "#fbbf24";
-                    ctx.fillRect(ag.x - 2, ag.y + 10, 2, 4); // Klavye üstü eller
-                    ctx.fillRect(ag.x + 22, ag.y + 10, 2, 4);
-                } else if (ag.state === "Kahvede") {
-                    ctx.fillStyle = "#fff";
-                    ctx.font = "8px sans-serif";
-                    ctx.fillText("☕", ag.x + 24, ag.y + 12);
-                }
-
-                // İsim Etiketi
+                // İsim
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 7px 'Courier New'";
-                ctx.fillText(name, ag.x - 2, ag.y + 36);
+                ctx.fillText(name, ag.x - 2, ag.y + 38);
 
-                // Canvas Üstü İnteraktif Konuşma / Durum Balonu (Comic Bubble)
+                // Konuşma Balonu
                 ctx.fillStyle = "#f8fafc";
                 ctx.fillRect(ag.x - 8, ag.y - 18, ctx.measureText(ag.state).width + 8, 12);
                 ctx.strokeStyle = "#38bdf8";
-                ctx.lineWidth = 1;
                 ctx.strokeRect(ag.x - 8, ag.y - 18, ctx.measureText(ag.state).width + 8, 12);
-                
                 ctx.fillStyle = "#0f172a";
                 ctx.font = "bold 7px 'Courier New'";
                 ctx.fillText(ag.state, ag.x - 4, ag.y - 10);
             }
         }
 
-        function randomRange(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const scaleX = 1020 / rect.width;
-            const scaleY = 410 / rect.height;
+            const scaleX = 1080 / rect.width;
+            const scaleY = 440 / rect.height;
             const mouseX = (e.clientX - rect.left) * scaleX;
             const mouseY = (e.clientY - rect.top) * scaleY;
 
             for (let name in agentsData) {
                 let ag = agentsData[name];
-                if (mouseX >= ag.x && mouseX <= ag.x + 22 && mouseY >= ag.y && mouseY <= ag.y + 28) {
+                if (mouseX >= ag.x && mouseX <= ag.x + 24 && mouseY >= ag.y && mouseY <= ag.y + 30) {
                     openAgentCard(name, ag.role || "Robot Personel");
                     break;
                 }
             }
         });
 
-        // Simülasyon Verisini Çek
         setInterval(() => {
             fetch('/api/simulation-tick')
             .then(res => res.json())
@@ -417,8 +421,8 @@ HTML_TEMPLATE = """
                 data.agents.forEach(ag => {
                     mapped[ag.name] = ag;
                     if (ag.state === "Yürüyor...") {
-                        footprints.push({x: ag.x + 11, y: ag.y + 24});
-                        if (footprints.length > 25) footprints.shift();
+                        footprints.push({x: ag.x + 12, y: ag.y + 26});
+                        if (footprints.length > 30) footprints.shift();
                     }
                 });
                 agentsData = mapped;
@@ -512,34 +516,55 @@ def query_supabase_memory(query_text):
         return "Hafızaya erişilemedi."
 
 latest_inter_agent_chat = ""
+active_shared_goal = {"type": "STANDART", "target": None, "agents": []}
 
 @app.route('/api/simulation-tick', methods=['GET'])
 def simulation_tick():
-    global latest_inter_agent_chat
+    global latest_inter_agent_chat, active_shared_goal
     agent_list = []
     
-    if random.random() < 0.15:
+    if random.random() < 0.20:
         names = list(employees.keys())
         a1, a2 = random.sample(names, 2)
-        dialogues = [
-            f"{a1}, {a2}'ye kahve ısmarladı ve projeyi sordu.",
-            f"{a1}, {a2} ile bütçe detaylarını tartıştı.",
-            f"{a1}, {a2}'ye yeni siparişler hakkında bilgi verdi."
+        
+        scenarios = [
+            (f"{a1}, {a2}'ye kahve ısmarladı ve mutfakta buluştular.", "KAHVE", (940, 70)),
+            (f"{a1} ve {a2} acil stratejik zirve toplantısı başlattı.", "TOPLANTI", (random.randint(620, 950), random.randint(280, 360))),
+            (f"{a1}, {a2} ile bütçe planlamasını gözden geçiriyor.", "MASA", None)
         ]
-        latest_inter_agent_chat = random.choice(dialogues)
+        
+        chosen_text, goal_type, target_pos = random.choice(scenarios)
+        latest_inter_agent_chat = chosen_text
         log_to_supabase("SISTEM_SOHBET", "INTER_AGENT", latest_inter_agent_chat)
+        
+        if goal_type == "KAHVE":
+            active_shared_goal = {"type": "KAHVE", "target": target_pos, "agents": [a1, a2]}
+        elif goal_type == "TOPLANTI":
+            active_shared_goal = {"type": "TOPLANTI", "target": target_pos, "agents": [a1, a2]}
+        else:
+            active_shared_goal = {"type": "STANDART", "target": None, "agents": []}
     else:
         latest_inter_agent_chat = ""
 
     for name, data in employees.items():
-        if random.random() < 0.2:
-            destinations = [
-                (data["room_x"] + 45, data["room_y"] + 40),
-                (random.randint(550, 930), random.randint(30, 150)),  # Mutfak
-                (random.randint(550, 930), random.randint(230, 350)) # Zirve Odası
-            ]
-            dest = random.choice(destinations)
-            data["target_x"], data["target_y"] = dest
+        if active_shared_goal["type"] != "STANDART" and name in active_shared_goal["agents"]:
+            if active_shared_goal["type"] == "KAHVE":
+                offset_x = active_shared_goal["agents"].index(name) * 22
+                data["target_x"] = 920 + offset_x
+                data["target_y"] = 80
+            elif active_shared_goal["type"] == "TOPLANTI":
+                offset_x = active_shared_goal["agents"].index(name) * 30
+                data["target_x"] = 760 + offset_x
+                data["target_y"] = 320
+        else:
+            if random.random() < 0.15:
+                destinations = [
+                    (data["room_x"] + 55, data["room_y"] + 55),
+                    (random.randint(600, 1000), random.randint(30, 170)),  # Mutfak
+                    (random.randint(600, 1000), random.randint(250, 400)) # Zirve Odası
+                ]
+                dest = random.choice(destinations)
+                data["target_x"], data["target_y"] = dest
 
         if data["x"] < data["target_x"]: data["x"] += min(5, data["target_x"] - data["x"])
         elif data["x"] > data["target_x"]: data["x"] -= min(5, data["x"] - data["target_x"])
@@ -547,11 +572,11 @@ def simulation_tick():
         if data["y"] < data["target_y"]: data["y"] += min(5, data["target_y"] - data["y"])
         elif data["y"] > data["target_y"]: data["y"] -= min(5, data["y"] - data["target_y"])
 
-        if data["x"] >= 510 and data["y"] <= 200:
+        if data["x"] >= 560 and data["y"] <= 210:
             data["state"] = "Kahvede"
-        elif data["x"] >= 510 and data["y"] > 200:
+        elif data["x"] >= 560 and data["y"] > 210:
             data["state"] = "Toplantıda"
-        elif abs(data["x"] - (data["room_x"] + 45)) < 15 and abs(data["y"] - (data["room_y"] + 40)) < 15:
+        elif abs(data["x"] - (data["room_x"] + 55)) < 15 and abs(data["y"] - (data["room_y"] + 55)) < 15:
             data["state"] = "Masada"
         else:
             data["state"] = "Yürüyor..."
@@ -584,12 +609,11 @@ def api_chat():
         new_name = "Personel_" + str(random.randint(10, 99))
         employees[new_name] = {
             "role": "Yeni Personel", 
-            "room_x": 530, "room_y": 15, 
-            "x": 550, "y": 50, 
-            "target_x": 550, "target_y": 50, 
+            "room_x": 580, "room_y": 15, 
+            "x": 620, "y": 60, 
+            "target_x": 620, "target_y": 60, 
             "color": "#eab308", 
-            "state": "İşe Başladı", 
-            "plant_health": 100
+            "state": "İşe Başladı"
         }
 
     task_created = False
