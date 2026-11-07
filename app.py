@@ -39,7 +39,7 @@ def init_db():
                 water_status TEXT DEFAULT 'Mükemmel'
             );
         """)
-        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Sharp Saksı', 100) ON CONFLICT (id) DO NOTHING;")
+        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Robot Üs Saksısı', 100) ON CONFLICT (id) DO NOTHING;")
         conn.commit()
         cur.close()
         conn.close()
@@ -48,18 +48,19 @@ def init_db():
 
 init_db()
 
+# 9 Ajan ve Gerçekçi Oda İçi Masa Konumları
 employees = {
-    "Marco": {"role": "Destek", "home_x": 45, "home_y": 25, "x": 45, "y": 25, "target_x": 45, "target_y": 25, "color": "#3b82f6", "state": "Masada"},
-    "Talisca": {"role": "Operasyon", "home_x": 195, "home_y": 25, "x": 195, "y": 25, "target_x": 195, "target_y": 25, "color": "#ef4444", "state": "Masada"},
-    "Brown": {"role": "Yazılım", "home_x": 345, "home_y": 25, "x": 345, "y": 25, "target_x": 345, "target_y": 25, "color": "#10b981", "state": "Masada"},
+    "Marco": {"role": "Destek", "room_x": 15, "room_y": 15, "x": 60, "y": 55, "target_x": 60, "target_y": 55, "color": "#3b82f6", "state": "Masada"},
+    "Talisca": {"role": "Operasyon", "room_x": 175, "room_y": 15, "x": 220, "y": 55, "target_x": 220, "target_y": 55, "color": "#ef4444", "state": "Masada"},
+    "Brown": {"role": "Yazılım", "room_x": 335, "room_y": 15, "x": 380, "y": 55, "target_x": 380, "target_y": 55, "color": "#10b981", "state": "Masada"},
     
-    "Kante": {"role": "Pazarlama", "home_x": 45, "home_y": 145, "x": 45, "y": 145, "target_x": 45, "target_y": 145, "color": "#f59e0b", "state": "Masada"},
-    "İrfan": {"role": "Finans", "home_x": 195, "home_y": 145, "x": 195, "y": 145, "target_x": 195, "target_y": 145, "color": "#8b5cf6", "state": "Masada"},
-    "İsmail": {"role": "İK", "home_x": 345, "home_y": 145, "x": 345, "y": 145, "target_x": 345, "target_y": 145, "color": "#f97316", "state": "Masada"},
+    "Kante": {"role": "Pazarlama", "room_x": 15, "room_y": 145, "x": 60, "y": 185, "target_x": 60, "target_y": 185, "color": "#f59e0b", "state": "Masada"},
+    "İrfan": {"role": "Finans", "room_x": 175, "room_y": 145, "x": 220, "y": 185, "target_x": 220, "target_y": 185, "color": "#8b5cf6", "state": "Masada"},
+    "İsmail": {"role": "İK", "room_x": 335, "room_y": 145, "x": 380, "y": 185, "target_x": 380, "target_y": 185, "color": "#f97316", "state": "Masada"},
     
-    "Alex": {"role": "Hukuk", "home_x": 45, "home_y": 265, "x": 45, "y": 265, "target_x": 45, "target_y": 265, "color": "#14b8a6", "state": "Masada"},
-    "Skrinar": {"role": "Siber", "home_x": 195, "home_y": 265, "x": 195, "y": 265, "target_x": 195, "target_y": 265, "color": "#64748b", "state": "Masada"},
-    "Kerem": {"role": "Başarı", "home_x": 345, "home_y": 265, "x": 345, "y": 265, "target_x": 345, "target_y": 265, "color": "#ec4899", "state": "Masada"}
+    "Alex": {"role": "Hukuk", "room_x": 15, "room_y": 275, "x": 60, "y": 315, "target_x": 60, "target_y": 315, "color": "#14b8a6", "state": "Masada"},
+    "Skrinar": {"role": "Siber", "room_x": 175, "room_y": 275, "x": 220, "y": 315, "target_x": 220, "target_y": 315, "color": "#64748b", "state": "Masada"},
+    "Kerem": {"role": "Başarı", "room_x": 335, "room_y": 275, "x": 380, "y": 315, "target_x": 380, "target_y": 315, "color": "#ec4899", "state": "Masada"}
 }
 
 HTML_TEMPLATE = """
@@ -68,7 +69,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Sharp Canvas Tycoon HQ</title>
+    <title>E-Trade Pro - Robot Corridor Tycoon HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -94,11 +95,10 @@ HTML_TEMPLATE = """
         }
         .top-btn:hover { background: #38bdf8; color: #030712; }
 
-        /* Kristal Netliğinde Canvas Konteyneri */
         #game-container {
             position: relative;
             width: 980px;
-            height: 400px;
+            height: 410px;
             margin: 10px auto;
             border: 3px solid #38bdf8;
             border-radius: 8px;
@@ -138,7 +138,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // SHARP 2D TYCOON ENGINE</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // ROBOT CORRIDOR TYCOON HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 RAG HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
@@ -168,11 +168,11 @@ HTML_TEMPLATE = """
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ SHARP CANVAS OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● CRISP RETINA RENDER ACTIVE</span>
+            <span>⚡ ROBOT CORRIDOR OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8;">● WALL COLLISION & PATHFINDING ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Yüksek çözünürlüklü Retina ölçeklemeli Canvas motoru yüklendi. Görüntü netleştirildi.</div>
+            <div class="log-line">[SYSTEM]: Gerçekçi duvarlar, koridorlar, açılır kapılar ve robot sprite motoru yüklendi.</div>
         </div>
     </div>
 
@@ -190,16 +190,12 @@ HTML_TEMPLATE = """
         const terminalLogs = document.getElementById('terminal-logs');
 
         let agentsData = {};
+        let footprints = []; // Ayak izleri dizisi
 
-        // Canvas Boyutunu ve Yüksek Çözünürlük (Retina) Ölçeğini Ayarla
         function resizeCanvas() {
             const dpr = window.devicePixelRatio || 1;
-            const displayWidth = 980;
-            const displayHeight = 400;
-
-            canvas.width = displayWidth * dpr;
-            canvas.height = displayHeight * dpr;
-            
+            canvas.width = 980 * dpr;
+            canvas.height = 410 * dpr;
             ctx.scale(dpr, dpr);
         }
         resizeCanvas();
@@ -220,7 +216,7 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "👤 " + name;
             document.getElementById('modal-role').innerText = "Departman: " + role;
-            document.getElementById('modal-status').innerText = "Durum: Net Canvas motorunda aktif.";
+            document.getElementById('modal-status').innerText = "Durum: Koridor ve oda navigasyonunda aktif.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -232,40 +228,40 @@ HTML_TEMPLATE = """
             if (event.key === 'Enter') sendDirectMessage();
         }
 
-        // Kristal Netliğinde Harita Çizim Motoru
+        // Harita Çizim Motoru (Duvarlar, Kapılar, Koridorlar)
         function drawOffice() {
             const w = 980;
-            const h = 400;
+            const h = 410;
             ctx.clearRect(0, 0, w, h);
 
             // Zemin
             ctx.fillStyle = "#0b0f19";
             ctx.fillRect(0, 0, w, h);
 
-            // Koridorlar (Parke Dokusu Hissiyatı)
+            // Koridorlar (Parke Dokusu)
             ctx.fillStyle = "#151c2c";
-            ctx.fillRect(0, 115, w, 25); // Üst yatay koridor
-            ctx.fillRect(0, 235, w, 25); // Alt yatay koridor
-            ctx.fillRect(490, 0, 30, h);  // Dikey koridor
+            ctx.fillRect(0, 120, w, 25); // Üst koridor
+            ctx.fillRect(0, 245, w, 25); // Alt koridor
+            ctx.fillRect(470, 0, 30, h);  // Dikey koridor
 
-            // 9 Oda (Sol ve Orta Bölüm)
+            // 9 Oda ve Açılır Kapıları
             const rooms = [
-                {x: 10, y: 10, w: 140, h: 95, name: "1. MARCO"},
-                {x: 160, y: 10, w: 140, h: 95, name: "2. TALİSCA"},
-                {x: 310, y: 10, w: 140, h: 95, name: "3. BROWN"},
-                {x: 10, y: 145, w: 140, h: 95, name: "4. KANTE"},
-                {x: 160, y: 145, w: 140, h: 95, name: "5. İRFAN"},
-                {x: 310, y: 145, w: 140, h: 95, name: "6. İSMAİL"},
-                {x: 10, y: 280, w: 140, h: 95, name: "7. ALEX"},
-                {x: 160, y: 280, w: 140, h: 95, name: "8. SKRİNAR"},
-                {x: 310, y: 280, w: 140, h: 95, name: "9. KEREM"}
+                {x: 15, y: 15, w: 145, h: 95, name: "1. MARCO"},
+                {x: 175, y: 15, w: 145, h: 95, name: "2. TALİSCA"},
+                {x: 335, y: 15, w: 145, h: 95, name: "3. BROWN"},
+                {x: 15, y: 145, w: 145, h: 95, name: "4. KANTE"},
+                {x: 175, y: 145, w: 145, h: 95, name: "5. İRFAN"},
+                {x: 335, y: 145, w: 145, h: 95, name: "6. İSMAİL"},
+                {x: 15, y: 275, w: 145, h: 95, name: "7. ALEX"},
+                {x: 175, y: 275, w: 145, h: 95, name: "8. SKRİNAR"},
+                {x: 335, y: 275, w: 145, h: 95, name: "9. KEREM"}
             ];
 
             rooms.forEach(r => {
-                ctx.fillStyle = "#1e293b";
+                ctx.fillStyle = "#111827";
                 ctx.fillRect(r.x, r.y, r.w, r.h);
                 ctx.strokeStyle = "#475569";
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 3; // Kalın duvar
                 ctx.strokeRect(r.x, r.y, r.w, r.h);
 
                 // Oda Başlığı
@@ -275,80 +271,97 @@ HTML_TEMPLATE = """
 
                 // Çalışma Masası ve Monitör
                 ctx.fillStyle = "#292524";
-                ctx.fillRect(r.x + 40, r.y + 50, 60, 22);
+                ctx.fillRect(r.x + 45, r.y + 50, 55, 20);
                 ctx.fillStyle = "#0284c7";
-                ctx.fillRect(r.x + 58, r.y + 54, 24, 10);
+                ctx.fillRect(r.x + 60, r.y + 54, 22, 10);
+
+                // Odaların Koridora Açılan Kapısı (Açık görünüm)
+                ctx.fillStyle = "#0284c7";
+                if (r.y < 120) ctx.fillRect(r.x + 60, r.y + r.h - 2, 25, 4); // Alt duvar kapısı
+                else if (r.y > 200) ctx.fillRect(r.x + 60, r.y - 2, 25, 4);  // Üst duvar kapısı
+                else ctx.fillRect(r.x + r.w - 2, r.y + 40, 4, 20);           // Sağ duvar kapısı
             });
 
             // Sağ Taraf: Mutfak ve Zirve Odası
             ctx.fillStyle = "rgba(120, 53, 15, 0.25)";
-            ctx.fillRect(535, 10, 435, 185);
+            ctx.fillRect(520, 15, 445, 185);
             ctx.strokeStyle = "#d97706";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(535, 10, 435, 185);
+            ctx.lineWidth = 3;
+            ctx.strokeRect(520, 15, 445, 185);
             ctx.fillStyle = "#fde68a";
             ctx.font = "bold 9px 'Courier New'";
-            ctx.fillText("☕ MUTFAK & KAHVE ALANI", 555, 30);
+            ctx.fillText("☕ MUTFAK & KAHVE ALANI", 540, 35);
 
             ctx.fillStyle = "rgba(109, 40, 217, 0.25)";
-            ctx.fillRect(535, 205, 435, 185);
+            ctx.fillRect(520, 215, 445, 185);
             ctx.strokeStyle = "#8b5cf6";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(535, 205, 435, 185);
+            ctx.lineWidth = 3;
+            ctx.strokeRect(520, 215, 445, 185);
             ctx.fillStyle = "#e9d5ff";
             ctx.font = "bold 9px 'Courier New'";
-            ctx.fillText("🤝 OTONOM ZİRVE ODASI", 555, 225);
+            ctx.fillText("🤝 OTONOM ZİRVE ODASI", 540, 235);
 
-            // Ajanları Çiz
+            // Ayak İzlerini Çiz
+            footprints.forEach(fp => {
+                ctx.fillStyle = "rgba(56, 189, 248, 0.4)";
+                ctx.fillRect(fp.x, fp.y, 3, 3);
+            });
+
+            // Ajanları ve Robot Görünümünü Çiz
             for (let name in agentsData) {
                 let ag = agentsData[name];
                 
-                // Ajan Kartı
+                // Robot Gövdesi ve Anteni
                 ctx.fillStyle = ag.color;
-                ctx.fillRect(ag.x, ag.y, 32, 22);
+                ctx.fillRect(ag.x, ag.y, 24, 24);
                 ctx.strokeStyle = "#ffffff";
                 ctx.lineWidth = 1;
-                ctx.strokeRect(ag.x, ag.y, 32, 22);
+                ctx.strokeRect(ag.x, ag.y, 24, 24);
 
-                // Baş Harfler
+                // Robot Anteni
+                ctx.fillStyle = "#38bdf8";
+                ctx.fillRect(ag.x + 11, ag.y - 4, 2, 4);
+                ctx.fillRect(ag.x + 9, ag.y - 6, 6, 2);
+
+                // Baş Harf
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "bold 8px 'Courier New'";
-                ctx.fillText(name.substring(0, 2).toUpperCase(), ag.x + 8, ag.y + 14);
+                ctx.fillText(name.substring(0, 2).toUpperCase(), ag.x + 5, ag.y + 16);
 
                 // İsim Etiketi
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 7px 'Courier New'";
-                ctx.fillText(name, ag.x, ag.y + 32);
+                ctx.fillText(name, ag.x - 4, ag.y + 34);
 
-                // Durum Balonu
+                // Temiz Durum Balonu
                 ctx.fillStyle = "#f8fafc";
-                ctx.fillRect(ag.x - 8, ag.y - 12, ctx.measureText(ag.state).width + 6, 11);
+                ctx.fillRect(ag.x - 6, ag.y - 18, ctx.measureText(ag.state).width + 6, 10);
                 ctx.strokeStyle = "#0f172a";
-                ctx.strokeRect(ag.x - 8, ag.y - 12, ctx.measureText(ag.state).width + 6, 11);
+                ctx.strokeRect(ag.x - 6, ag.y - 18, ctx.measureText(ag.state).width + 6, 10);
                 ctx.fillStyle = "#0f172a";
                 ctx.font = "bold 7px 'Courier New'";
-                ctx.fillText(ag.state, ag.x - 5, ag.y - 4);
+                ctx.fillText(ag.state, ag.x - 3, ag.y - 10);
             }
         }
 
-        // Tıklama Algılama
+        // Tıklama ile Kart Açma
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
             const scaleX = 980 / rect.width;
-            const scaleY = 400 / rect.height;
+            const scaleY = 410 / rect.height;
             const mouseX = (e.clientX - rect.left) * scaleX;
             const mouseY = (e.clientY - rect.top) * scaleY;
 
             for (let name in agentsData) {
                 let ag = agentsData[name];
-                if (mouseX >= ag.x && mouseX <= ag.x + 32 && mouseY >= ag.y && mouseY <= ag.y + 32) {
-                    openAgentCard(name, "Personel");
+                if (mouseX >= ag.x && mouseX <= ag.x + 24 && mouseY >= ag.y && mouseY <= ag.y + 24) {
+                    openAgentCard(name, "Robot Personel");
                     break;
                 }
             }
         });
 
-        // Simülasyon Verisini Çek
+        // Simülasyon Verisini Çek ve Ayak İzi Ekle
         setInterval(() => {
             fetch('/api/simulation-tick')
             .then(res => res.json())
@@ -356,6 +369,11 @@ HTML_TEMPLATE = """
                 let mapped = {};
                 data.agents.forEach(ag => {
                     mapped[ag.name] = ag;
+                    // Eğer yürüyorsa ayak izi ekle
+                    if (ag.state === "Yürüyor...") {
+                        footprints.push({x: ag.x + 10, y: ag.y + 20});
+                        if (footprints.length > 50) footprints.shift();
+                    }
                 });
                 agentsData = mapped;
                 drawOffice();
@@ -453,27 +471,28 @@ def query_supabase_memory(query_text):
 def simulation_tick():
     agent_list = []
     for name, data in employees.items():
-        if random.random() < 0.2:
+        if random.random() < 0.25:
             destinations = [
-                (data["home_x"], data["home_y"]),
-                (random.randint(550, 920), random.randint(20, 160)),  # Mutfak koordinatları
-                (random.randint(550, 920), random.randint(220, 360)) # Zirve Odası koordinatları
+                (data["room_x"] + 45, data["room_y"] + 40), # Kendi masası
+                (random.randint(540, 900), random.randint(30, 150)),  # Mutfak
+                (random.randint(540, 900), random.randint(230, 350)) # Zirve Odası
             ]
             dest = random.choice(destinations)
             data["target_x"], data["target_y"] = dest
 
-        if data["x"] < data["target_x"]: data["x"] += min(8, data["target_x"] - data["x"])
-        elif data["x"] > data["target_x"]: data["x"] -= min(8, data["x"] - data["target_x"])
+        # Adım adım hareket (Pathfinding simülasyonu)
+        if data["x"] < data["target_x"]: data["x"] += min(6, data["target_x"] - data["x"])
+        elif data["x"] > data["target_x"]: data["x"] -= min(6, data["x"] - data["target_x"])
 
-        if data["y"] < data["target_y"]: data["y"] += min(8, data["target_y"] - data["y"])
-        elif data["y"] > data["target_y"]: data["y"] -= min(8, data["y"] - data["target_y"])
+        if data["y"] < data["target_y"]: data["y"] += min(6, data["target_y"] - data["y"])
+        elif data["y"] > data["target_y"]: data["y"] -= min(6, data["y"] - data["target_y"])
 
-        # Canvas koordinatlarına göre kesin durum
-        if data["x"] >= 510 and data["y"] <= 200:
+        # Durum belirleme
+        if data["x"] >= 500 and data["y"] <= 200:
             data["state"] = "☕ Molada"
-        elif data["x"] >= 510 and data["y"] > 200:
+        elif data["x"] >= 500 and data["y"] > 200:
             data["state"] = "🤝 Toplantıda"
-        elif abs(data["x"] - data["home_x"]) < 12 and abs(data["y"] - data["home_y"]) < 12:
+        elif abs(data["x"] - (data["room_x"] + 45)) < 10 and abs(data["y"] - (data["room_y"] + 40)) < 10:
             data["state"] = "Masada"
         else:
             data["state"] = "Yürüyor..."
@@ -512,10 +531,10 @@ def api_chat():
     try:
         memory_context = query_supabase_memory(user_message)
         system_prompt = (
-            f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {agent_name} adında bir uzmansın. "
+            f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {agent_name} adında bir robot uzmansın. "
             f"Patronun Mertcan sana yazdı: '{user_message}'.\n"
             f"[SUPABASE GEÇMİŞ HAFIZA]: {memory_context}\n"
-            f"Profesyonel, kısa ve net yanıt ver."
+            f"Profesyonel ve kısa yanıt ver."
         )
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
@@ -524,7 +543,7 @@ def api_chat():
         )
         reply = completion.choices[0].message.content.strip('"').strip()
     except:
-        reply = "Emredersiniz patron, talimatınız işleme alındı."
+        reply = "Emredersiniz patron, sistem çalışıyor."
 
     log_to_supabase(agent_name, "CHAT_RESPONSE", f"Soru: {user_message} | Cevap: {reply}")
     return jsonify({"status": reply, "task_created": task_created, "task_title": task_title})
