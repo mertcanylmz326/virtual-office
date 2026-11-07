@@ -17,6 +17,10 @@ COINGECKO_API_KEY = "CG-rU5NZkTSGvA1dXfNV58J26fK"
 GITHUB_TOKEN = "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"
 GITHUB_USERNAME = "mertcanymlz326"
 
+# İsmail'in Yeni Sistem Sağlığı Anahtarları
+UPTIMEROBOT_API_KEY = "u3671342-858d5db4b2fd40032fce3ce6"
+SUPABASE_REST_URL = "https://prphsmgaujdwrqqdmmrd.supabase.co/rest/v1/"
+
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 company_state = {
@@ -73,6 +77,28 @@ def get_crypto_price(coin_id="bitcoin"):
         print(f"CoinGecko API Hatası: {e}")
     return None
 
+def check_system_uptime():
+    try:
+        url = "https://api.uptimerobot.com/v2/getMonitors"
+        payload = {
+            "api_key": UPTIMEROBOT_API_KEY,
+            "format": "json"
+        }
+        response = requests.post(url, data=payload, timeout=5)
+        data = response.json()
+        if data.get("stat") == "ok":
+            monitors = data.get("monitors", [])
+            if monitors:
+                status_code = monitors[0].get("status")
+                # 2: up, 8: seems offline, 9: offline
+                status_text = "Aktif (Çalışıyor)" if status_code == 2.0 or status_code == 2 else f"Kod Durumu: {status_code}"
+                return f"UptimeRobot: Sistem monitörleri {status_text}."
+            else:
+                return "UptimeRobot: Tanımlı monitör bulunamadı, ancak API bağlantısı başarılı."
+    except Exception as e:
+        print(f"UptimeRobot API Hatası: {e}")
+    return "UptimeRobot API erişiminde geçici hata."
+
 def create_github_repo_and_deploy(project_name, html_content):
     try:
         repo_name = f"e-trade-{int(time.time())}-{project_name.lower().replace(' ', '-')[:20]}"
@@ -80,8 +106,6 @@ def create_github_repo_and_deploy(project_name, html_content):
             "Authorization": f"Bearer {GITHUB_TOKEN}",
             "Accept": "application/vnd.github+json"
         }
-        
-        # 1. Repo Oluştur
         repo_data = {
             "name": repo_name,
             "description": f"E-Trade Pro AI Agency - Otomatik Üretilen Proje: {project_name}",
@@ -90,12 +114,10 @@ def create_github_repo_and_deploy(project_name, html_content):
         }
         r = requests.post("https://api.github.com/user/repos", json=repo_data, headers=headers, timeout=10)
         if r.status_code != 201:
-            print(f"GitHub Repo Oluşturma Hatası: {r.text}")
             return None
 
-        time.sleep(2) # GitHub'ın repoyu hazırlaması için kısa bekleme
+        time.sleep(2)
 
-        # 2. index.html Dosyasını Ekle
         file_url = f"https://api.github.com/repos/{GITHUB_USERNAME}/{repo_name}/contents/index.html"
         encoded_content = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
         file_data = {
@@ -116,7 +138,7 @@ employees = {
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "x": 60, "y": 205, "target_x": 60, "target_y": 205, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "x": 240, "y": 205, "target_x": 240, "target_y": 205, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
-    "İsmail": {"role": "İK", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 375, "room_y": 155, "x": 420, "y": 205, "target_x": 420, "target_y": 205, "color": "#f97316", "state": "Masada", "speech": "Optimizasyon"},
+    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 375, "room_y": 155, "x": 420, "y": 205, "target_x": 420, "target_y": 205, "color": "#f97316", "state": "Masada", "speech": "Sistem Sağlığı OK"},
     
     "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "x": 60, "y": 345, "target_x": 60, "target_y": 345, "color": "#14b8a6", "state": "Masada", "speech": "Sözleşme aktif"},
     "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "x": 240, "y": 345, "target_x": 240, "target_y": 345, "color": "#64748b", "state": "Masada", "speech": "Firewall koruyor"},
@@ -222,19 +244,19 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // GITHUB DEPLOY AI HQ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // İSMAİL UPTIME MONITOR HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
+            <span class="top-btn" onclick="checkUptime()">🛡️ SİSTEM SAĞLIĞI</span>
             <span class="top-btn" onclick="triggerBoardroom()">🤝 ZİRVE</span>
-            <span class="top-btn" onclick="loadOrders()">🛒 SİPARİŞLER</span>
         </div>
     </div>
 
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 GITHUB DEPLOY: Aktif</span>
+        <span style="color: #fbbf24;">🚀 İSMAIL UPTIME: Aktif</span>
     </div>
 
     <!-- Canvas Haritası -->
@@ -250,7 +272,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Brown'a 'şu isimde web sitesi kur' de..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="İsmail'e sistem durumunu sor veya Brown'a site kurdur..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -259,10 +281,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● GITHUB AUTO-DEPLOY READY</span>
+            <span style="color: #38bdf8;">● UPTIMEROBOT & SUPABASE SYNCED</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: GitHub PAT ve Otomatik Kod Üretim Motoru devreye alındı.</div>
+            <div class="log-line">[SYSTEM]: İsmail UptimeRobot ve Supabase REST denetim motoruyla donatıldı.</div>
         </div>
     </div>
 
@@ -298,8 +320,8 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "🤖 " + name;
             document.getElementById('modal-role').innerText = "Rol: " + role;
-            document.getElementById('modal-xp').innerText = "Departman Uzmanlığı: Sabit Görev";
-            document.getElementById('modal-status').innerText = "Durum: Kendi odasında çalışıyor.";
+            document.getElementById('modal-xp').innerText = "Departman Uzmanlığı: Sistem Operasyonları";
+            document.getElementById('modal-status').innerText = "Durum: 7/24 Uptime denetimde.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -339,7 +361,7 @@ HTML_TEMPLATE = """
                 {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (DEV)", glow: "#10b981"},
                 {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b"},
                 {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6"},
-                {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL", glow: "#f97316"},
+                {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL (İK)", glow: "#f97316"},
                 {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX", glow: "#14b8a6"},
                 {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR", glow: "#64748b"},
                 {x: 375, y: 295, w: 160, h: 105, name: "9. KEREM", glow: "#ec4899"}
@@ -519,10 +541,10 @@ HTML_TEMPLATE = """
             });
         }
 
-        function loadOrders() {
-            appendLog(`> [SİPARİŞLER]: Müşteri web sitesi siparişleri listeleniyor...`);
-            fetch('/api/orders').then(res => res.json()).then(data => {
-                appendLog(`> [SİPARİŞLER]: ${data.orders.join(" | ")}`);
+        function checkUptime() {
+            appendLog(`> [İSMAİL - UPTIME]: UptimeRobot API ile sistem sağlığı sorgulanıyor...`);
+            fetch('/api/uptime').then(res => res.json()).then(data => {
+                appendLog(`> [SİSTEM RAPORU]: ${data.status}`);
             });
         }
 
@@ -620,12 +642,11 @@ def api_chat():
     task_title = ""
     repo_url = ""
 
-    # Eğer Brown'a site kurduruluyorsa GitHub'da repo oluştur ve kod bas
-    if agent_name == "Brown" and ("site" in user_message.lower()  or "kur" in user_message.lower() or "yap" in user_message.lower() or "kod" in user_message.lower()):
+    # Brown ile GitHub Repo Otomasyonu
+    if agent_name == "Brown" and ("site" in user_message.lower() or "kur" in user_message.lower() or "yap" in user_message.lower() or "kod" in user_message.lower()):
         task_created = True
         task_title = user_message[:40]
 
-        # 1. Groq ile profesyonel HTML/CSS kodu üret
         html_code = "<!DOCTYPE html><html><head><title>Proje</title></head><body><h1>E-Trade Pro AI Sitesi</h1></body></html>"
         try:
             code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern ve şık tek dosyalık bir HTML/CSS (Bootstrap veya dahili style içeren) web sitesi kodu yaz: '{user_message}'. Sadece ham HTML kodunu döndür, başka açıklama yazma."
@@ -644,7 +665,6 @@ def api_chat():
         except Exception as e:
             print(f"Kod Üretim Hatası: {e}")
 
-        # 2. GitHub'a otomatik yükle
         repo_url = create_github_repo_and_deploy(task_title, html_code)
 
         try:
@@ -663,6 +683,12 @@ def api_chat():
         if btc_price:
             live_context = f"[CANLI PİYASA VERİSİ]: Bitcoin (BTC) şu an anlık olarak ${btc_price:,} USD seviyesinden işlem görmektedir."
 
+    # İsmail için Canlı Uptime Raporu
+    uptime_context = ""
+    if agent_name == "İsmail" and ("durum" in user_message.lower() or "sağlık" in user_message.lower() or "uptime" in user_message.lower() or "sistem" in user_message.lower()):
+        uptime_status = check_system_uptime()
+        uptime_context = f"[SİSTEM SAĞLIĞI]: {uptime_status}"
+
     reply = ""
     try:
         memory_context = query_supabase_memory(user_message)
@@ -670,6 +696,7 @@ def api_chat():
             f"Sen E-Trade Pro otonom ajansında {agent['role']} departmanında çalışan {agent_name} adında bir uzmansın. "
             f"Patronun Mertcan sana yazdı: '{user_message}'.\n"
             f"{live_context}\n"
+            f"{uptime_context}\n"
             f"Kıdemli bir uzman gibi kısa, net, karizmatik ve doğrudan sonuca giden bir yanıt ver."
         )
         if task_created and repo_url:
@@ -687,12 +714,19 @@ def api_chat():
     if not reply:
         if repo_url:
             reply = f"Patron site kodlandı ve GitHub'a atıldı: {repo_url}"
+        elif agent_name == "İsmail":
+            reply = check_system_uptime()
         else:
             reply = f"Emredersiniz patron, {agent['role']} olarak talimatınız işleme alındı."
 
     employees[agent_name]["speech"] = reply[:25]
-    log_to_supabase(agent_name, "GITHUB_DEPLOY", f"Talimat: {user_message} | Repo: {repo_url}")
+    log_to_supabase(agent_name, "SYSTEM_OP", f"Talimat: {user_message} | Yanıt: {reply}")
     return jsonify({"status": reply, "task_created": task_created, "task_title": task_title, "repo_url": repo_url})
+
+@app.route('/api/uptime', methods=['GET'])
+def api_uptime():
+    status = check_system_uptime()
+    return jsonify({"status": status})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
@@ -712,20 +746,6 @@ def api_tasks():
         return jsonify({"tasks": tasks if tasks else ["Bekleyen müşteri projesi yok."]})
     except:
         return jsonify({"tasks": ["Projeler yüklenemedi."]})
-
-@app.route('/api/orders', methods=['GET'])
-def api_orders():
-    try:
-        conn = psycopg2.connect(DB_URL)
-        cur = conn.cursor()
-        cur.execute("SELECT client_name, project_type, status, repo_url FROM client_orders ORDER BY id DESC LIMIT 5;")
-        rows = cur.fetchall()
-        cur.close()
-        conn.close()
-        orders = [f"Müşteri: {r[0]} | İş: {r[1]} | Repo: {r[3]}" for r in rows]
-        return jsonify({"orders": orders if orders else ["Aktif müşteri siparişi bulunmuyor."]})
-    except:
-        return jsonify({"orders": ["Siparişler okunamadı."]})
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
