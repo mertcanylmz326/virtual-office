@@ -8,14 +8,10 @@ from groq import Groq
 
 app = Flask(__name__)
 
-# Supabase Veritabanı Bilgileri
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
-
-# Groq API Bağlantısı
 GROQ_API_KEY = "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"
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
-# Veritabanı Tablosunu Oluşturma
 def init_db():
     try:
         conn = psycopg2.connect(DB_URL)
@@ -28,7 +24,22 @@ def init_db():
                 content TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
+            CREATE TABLE IF NOT EXISTS company_tasks (
+                id SERIAL PRIMARY KEY,
+                task_title TEXT,
+                assigned_to TEXT,
+                status TEXT DEFAULT 'Bekliyor',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS office_plants (
+                id SERIAL PRIMARY KEY,
+                plant_name TEXT,
+                health_level INT DEFAULT 100,
+                water_status TEXT DEFAULT 'İyi',
+                last_watered_by TEXT
+            );
         """)
+        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Ana Salon Çiçeği', 80) ON CONFLICT (id) DO NOTHING;")
         conn.commit()
         cur.close()
         conn.close()
@@ -37,29 +48,27 @@ def init_db():
 
 init_db()
 
-# Ajan Kadromuz ve Konumları
 employees = {
-    "Marco": {"role": "Müşteri İlişkileri & Destek", "room": "Destek Odası", "home_x": 90, "home_y": 70, "color": "#3b82f6", "default": "Destek hattında..."},
-    "Talisca": {"role": "Sipariş Takip & Operasyon", "room": "Operasyon Odası", "home_x": 390, "home_y": 70, "color": "#ef4444", "default": "Sipariş işliyor"},
-    "Brown": {"role": "Yazılım Mühendisi", "room": "Yazılım Üssü", "home_x": 690, "home_y": 70, "color": "#10b981", "default": "Kod derleniyor..."},
-    "Kante": {"role": "Pazarlama Uzmanı", "room": "Pazarlama Odası", "home_x": 90, "home_y": 200, "color": "#f59e0b", "default": "Kampanya kurguluyor"},
-    "İrfan": {"role": "Finans & Trader", "room": "Finans Odası", "home_x": 390, "home_y": 200, "color": "#8b5cf6", "default": "Piyasayı tarıyor"},
-    "İsmail": {"role": "İnsan Kaynakları", "room": "İK Odası", "home_x": 690, "home_y": 200, "color": "#f97316", "default": "Mülakatta..."},
-    "Alex": {"role": "Hukuk Danışmanı", "room": "Hukuk Bürosu", "home_x": 90, "home_y": 330, "color": "#14b8a6", "default": "Sözleşme inceliyor"},
-    "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik Odası", "home_x": 390, "home_y": 330, "color": "#64748b", "default": "Sistem taranıyor"},
-    "Kerem": {"role": "Müşteri Başarı", "room": "Başarı Odası", "home_x": 690, "home_y": 330, "color": "#ec4899", "default": "Onboarding aktif"}
+    "Marco": {"role": "Destek", "x": 100, "y": 80, "target_x": 100, "target_y": 80, "color": "#3b82f6", "state": "Çalışıyor"},
+    "Talisca": {"role": "Operasyon", "x": 380, "y": 80, "target_x": 380, "target_y": 80, "color": "#ef4444", "state": "Çalışıyor"},
+    "Brown": {"role": "Yazılım", "x": 660, "y": 80, "target_x": 660, "target_y": 80, "color": "#10b981", "state": "Çalışıyor"},
+    "Kante": {"role": "Pazarlama", "x": 100, "y": 210, "target_x": 100, "target_y": 210, "color": "#f59e0b", "state": "Çalışıyor"},
+    "İrfan": {"role": "Finans", "x": 380, "y": 210, "target_x": 380, "target_y": 210, "color": "#8b5cf6", "state": "Çalışıyor"},
+    "İsmail": {"role": "İK", "x": 660, "y": 210, "target_x": 660, "target_y": 210, "color": "#f97316", "state": "Çalışıyor"},
+    "Alex": {"role": "Hukuk", "x": 100, "y": 340, "target_x": 100, "target_y": 340, "color": "#14b8a6", "state": "Çalışıyor"},
+    "Skrinar": {"role": "Siber", "x": 380, "y": 340, "target_x": 380, "target_y": 340, "color": "#64748b", "state": "Çalışıyor"},
+    "Kerem": {"role": "Başarı", "x": 660, "y": 340, "target_x": 660, "target_y": 340, "color": "#ec4899", "state": "Çalışıyor"}
 }
 
-# Orijinal Harika Görsel Ofis Tasarımı + Supabase & Otonom Arka Plan
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - Autonomous Private Offices</title>
+    <title>E-Trade Pro - Living Autonomous HQ</title>
     <style>
         body { 
-            background-color: #05070b; 
+            background-color: #030712; 
             color: #fff; 
             font-family: 'Courier New', Courier, monospace; 
             text-align: center; 
@@ -67,7 +76,6 @@ HTML_TEMPLATE = """
             padding: 0; 
             overflow-x: hidden; 
         }
-        
         #game-topbar {
             background: #0f172a;
             border-bottom: 3px solid #1e293b;
@@ -77,265 +85,161 @@ HTML_TEMPLATE = """
             align-items: center;
             font-size: 11px;
         }
-        .top-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 4px 10px; border-radius: 4px; font-weight: bold; }
+        .top-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 4px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .top-btn:hover { border-color: #38bdf8; }
 
         #office-floor { 
             position: relative; 
-            width: 960px; 
-            height: 480px; 
+            width: 980px; 
+            height: 500px; 
             margin: 10px auto; 
             background-color: #1a120b;
             background-image: 
-                linear-gradient(90deg, rgba(255,255,255,0.04) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 2px, transparent 2px),
                 linear-gradient(rgba(0,0,0,0.3) 2px, transparent 2px);
-            background-size: 60px 30px;
+            background-size: 50px 50px;
             border: 6px solid #1e293b; 
             border-radius: 10px; 
             box-shadow: 0 25px 50px rgba(0,0,0,0.95); 
             overflow: hidden;
         }
 
-        .private-room {
+        /* Odalar ve Alanlar */
+        .room {
             position: absolute;
-            border: 3px solid #475569;
-            background: rgba(30, 41, 59, 0.75);
+            border: 2px solid #475569;
+            background: rgba(30, 41, 59, 0.65);
             border-radius: 6px;
-            width: 280px;
+            width: 270px;
             height: 115px;
         }
-        .room-label {
-            position: absolute;
-            font-size: 8px;
-            color: #38bdf8;
-            top: 4px;
-            left: 8px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .room-door {
-            position: absolute;
-            right: 0;
-            top: 40px;
-            width: 8px;
-            height: 35px;
-            background: #78350f;
-            border: 1px solid #451a03;
-        }
-
-        .desk { position: absolute; width: 45px; height: 24px; background: #1c1917; border: 2px solid #44403c; border-radius: 3px; }
-        .pc-monitor { position: absolute; width: 16px; height: 9px; background: #38bdf8; top: 3px; left: 14px; border-radius: 2px; box-shadow: 0 0 6px #38bdf8; }
+        .room-label { position: absolute; font-size: 7px; color: #38bdf8; top: 3px; left: 6px; font-weight: bold; }
         
-        .ceo-hq {
-            position: absolute;
-            left: 440px;
-            top: 400px;
-            width: 80px;
-            height: 65px;
-            background: radial-gradient(circle, #dc2626 0%, #7f1d1d 100%);
-            border: 3px solid #fff;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
-            font-weight: bold;
-            box-shadow: 0 0 25px rgba(220, 38, 38, 0.9);
-            z-index: 50;
+        /* Mutfak ve Toplantı Odası */
+        .kitchen-area {
+            position: absolute; left: 810px; top: 15px; width: 155px; height: 220px;
+            border: 3px dashed #d97706; background: rgba(120, 53, 15, 0.2); border-radius: 6px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #fde68a;
+        }
+        .boardroom-area {
+            position: absolute; left: 810px; top: 250px; width: 155px; height: 230px;
+            border: 3px dashed #8b5cf6; background: rgba(109, 40, 217, 0.2); border-radius: 6px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #e9d5ff;
         }
 
+        /* Saksılar & Çiçekler */
+        .plant-pot {
+            position: absolute; width: 30px; height: 30px; background: #78350f; border: 2px solid #451a03;
+            border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 14px; z-index: 10;
+        }
+        .plant-status { position: absolute; top: -12px; font-size: 6px; background: #000; padding: 1px 3px; border-radius: 3px; white-space: nowrap; }
+
+        /* Ayak İzleri Efekti */
+        .footprint {
+            position: absolute; width: 6px; height: 6px; background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%; pointer-events: none; z-index: 15; animation: fadeOut 2s forwards;
+        }
+        @keyframes fadeOut { 0% { opacity: 0.6; } 100% { opacity: 0; transform: scale(1.5); } }
+
+        /* Ajan Spritelaarı */
         .agent { 
-            position: absolute; 
-            width: 45px; 
-            height: 55px; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            transition: left 2.2s ease, top 2.2s ease;
-            z-index: 30;
+            position: absolute; width: 40px; height: 50px; cursor: pointer; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            transition: transform 0.2s; z-index: 40;
         }
-        
         .robot-sprite {
-            width: 28px;
-            height: 28px;
-            background-color: #18181b;
-            border: 2px solid;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.8);
-            animation: robotStep 0.4s infinite alternate;
+            width: 26px; height: 26px; background-color: #18181b; border: 2px solid; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.8);
         }
-
-        .agent-name {
-            font-size: 7px;
-            font-weight: bold;
-            background: rgba(15, 23, 42, 0.95);
-            padding: 1px 3px;
-            border-radius: 3px;
-            margin-top: 2px;
-            white-space: nowrap;
-            border: 1px solid #475569;
-        }
-        
+        .agent-name { font-size: 6px; font-weight: bold; background: rgba(15, 23, 42, 0.9); padding: 1px 2px; border-radius: 2px; margin-top: 1px; white-space: nowrap; }
         .speech-bubble {
-            position: absolute;
-            top: -22px;
-            background: #f8fafc;
-            color: #0f172a;
-            font-size: 6px;
-            font-weight: bold;
-            padding: 2px 5px;
-            border-radius: 4px;
-            white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            pointer-events: none;
-            max-width: 110px;
+            position: absolute; top: -20px; background: #f8fafc; color: #0f172a; font-size: 6px; font-weight: bold;
+            padding: 2px 4px; border-radius: 3px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none;
         }
 
-        .agent:hover { transform: scale(1.3); z-index: 100; }
-
-        @keyframes robotStep {
-            0% { transform: translateY(0px) rotate(0deg); }
-            100% { transform: translateY(-4px) rotate(2deg); }
-        }
-
+        .action-bar { margin: 10px auto; width: 970px; display: flex; justify-content: space-between; gap: 10px; }
         #command-panel {
-            margin: 10px auto;
-            width: 950px;
-            background: #0f172a;
-            border: 2px solid #334155;
-            padding: 10px;
-            border-radius: 6px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            background: #0f172a; border: 2px solid #334155; padding: 10px; border-radius: 6px; display: flex; gap: 10px; align-items: center; flex-grow: 1;
         }
-        select, input[type="text"] {
-            background: #1e293b;
-            color: #fff;
-            border: 1px solid #475569;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 11px;
-        }
+        select, input[type="text"] { background: #1e293b; color: #fff; border: 1px solid #475569; padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 11px; }
         input[type="text"] { flex-grow: 1; }
-        .send-btn {
-            background: #0284c7;
-            color: #fff;
-            border: none;
-            padding: 6px 15px;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        .send-btn { background: #0284c7; color: #fff; border: none; padding: 6px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; }
         .send-btn:hover { background: #0369a1; }
 
         #activity-terminal {
-            margin: 0 auto 20px auto;
-            width: 950px;
-            background: #020617;
-            border: 2px solid #334155;
-            border-radius: 6px;
-            text-align: left;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-            overflow: hidden;
+            margin: 0 auto 20px auto; width: 970px; background: #020617; border: 2px solid #334155; border-radius: 6px; text-align: left; overflow: hidden;
         }
-        .terminal-header {
-            background: #0f172a;
-            padding: 6px 12px;
-            font-size: 10px;
-            color: #38bdf8;
-            border-bottom: 1px solid #1e293b;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-        }
-        .terminal-body {
-            padding: 10px;
-            height: 100px;
-            overflow-y: auto;
-            font-size: 10px;
-            color: #4ade80;
-            line-height: 1.4;
-        }
-        .log-line { margin-bottom: 4px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 2px; }
+        .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 10px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; }
+        .terminal-body { padding: 8px; height: 90px; overflow-y: auto; font-size: 10px; color: #4ade80; line-height: 1.3; }
+        .log-line { margin-bottom: 3px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - AUTONOMOUS PRIVATE OFFICES</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO - LIVING SIMULATION HQ</div>
         <div>
-            <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">SUPABASE & OTONOM AKTİF</span>
+            <span class="top-btn" onclick="checkPlantStatus()">🌿 ÇİÇEK DURUMU</span>
+            <span class="top-btn" onclick="triggerWatering()">💧 ÇİÇEKLERİ SULA</span>
         </div>
     </div>
 
-    <!-- Orijinal Müstakil Odalı Ofis Haritası -->
-    <div id="office-floor">
-        <div class="private-room" style="left: 20px; top: 15px;"><div class="room-label">MARCO (DESTEK)</div><div class="room-door"></div></div>
-        <div class="private-room" style="left: 340px; top: 15px;"><div class="room-label">TALİSCA (OPERASYON)</div><div class="room-door"></div></div>
-        <div class="private-room" style="left: 660px; top: 15px;"><div class="room-label">BROWN (YAZILIM)</div><div class="room-door"></div></div>
+    <!-- Canlı Ofis Haritası -->
+    <div id="office-floor" id="floor-container">
+        <!-- 9 Oda -->
+        <div class="room" style="left: 15px; top: 15px;"><div class="room-label">MARCO (DESTEK)</div></div>
+        <div class="room" style="left: 300px; top: 15px;"><div class="room-label">TALİSCA (OPERASYON)</div></div>
+        <div class="room" style="left: 585px; top: 15px;"><div class="room-label">BROWN (YAZILIM)</div></div>
         
-        <div class="private-room" style="left: 20px; top: 145px;"><div class="room-label">KANTE (PAZARLAMA)</div><div class="room-door"></div></div>
-        <div class="private-room" style="left: 340px; top: 145px;"><div class="room-label">İRFAN (FİNANS & TRADER)</div><div class="room-door"></div></div>
-        <div class="private-room" style="left: 660px; top: 145px;"><div class="room-label">İSMAİL (İK)</div><div class="room-door"></div></div>
+        <div class="room" style="left: 15px; top: 145px;"><div class="room-label">KANTE (PAZARLAMA)</div></div>
+        <div class="room" style="left: 300px; top: 145px;"><div class="room-label">İRFAN (FİNANS)</div></div>
+        <div class="room" style="left: 585px; top: 145px;"><div class="room-label">İSMAİL (İK)</div></div>
 
-        <div class="private-room" style="left: 20px; top: 275px;"><div class="room-label">ALEX (HUKUK)</div><div class="room-door"></div></div>
-        <div class="private-room" style="left: 340px; top: 275px;"><div class="room-label">SKRİNAR (SİBER)</div><div class="room-door"></div></div>
-        <div class="private-room" style="left: 660px; top: 275px;"><div class="room-label">KEREM (BAŞARI)</div><div class="room-door"></div></div>
+        <div class="room" style="left: 15px; top: 275px;"><div class="room-label">ALEX (HUKUK)</div></div>
+        <div class="room" style="left: 300px; top: 275px;"><div class="room-label">SKRİNAR (SİBER)</div></div>
+        <div class="room" style="left: 585px; top: 275px;"><div class="room-label">KEREM (BAŞARI)</div></div>
 
-        <div class="desk" style="left: 135px; top: 60px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 455px; top: 60px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 775px; top: 60px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 135px; top: 190px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 455px; top: 190px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 775px; top: 190px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 135px; top: 320px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 455px; top: 320px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 775px; top: 320px;"><div class="pc-monitor"></div></div>
+        <!-- Mutfak ve Toplantı Alanları -->
+        <div class="kitchen-area">☕ MUTFAK & MOLA</div>
+        <div class="boardroom-area">🤝 TOPLANTI ODASI</div>
 
-        <div class="ceo-hq">
-            <span>👑 SEN</span>
-            <span style="font-size: 7px; color: #fca5a5;">CEO OFİSİ</span>
+        <!-- Saksılar (Çiçekler) -->
+        <div class="plant-pot" style="left: 275px; top: 110px;" id="plant-1">
+            <span class="plant-status" id="plant-status-1">🌿 %80</span>🌱
+        </div>
+        <div class="plant-pot" style="left: 770px; top: 110px;" id="plant-2">
+            <span class="plant-status" id="plant-status-2">🌿 %80</span>🌵
         </div>
 
+        <!-- Ajanlar -->
         {% for name, data in employees.items() %}
-        <div class="agent" id="agent-{{ name }}" style="left: {{ data.home_x }}px; top: {{ data.home_y }}px;" 
-             onclick="selectAgent('{{ name }}')">
-            <div class="speech-bubble" id="bubble-{{ name }}">{{ data.default }}</div>
+        <div class="agent" id="agent-{{ name }}" style="left: {{ data.x }}px; top: {{ data.y }}px;" onclick="selectAgent('{{ name }}')">
+            <div class="speech-bubble" id="bubble-{{ name }}">{{ data.state }}</div>
             <div class="robot-sprite" style="border-color: {{ data.color }};">🤖</div>
             <div class="agent-name" style="color: {{ data.color }};">{{ name }}</div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- Komuta Paneli -->
-    <div id="command-panel">
-        <select id="agent-select">
-            {% for name, data in employees.items() %}
-            <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
-            {% endfor %}
-        </select>
-        <input type="text" id="ceo-message" placeholder="Stratejik komut ver veya piyasa sor..." onkeypress="checkEnter(event)">
-        <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
+    <div class="action-bar">
+        <div id="command-panel">
+            <select id="agent-select">
+                {% for name, data in employees.items() %}
+                <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
+                {% endfor %}
+            </select>
+            <input type="text" id="ceo-message" placeholder="Emir ver veya sohbet et..." onkeypress="checkEnter(event)">
+            <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
+        </div>
     </div>
 
-    <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ AUTONOMOUS OPERATIONS TERMINAL</span>
-            <span style="color: #34d399;">● LIVE SYNCED</span>
+            <span>⚡ LIVING SIMULATION TERMINAL</span>
+            <span style="color: #34d399;">● ACTIVE MOVEMENT</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Supabase veritabanı ve otonom arka plan işçisi devreye girdi.</div>
+            <div class="log-line">[SYSTEM]: Yaşayan ofis simülasyonu başlatıldı. Ajanlar koridorda geziniyor ve saksılar takip ediliyor.</div>
         </div>
     </div>
 
@@ -352,11 +256,45 @@ HTML_TEMPLATE = """
 
         function selectAgent(name) {
             document.getElementById('agent-select').value = name;
-            appendLog(`> [SEÇİM]: ${name} odasına bağlanıldı.`);
+            appendLog(`> [SEÇİM]: ${name} seçildi.`);
         }
 
         function checkEnter(event) {
             if (event.key === 'Enter') sendDirectMessage();
+        }
+
+        // Ajanların Hareket Etmesi ve Ayak İzi Bırakması (Animate Loop)
+        setInterval(() => {
+            fetch('/api/simulation-tick')
+            .then(res => res.json())
+            .then(data => {
+                data.agents.forEach(agent => {
+                    const el = document.getElementById('agent-' + agent.name);
+                    if (!el) return;
+                    
+                    const oldX = parseInt(el.style.left);
+                    const oldY = parseInt(el.style.top);
+                    
+                    el.style.left = agent.x + 'px';
+                    el.style.top = agent.y + 'px';
+                    document.getElementById('bubble-' + agent.name).innerText = agent.state;
+
+                    // Eğer hareket ediyorsa ayak izi bırak
+                    if (Math.abs(oldX - agent.x) > 2 || Math.abs(oldY - agent.y) > 2) {
+                        createFootprint(agent.x + 20, agent.y + 45);
+                    }
+                });
+            });
+        }, 2000);
+
+        function createFootprint(x, y) {
+            const floor = document.getElementById('office-floor');
+            const fp = document.createElement('div');
+            fp.className = 'footprint';
+            fp.style.left = x + 'px';
+            fp.style.top = y + 'px';
+            floor.appendChild(fp);
+            setTimeout(() => fp.remove(), 2000); // 2 saniye sonra silinir
         }
 
         function sendDirectMessage() {
@@ -365,7 +303,7 @@ HTML_TEMPLATE = """
             const messageText = messageInput.value.trim();
             if (!messageText) return;
 
-            appendLog(`> [KOMUT]: "${messageText}"`);
+            appendLog(`> [KOMUT -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
 
             fetch('/api/chat', {
@@ -375,11 +313,21 @@ HTML_TEMPLATE = """
             })
             .then(res => res.json())
             .then(data => {
-                document.getElementById('bubble-' + agentName).innerText = data.short_status;
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
-                if (data.handoff) {
-                    appendLog(`> [PASLAŞMA]: ${data.handoff}`);
-                }
+                if(data.action_type === 'kitchen') appendLog(`> [ETKİNLİK]: ${agentName} mutfağa kahve molasına gitti.`);
+                if(data.action_type === 'boardroom') appendLog(`> [ETKİNLİK]: ${agentName} toplantı odasına geçti.`);
+            });
+        }
+
+        function checkPlantStatus() {
+            fetch('/api/plants').then(res => res.json()).then(data => {
+                appendLog(`> [SİSTEM BİTKİ DURUMU]: ${data.status_text}`);
+            });
+        }
+
+        function triggerWatering() {
+            fetch('/api/water-plants', {method: 'POST'}).then(res => res.json()).then(data => {
+                appendLog(`> [SULAMA]: Çiçekler sulandı! Sağlık seviyesi %100 oldu.`);
             });
         }
     </script>
@@ -388,7 +336,6 @@ HTML_TEMPLATE = """
 """
 
 def log_to_supabase(agent_name, action_type, content):
-    """Yapılan işlemleri Supabase veritabanına kaydeder"""
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
@@ -397,70 +344,39 @@ def log_to_supabase(agent_name, action_type, content):
         cur.close()
         conn.close()
     except Exception as e:
-        print(f"Log Kayıt Hatası: {e}")
+        print(f"DB Hatası: {e}")
 
-def fetch_crypto_price():
-    """Canlı Kripto Verisi Çekme Motoru"""
-    try:
-        url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd"
-        res = requests.get(url, timeout=3).json()
-        btc = res.get("bitcoin", {}).get("usd", "N/A")
-        eth = res.get("ethereum", {}).get("usd", "N/A")
-        return f"BTC: ${btc} USD | ETH: ${eth} USD"
-    except:
-        return "Piyasa verisi geçici olarak alınamadı."
+# Otonom Konum Güncelleyici (Ajanlar Koridorda / Mutfakta / Odada Gezinir)
+import random
 
-# Otonom Arka Plan Döngüsü
-def autonomous_background_worker():
-    while True:
-        time.sleep(180) # Her 3 dakikada bir otomatik çalışma
-        try:
-            live_market = fetch_crypto_price()
-            log_to_supabase("İrfan", "AUTONOMOUS_SCAN", f"Periyodik Piyasa Taraması: {live_market}")
-        except Exception as e:
-            print(f"Otonom İşçi Hatası: {e}")
+@app.route('/api/simulation-tick', methods=['GET'])
+def simulation_tick():
+    agent_list = []
+    for name, data in employees.items():
+        # Rastgele otonom hareket kararı (Mutfak: x=850, y=100 | Toplantı: x=850, y=300 | Oda: Kendi evi)
+        if random.random() < 0.25: # %25 ihtimalle yer değiştirirler
+            destinations = [
+                (data["home_x"] if "home_x" in data else data["x"], data["home_y"] if "home_y" in data else data["y"]), # Kendi odası
+                (850, random.randint(50, 180)), # Mutfak
+                (850, random.randint(280, 400)) # Toplantı Odası
+            ]
+            dest = random.choice(destinations)
+            data["target_x"], data["target_y"] = dest
+            if dest[0] > 800:
+                data["state"] = "Mutfakta/Molada" if dest[1] < 200 else "Toplantıda"
+            else:
+                data["state"] = "Masasında"
 
-threading.Thread(target=autonomous_background_worker, daemon=True).start()
+        # Yavaşça hedefe doğru ilerle (smooth movement)
+        if data["x"] < data["target_x"]: data["x"] += min(15, data["target_x"] - data["x"])
+        elif data["x"] > data["target_x"]: data["x"] -= min(15, data["x"] - data["target_x"])
 
-def generate_agent_reply(agent_name, role, user_message):
-    try:
-        extra_context = ""
-        handoff_text = ""
-        
-        if any(w in user_message.lower() for w in ["btc", "bitcoin", "eth", "ethereum", "fiyat", "piyasa"]):
-            extra_context = f"\n[GÜNCEL PİYASA VERİSİ]: {fetch_crypto_price()}\n"
+        if data["y"] < data["target_y"]: data["y"] += min(15, data["target_y"] - data["y"])
+        elif data["y"] > data["target_y"]: data["y"] -= min(15, data["y"] - data["target_y"])
 
-        if "kod" in user_message.lower() or "yazılım" in user_message.lower():
-            handoff_text = "Siber Güvenlik Uzmanı Skrinar güvenlik testi için bilgilendirildi."
-        elif "sözleşme" in user_message.lower() or "hukuk" in user_message.lower():
-            handoff_text = "İnsan Kaynakları yöneticisi İsmail onay için bilgilendirildi."
+        agent_list.append({"name": name, "x": data["x"], "y": data["y"], "state": data["state"]})
 
-        system_prompt = (
-            f"Sen E-Trade Pro şirketinde {role} olarak çalışan {agent_name} adında üst düzey bir uzmansın. "
-            f"Kendi müstakil odandasın. Patronun Mertcan sana yazdı: '{user_message}'.\n"
-            f"{extra_context}\n"
-            f"Profesyonel, net, stratejik ve doğrudan konuya odaklanan bir rapor sun. Kısa ve öz ol."
-        )
-        
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message}
-        ]
-        
-        completion = groq_client.chat.completions.create(
-            model="openai/gpt-oss-20b",
-            messages=messages,
-            max_tokens=200,
-            temperature=0.7
-        )
-        
-        reply = completion.choices[0].message.content.strip('"').strip() if completion.choices else "Görev başında."
-        
-        log_to_supabase(agent_name, "CHAT_RESPONSE", f"Soru: {user_message} | Cevap: {reply}")
-
-        return reply, handoff_text
-    except Exception as e:
-        return f"Sistem hatası oluştu.", ""
+    return jsonify({"agents": agent_list})
 
 @app.route('/')
 def index():
@@ -475,40 +391,55 @@ def api_chat():
     if agent_name not in employees: agent_name = "İrfan"
     agent = employees[agent_name]
 
-    status_text, handoff = generate_agent_reply(agent_name, agent['role'], user_message)
+    action_type = "chat"
+    if "kahve" in user_message.lower() or "mola" in user_message.lower():
+        agent["target_x"], agent["target_y"] = 850, 100
+        agent["state"] = "Kahve Molasında"
+        action_type = "kitchen"
+    elif "toplantı" in user_message.lower():
+        agent["target_x"], agent["target_y"] = 850, 300
+        agent["state"] = "Toplantıda"
+        action_type = "boardroom"
 
-    return jsonify({
-        "status": status_text, 
-        "short_status": status_text[:22] + "..." if len(status_text) > 22 else status_text,
-        "handoff": handoff
-    })
+    try:
+        system_prompt = f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {agent_name} adında bir uzmansın. Patronun Mertcan sana yazdı: '{user_message}'. Kısa, net ve profesyonel yanıt ver."
+        completion = groq_client.chat.completions.create(
+            model="openai/gpt-oss-20b",
+            messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
+            max_tokens=150, temperature=0.7
+        )
+        reply = completion.choices[0].message.content.strip('"').strip()
+    except:
+        reply = "Emredersiniz patron, çalışıyorum."
 
-@app.route('/v1/chat/completions', methods=['POST'])
-def v1_chat_completions():
-    req_data = request.json
-    incoming_messages = req_data.get('messages', [])
-    last_user_msg = incoming_messages[-1].get('content', 'Selam') if incoming_messages else "Selam"
+    log_to_supabase(agent_name, action_type, f"Soru: {user_message} | Cevap: {reply}")
+    return jsonify({"status": reply, "action_type": action_type})
 
-    target_agent = "İrfan"
-    for name in employees.keys():
-        if name.lower() in last_user_msg.lower():
-            target_agent = name
-            break
+@app.route('/api/plants', methods=['GET'])
+def api_plants():
+    try:
+        conn = psycopg2.connect(DB_URL)
+        cur = conn.cursor()
+        cur.execute("SELECT plant_name, health_level, water_status FROM office_plants WHERE id=1;")
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        return jsonify({"status_text": f"{row[0]} -> Sağlık: %{row[1]} ({row[2]})"})
+    except:
+        return jsonify({"status_text": "Bitki durumu okunamadı."})
 
-    agent = employees[target_agent]
-    reply_text, _ = generate_agent_reply(target_agent, agent['role'], last_user_msg)
-
-    return jsonify({
-        "id": "chatcmpl-etrade",
-        "object": "chat.completion",
-        "created": 1700000000,
-        "model": "openai/gpt-oss-20b",
-        "choices": [{
-            "index": 0,
-            "message": {"role": "assistant", "content": f"[{target_agent} - {agent['role']}]: {reply_text}"},
-            "finish_reason": "stop"
-        }]
-    })
+@app.route('/api/water-plants', methods=['POST'])
+def water_plants():
+    try:
+        conn = psycopg2.connect(DB_URL)
+        cur = conn.cursor()
+        cur.execute("UPDATE office_plants SET health_level = 100, water_status = 'Çok İyi' WHERE id=1;")
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"success": True})
+    except:
+        return jsonify({"success": False})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
