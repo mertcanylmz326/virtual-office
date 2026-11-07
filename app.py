@@ -84,9 +84,9 @@ def check_system_uptime():
     return "UptimeRobot API aktif."
 
 employees = {
-    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Destek hazır"},
+    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri talebi alıyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Web Servis Dev Aktif"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Web Servis Endpoint Üretiyor"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -186,7 +186,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // WEB SERVICE DEPLOYMENT</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // WEB SERVICE ENDPOINTS</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -198,7 +198,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 WEBSERVİS: Canlı Dağıtım Aktif</span>
+        <span style="color: #fbbf24;">🚀 DESTEK -> YAZILIM ENTEGRASYONU AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -212,7 +212,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Brown'a çiçekçi sitesi kurdur..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Marco'ya müşteri talebi ver veya Brown'a site kurdur..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -220,10 +220,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● INTERNAL WEB-SERVICE DEPLOYMENT ACTIVE</span>
+            <span style="color: #38bdf8;">● DYNAMIC PREVIEW ROUTER ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Harici GitHub gereksinimi kaldırıldı. Projeler doğrudan bu web servis üzerinden `/preview/<id>` olarak yayınlanacak.</div>
+            <div class="log-line">[SYSTEM]: Destek ve Yazılım departmanları arası web servis bağlayıcısı hazır. Üretilen siteler doğrudan `/preview/ID` olarak sunulacak.</div>
         </div>
     </div>
 
@@ -401,7 +401,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} web serviste projeyi derliyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -411,12 +411,12 @@ HTML_TEMPLATE = """
             .then(res => res.json())
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
-                if(data.task_created && data.preview_url) {
-                    appendLog(`> [WEBSERVİS CANLI LİNK]: <a href="${data.preview_url}" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: underline;">${data.preview_url}</a> adresinden siteyi direkt açabilirsin!`);
+                if(data.preview_url) {
+                    appendLog(`> [CANLI WEB SERVİS LİNKİ]: <a href="${data.preview_url}" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: underline;">${data.preview_url}</a> (Müşteriye atılacak veya direkt açılacak link)`);
                 }
             })
             .catch(err => {
-                appendLog(`> [HATA]: Sunucu yanıt vermedi.`);
+                appendLog(`> [HATA]: Bağlantı kurulamadı.`);
             });
         }
 
@@ -530,12 +530,11 @@ def api_chat():
     if agent_name not in employees: agent_name = "Brown"
     agent = employees[agent_name]
 
-    task_created = False
-    html_code = ""
     preview_url = ""
+    reply = ""
 
-    if agent_name == "Brown" and any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
-        task_created = True
+    # Eğer Marco (Destek) veya Brown (Yazılım) üzerinden bir site/proje talebi gelirse
+    if any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
         try:
             code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, şık ve tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ham HTML kodunu döndür, asla markdown işaretleri (```html) veya açıklama metni ekleme."
             comp = groq_client.chat.completions.create(
@@ -556,22 +555,25 @@ def api_chat():
         try:
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
-            cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", ("Mertcan (CEO)", user_message[:40], "Web Servis Canlı", html_code))
+            cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
+                        ("Destek Müşterisi", user_message[:40], "Web Servis Canlı", html_code))
             project_id = cur.fetchone()[0]
             conn.commit()
             cur.close()
             conn.close()
-            
-            # Dinamik olarak kendi sunucu linkimizi üretiyoruz
+
+            # Sunucumuzun kendi linkini üretiyoruz
             host_url = request.host_url.rstrip('/')
             preview_url = f"{host_url}/preview/{project_id}"
         except Exception as e:
             print(f"DB Kayıt Hatası: {e}")
-            preview_url = "Hata oluştu"
 
-    reply = ""
+    # Ajanların yanıt üretmesi
     try:
-        system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} uzmanısın. Patronun Mertcan sana yazdı: '{user_message}'. Kısa ve net yanıt ver."
+        system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} uzmanısın. Patronun veya müşteri sana yazdı: '{user_message}'. Kısa ve karizmatik yanıt ver."
+        if preview_url:
+            system_prompt += f" Proje başarıyla kodlandı, web servis linki hazır: {preview_url}"
+
         completion = groq_client.chat.completions.create(
             model="qwen/qwen3.8-27b",
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
@@ -579,14 +581,14 @@ def api_chat():
         )
         reply = completion.choices[0].message.content.strip('"').strip()
     except:
-        reply = "Emredersiniz patron, talimatınız işleme alındı."
+        reply = f"Emredersiniz patron, {agent['role']} olarak talimatınız işleme alındı."
 
     if not reply:
-        reply = "Web servis üzerinde site yayına hazır!"
+        reply = f"İşlem tamamlandı patron, web servis linki hazır."
 
     employees[agent_name]["speech"] = reply[:25]
     log_to_supabase(agent_name, "SYSTEM_OP", f"Talimat: {user_message}")
-    return jsonify({"status": reply, "task_created": task_created, "preview_url": preview_url})
+    return jsonify({"status": reply, "preview_url": preview_url})
 
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
@@ -612,7 +614,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu dahili web servis sunum altyapısını onayladı."})
+    return jsonify({"decision": "Yönetim kurulu destek ve web servis entegrasyonunu onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
