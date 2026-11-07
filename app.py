@@ -14,7 +14,7 @@ app = Flask(__name__)
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
 GROQ_API_KEY = "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"
 COINGECKO_API_KEY = "CG-rU5NZkTSGvA1dXfNV58J26fK"
-GITHUB_TOKEN = "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"
+GITHUB_TOKEN = "ghp_xLsYEYRdwhwLkXlPILOMqn2z0cKs0y2CJ6Uw"
 GITHUB_USERNAME = "mertcanymlz326"
 
 UPTIMEROBOT_API_KEY = "u3671342-858d5db4b2fd40032fce3ce6"
@@ -282,10 +282,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● GITHUB & UPTIME SYNCED</span>
+            <span style="color: #38bdf8;">● GITHUB TOKEN AKTİF & SYNCED</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown ve İsmail tam yetkiyle aktif.</div>
+            <div class="log-line">[SYSTEM]: GitHub token güncellendi, Brown tam yetkiyle hazır.</div>
         </div>
     </div>
 
