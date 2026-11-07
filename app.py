@@ -3,7 +3,7 @@ from flask import Flask, render_template_string
 
 app = Flask(__name__)
 
-# 9 Kişilik Rüya Takımımız ve Her Birine Ait Tamamen Ayrı Özel Odalar
+# 9 Kişilik Rüya Takımımız ve Odaları
 employees = {
     "Marco": {"role": "Müşteri İlişkileri", "room": "Destek Odası", "home_x": 90, "home_y": 70, "color": "#3b82f6", "bubble": "Destek hattında..."},
     "Talisca": {"role": "Sipariş Takip", "room": "Operasyon Odası", "home_x": 270, "home_y": 70, "color": "#ef4444", "bubble": "Sipariş işliyor"},
@@ -21,10 +21,10 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - Separate Rooms HQ</title>
+    <title>E-Trade Pro - Pixel Robot HQ</title>
     <style>
         body { 
-            background-color: #06090f; 
+            background-color: #05070b; 
             color: #fff; 
             font-family: 'Courier New', Courier, monospace; 
             text-align: center; 
@@ -44,56 +44,60 @@ HTML_TEMPLATE = """
         }
         .top-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 4px 10px; border-radius: 4px; font-weight: bold; }
 
-        /* Parke Zeminli Ofis Katı */
+        /* Harbi Parke Zemin (Ahşap Parke Görsel Dokusu) */
         #office-floor { 
             position: relative; 
             width: 920px; 
             height: 480px; 
             margin: 10px auto; 
-            background-color: #20150f;
+            background-color: #2c1d11;
             background-image: 
-                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
-                linear-gradient(rgba(0,0,0,0.3) 1px, transparent 1px);
-            background-size: 45px 22px;
-            border: 5px solid #334155; 
+                linear-gradient(90deg, rgba(255,255,255,0.06) 2px, transparent 2px),
+                linear-gradient(rgba(0,0,0,0.35) 2px, transparent 2px),
+                linear-gradient(0deg, rgba(139, 69, 19, 0.2) 0%, rgba(0,0,0,0.5) 100%);
+            background-size: 60px 30px;
+            border: 6px solid #1e293b; 
             border-radius: 10px; 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.9); 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.95); 
             overflow: hidden;
         }
 
-        /* Herkesin Ayrı Odaları */
+        /* Odalar */
         .hq-room {
             position: absolute;
-            border: 3px solid #475569;
-            background: rgba(24, 18, 14, 0.9);
+            border: 4px solid #334155;
+            background: rgba(30, 20, 14, 0.92);
             border-radius: 6px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.7);
         }
         .hq-room-title {
             position: absolute;
             font-size: 7px;
             color: #94a3b8;
-            top: 3px;
+            top: 4px;
             left: 6px;
             font-weight: bold;
             letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         /* Kapılar */
         .hq-door {
             position: absolute;
-            background: #92400e;
-            border: 1px solid #78350f;
+            background: #78350f;
+            border: 2px solid #451a03;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 6px;
             color: #fde68a;
             font-weight: bold;
+            box-shadow: 0 0 8px rgba(0,0,0,0.8);
         }
 
-        /* Çalışma Masaları */
-        .desk { position: absolute; width: 50px; height: 26px; background: #27272a; border: 1px solid #52525b; border-radius: 3px; }
-        .pc-monitor { position: absolute; width: 18px; height: 10px; background: #38bdf8; top: 4px; left: 16px; border-radius: 2px; box-shadow: 0 0 5px #38bdf8; }
+        /* Masalar ve Monitörler */
+        .desk { position: absolute; width: 50px; height: 26px; background: #1c1917; border: 2px solid #44403c; border-radius: 3px; }
+        .pc-monitor { position: absolute; width: 18px; height: 10px; background: #38bdf8; top: 4px; left: 16px; border-radius: 2px; box-shadow: 0 0 8px #38bdf8; }
         
         /* Ortak Mola Alanı */
         .lounge-area {
@@ -102,7 +106,7 @@ HTML_TEMPLATE = """
             top: 200px;
             width: 100px;
             height: 80px;
-            background: rgba(14, 165, 233, 0.1);
+            background: rgba(14, 165, 233, 0.12);
             border: 2px dashed #0284c7;
             border-radius: 8px;
             display: flex;
@@ -121,7 +125,7 @@ HTML_TEMPLATE = """
             top: 105px;
             width: 70px;
             height: 70px;
-            background: radial-gradient(circle, #ef4444 0%, #991b1b 100%);
+            background: radial-gradient(circle, #dc2626 0%, #7f1d1d 100%);
             border: 3px solid #fff;
             border-radius: 50%;
             display: flex;
@@ -130,50 +134,52 @@ HTML_TEMPLATE = """
             justify-content: center;
             font-size: 10px;
             font-weight: bold;
-            box-shadow: 0 0 25px rgba(239, 68, 68, 0.9);
+            box-shadow: 0 0 25px rgba(220, 38, 38, 0.9);
             z-index: 50;
         }
 
-        /* Ajanlar */
+        /* Piksel Robot Karakterler (Ayak Adımları / Yürüme Animasyonlu) */
         .agent { 
             position: absolute; 
             width: 45px; 
-            height: 50px; 
+            height: 55px; 
             cursor: pointer; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            transition: left 2s cubic-bezier(0.4, 0, 0.2, 1), top 2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: left 2.2s cubic-bezier(0.4, 0, 0.2, 1), top 2.2s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 30;
         }
-        .agent-avatar {
-            font-size: 14px;
-            background: #18181b;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
+        
+        .robot-sprite {
+            width: 32px;
+            height: 32px;
+            background-color: #18181b;
+            border: 2px solid;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.6);
-            animation: bounceWalk 0.5s infinite alternate;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.8);
+            animation: robotStep 0.4s infinite alternate; /* Gerçek ayak adımları / yürüme efekti */
         }
+
         .agent-name {
             font-size: 7px;
             font-weight: bold;
             background: rgba(15, 23, 42, 0.95);
             padding: 1px 3px;
             border-radius: 3px;
-            margin-top: 1px;
+            margin-top: 2px;
             white-space: nowrap;
             border: 1px solid #475569;
         }
         
         .speech-bubble {
             position: absolute;
-            top: -20px;
+            top: -22px;
             background: #f8fafc;
             color: #0f172a;
             font-size: 6px;
@@ -181,15 +187,15 @@ HTML_TEMPLATE = """
             padding: 2px 4px;
             border-radius: 4px;
             white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
             pointer-events: none;
         }
 
         .agent:hover { transform: scale(1.3); z-index: 100; }
 
-        @keyframes bounceWalk {
-            0% { transform: translateY(0px); }
-            100% { transform: translateY(-3px); }
+        @keyframes robotStep {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-4px) rotate(2deg); }
         }
 
         #game-console {
@@ -209,27 +215,21 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - SEPARATE ROOMS EDITION</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - PIXEL ROBOT EDITION</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">HERKESİN AYRI ODASI VAR</span>
+            <span class="top-btn" style="color: #34d399;">YÜRÜYEN PİKSEL ROBOTLAR AKTİF</span>
         </div>
     </div>
 
     <div id="office-floor">
-        <!-- Sol Üst: Marco & Talisca -->
+        <!-- Odalar -->
         <div class="hq-room" style="left: 15px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">MARCO (DESTEK)</div></div>
         <div class="hq-room" style="left: 225px; top: 15px; width: 195px; height: 215px;"><div class="hq-room-title">TALİSCA (SİPARİŞ)</div></div>
-
-        <!-- Sağ Üst: Brown & Kante -->
         <div class="hq-room" style="left: 495px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">BROWN (YAZILIM)</div></div>
         <div class="hq-room" style="left: 705px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">KANTE (PAZARLAMA)</div></div>
-
-        <!-- Sol Alt: İsmail & Alex -->
         <div class="hq-room" style="left: 15px; top: 255px; width: 200px; height: 215px;"><div class="hq-room-title">İSMAİL (İK)</div></div>
         <div class="hq-room" style="left: 225px; top: 255px; width: 195px; height: 215px;"><div class="hq-room-title">ALEX (HUKUK)</div></div>
-
-        <!-- Sağ Alt: Skrinar, Kerem & İrfan -->
         <div class="hq-room" style="left: 495px; top: 255px; width: 130px; height: 215px;"><div class="hq-room-title">SKRİNAR (SİBER)</div></div>
         <div class="hq-room" style="left: 635px; top: 255px; width: 130px; height: 215px;"><div class="hq-room-title">KEREM (BAŞARI)</div></div>
         <div class="hq-room" style="left: 775px; top: 255px; width: 130px; height: 215px;"><div class="hq-room-title">İRFAN (FİNANS)</div></div>
@@ -265,21 +265,21 @@ HTML_TEMPLATE = """
         <div class="agent" id="agent-{{ name }}" style="left: {{ data.home_x }}px; top: {{ data.home_y }}px;" 
              onclick="selectAgent('{{ name }}', '{{ data.role }}', '{{ data.room }}', '{{ data.bubble }}')">
             <div class="speech-bubble">{{ data.bubble }}</div>
-            <div class="agent-avatar" style="border-color: {{ data.color }};">🤖</div>
+            <div class="robot-sprite" style="border-color: {{ data.color }};">🤖</div>
             <div class="agent-name" style="color: {{ data.color }};">{{ name }}</div>
         </div>
         {% endfor %}
     </div>
 
     <div id="game-console">
-        > [SİSTEM]: Herkesin kendine ait özel odası tanımlandı. Asla birbirlerinin odasına girmiyorlar, sadece mola alanında buluşuyorlar.
+        > [SİSTEM]: Gerçek ahşap parke zemin, piksel robot sprite'ları, yürüme animasyonları ve özel odalar tam formunda yüklendi!
     </div>
 
     <script>
         const consoleBox = document.getElementById('game-console');
 
         function selectAgent(name, role, room, bubble) {
-            consoleBox.innerHTML = `> [AJAN RAPORU] <b>${name}</b> (${role}) | Özel Odası: <b>${room}</b> | Durum: <i>"${bubble}"</i>`;
+            consoleBox.innerHTML = `> [AJAN RAPORU] <b>${name}</b> (${role}) | Oda: <b>${room}</b> | Durum: <i>"${bubble}"</i>`;
         }
 
         const employeesData = {{ employees | tojson }};
