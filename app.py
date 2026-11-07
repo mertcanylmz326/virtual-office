@@ -32,7 +32,7 @@ def init_db():
                 water_status TEXT DEFAULT 'Mükemmel'
             );
         """)
-        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Cyber Saksı', 100) ON CONFLICT (id) DO NOTHING;")
+        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Mimari Saksı', 100) ON CONFLICT (id) DO NOTHING;")
         conn.commit()
         cur.close()
         conn.close()
@@ -41,19 +41,19 @@ def init_db():
 
 init_db()
 
-# Her ajanın kendi odasının merkez koordinatları (Ev / Başlangıç noktası)
+# Odaların merkez (ev) koordinatları
 employees = {
-    "Marco": {"role": "Destek", "home_x": 75, "home_y": 70, "x": 75, "y": 70, "target_x": 75, "target_y": 70, "color": "#3b82f6", "state": "Ofisinde"},
-    "Talisca": {"role": "Operasyon", "home_x": 285, "home_y": 70, "x": 285, "y": 70, "target_x": 285, "target_y": 70, "color": "#ef4444", "state": "Ofisinde"},
-    "Brown": {"role": "Yazılım", "home_x": 495, "home_y": 70, "x": 495, "y": 70, "target_x": 495, "target_y": 70, "color": "#10b981", "state": "Ofisinde"},
+    "Marco": {"role": "Destek", "home_x": 75, "home_y": 75, "x": 75, "y": 75, "target_x": 75, "target_y": 75, "color": "#3b82f6", "state": "Ofisinde"},
+    "Talisca": {"role": "Operasyon", "home_x": 285, "home_y": 75, "x": 285, "y": 75, "target_x": 285, "target_y": 75, "color": "#ef4444", "state": "Ofisinde"},
+    "Brown": {"role": "Yazılım", "home_x": 495, "home_y": 75, "x": 495, "y": 75, "target_x": 495, "target_y": 75, "color": "#10b981", "state": "Ofisinde"},
     
-    "Kante": {"role": "Pazarlama", "home_x": 75, "home_y": 200, "x": 75, "y": 200, "target_x": 75, "target_y": 200, "color": "#f59e0b", "state": "Ofisinde"},
-    "İrfan": {"role": "Finans", "home_x": 285, "home_y": 200, "x": 285, "y": 200, "target_x": 285, "target_y": 200, "color": "#8b5cf6", "state": "Ofisinde"},
-    "İsmail": {"role": "İK", "home_x": 495, "home_y": 200, "x": 495, "y": 200, "target_x": 495, "target_y": 200, "color": "#f97316", "state": "Ofisinde"},
+    "Kante": {"role": "Pazarlama", "home_x": 75, "home_y": 210, "x": 75, "y": 210, "target_x": 75, "target_y": 210, "color": "#f59e0b", "state": "Ofisinde"},
+    "İrfan": {"role": "Finans", "home_x": 285, "home_y": 210, "x": 285, "y": 210, "target_x": 285, "target_y": 210, "color": "#8b5cf6", "state": "Ofisinde"},
+    "İsmail": {"role": "İK", "home_x": 495, "home_y": 210, "x": 495, "y": 210, "target_x": 495, "target_y": 210, "color": "#f97316", "state": "Ofisinde"},
     
-    "Alex": {"role": "Hukuk", "home_x": 75, "home_y": 330, "x": 75, "y": 330, "target_x": 75, "target_y": 330, "color": "#14b8a6", "state": "Ofisinde"},
-    "Skrinar": {"role": "Siber", "home_x": 285, "home_y": 330, "x": 285, "y": 330, "target_x": 285, "target_y": 330, "color": "#64748b", "state": "Ofisinde"},
-    "Kerem": {"role": "Başarı", "home_x": 495, "home_y": 330, "x": 495, "y": 330, "target_x": 495, "target_y": 330, "color": "#ec4899", "state": "Ofisinde"}
+    "Alex": {"role": "Hukuk", "home_x": 75, "home_y": 345, "x": 75, "y": 345, "target_x": 75, "target_y": 345, "color": "#14b8a6", "state": "Ofisinde"},
+    "Skrinar": {"role": "Siber", "home_x": 285, "home_y": 345, "x": 285, "y": 345, "target_x": 285, "target_y": 345, "color": "#64748b", "state": "Ofisinde"},
+    "Kerem": {"role": "Başarı", "home_x": 495, "home_y": 345, "x": 495, "y": 345, "target_x": 495, "target_y": 345, "color": "#ec4899", "state": "Ofisinde"}
 }
 
 HTML_TEMPLATE = """
@@ -61,10 +61,10 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - 3D Isometric Cyber Office</title>
+    <title>E-Trade Pro - Architectural 3D Office</title>
     <style>
         body { 
-            background-color: #010409; 
+            background-color: #020617; 
             color: #f8fafc; 
             font-family: 'Courier New', Courier, monospace; 
             text-align: center; 
@@ -86,73 +86,84 @@ HTML_TEMPLATE = """
             background: #1e293b; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 14px; 
             border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.2s;
         }
-        .top-btn:hover { background: #38bdf8; color: #010409; box-shadow: 0 0 12px #38bdf8; }
+        .top-btn:hover { background: #38bdf8; color: #020617; box-shadow: 0 0 12px #38bdf8; }
 
-        /* 3D İzometrik Ofis Sahnesi */
+        /* Gerçek 3D Mimari Sahne */
         #office-container {
-            perspective: 1200px;
-            margin: 20px auto;
-            width: 1020px;
+            perspective: 1400px;
+            margin: 15px auto;
+            width: 1040px;
             height: 520px;
         }
 
         #office-floor { 
             position: relative; 
-            width: 1020px; 
+            width: 1040px; 
             height: 500px; 
-            background-color: #0b1120;
-            /* Parke ve zemin dokusu */
+            background-color: #090d16;
             background-image: 
-                linear-gradient(90deg, rgba(56,189,248,0.05) 1px, transparent 1px),
-                linear-gradient(rgba(56,189,248,0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
-            border: 4px solid #38bdf8; 
+                linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px),
+                linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            border: 5px solid #1e293b; 
             border-radius: 12px; 
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), inset 0 0 60px rgba(0,0,0,0.8); 
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), inset 0 0 80px rgba(0,0,0,0.9); 
             overflow: hidden;
-            transform: rotateX(18deg); /* Gerçek 3D Oyun Görünümü */
+            transform: rotateX(15deg); /* Gerçekçi Mimari Açı */
             transform-style: preserve-3d;
         }
 
-        /* Ana Koridor Şeridi */
-        .hallway-h {
-            position: absolute; left: 0; right: 0; height: 35px; background: rgba(30, 41, 59, 0.4);
-            border-top: 1px dashed rgba(56,189,248,0.2); border-bottom: 1px dashed rgba(56,189,248,0.2);
+        /* Parke Kaplı Ana Koridorlar (Yürüyüş Yolları) */
+        .corridor-h {
+            position: absolute; left: 0; right: 0; height: 32px; 
+            background: #111827;
+            border-top: 2px solid #334155; border-bottom: 2px solid #334155;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
         }
-        .hallway-v {
-            position: absolute; top: 0; bottom: 0; width: 40px; background: rgba(30, 41, 59, 0.4);
-            border-left: 1px dashed rgba(56,189,248,0.2); border-right: 1px dashed rgba(56,189,248,0.2);
+        .corridor-v {
+            position: absolute; top: 0; bottom: 0; width: 35px; 
+            background: #111827;
+            border-left: 2px solid #334155; border-right: 2px solid #334155;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
         }
 
-        /* Düzenli Odalar */
+        /* Kalın Duvarlı, Gerçekçi 3D Odalar */
         .room {
             position: absolute;
-            border: 2px solid #334155;
-            background: rgba(15, 23, 42, 0.9);
-            border-radius: 8px;
-            width: 195px;
+            border: 4px solid #475569; /* Kalın 3D Duvar Çerçevesi */
+            background: #0f172a;
+            border-radius: 6px;
+            width: 190px;
             height: 110px;
-            box-shadow: inset 0 0 12px rgba(0,0,0,0.7);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,0,0,0.6);
         }
-        .room-label { position: absolute; font-size: 7px; color: #38bdf8; top: 4px; left: 6px; font-weight: bold; text-transform: uppercase; }
+        .room-label { 
+            position: absolute; font-size: 7px; color: #38bdf8; top: 3px; left: 6px; 
+            font-weight: bold; text-transform: uppercase; background: #020617; padding: 1px 4px; border-radius: 2px;
+            border: 1px solid #1e293b;
+        }
+        /* Odaların Kapı Çıkışları (Görsel Detay) */
+        .room-door {
+            position: absolute; background: #78350f; border: 1px solid #451a03;
+        }
 
-        /* Sağ Taraf: Mutfak ve Toplantı Odası */
+        /* Sağ Bölüm: Mutfak ve Zirve Odası (Geniş ve Belirgin) */
         .kitchen-room {
-            position: absolute; left: 780px; top: 15px; width: 220px; height: 220px;
-            border: 2px solid #f59e0b; background: rgba(120, 53, 15, 0.2); border-radius: 8px;
+            position: absolute; left: 790px; top: 15px; width: 235px; height: 220px;
+            border: 4px solid #d97706; background: rgba(120, 53, 15, 0.25); border-radius: 8px;
             display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: #fde68a;
-            box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8), inset 0 0 20px rgba(217, 119, 6, 0.3);
         }
         .boardroom {
-            position: absolute; left: 780px; top: 255px; width: 220px; height: 225px;
-            border: 2px solid #a855f7; background: rgba(109, 40, 217, 0.2); border-radius: 8px;
+            position: absolute; left: 790px; top: 255px; width: 235px; height: 230px;
+            border: 4px solid #8b5cf6; background: rgba(109, 40, 217, 0.25); border-radius: 8px;
             display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: #e9d5ff;
-            box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.3);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8), inset 0 0 20px rgba(139, 92, 246, 0.3);
         }
 
         /* Saksılar */
         .plant-pot {
-            position: absolute; width: 30px; height: 30px; background: #78350f; border: 2px solid #b45309;
+            position: absolute; width: 32px; height: 32px; background: #78350f; border: 2px solid #b45309;
             border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; z-index: 10;
         }
         .plant-status { position: absolute; top: -14px; font-size: 6px; background: #000; color: #4ade80; padding: 1px 3px; border-radius: 3px; white-space: nowrap; border: 1px solid #4ade80; }
@@ -173,7 +184,7 @@ HTML_TEMPLATE = """
         .robot-sprite {
             width: 26px; height: 26px; background-color: #0f172a; border: 2px solid; border-radius: 6px;
             display: flex; align-items: center; justify-content: center; font-size: 12px; 
-            box-shadow: 0 0 8px rgba(0,0,0,0.9);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.9);
         }
         .agent-name { font-size: 6px; font-weight: bold; background: rgba(15, 23, 42, 0.95); padding: 1px 2px; border-radius: 2px; margin-top: 1px; white-space: nowrap; border: 1px solid #334155; }
         .speech-bubble {
@@ -181,7 +192,7 @@ HTML_TEMPLATE = """
             padding: 2px 4px; border-radius: 3px; white-space: nowrap; box-shadow: 0 0 6px rgba(255,255,255,0.5); pointer-events: none;
         }
 
-        .action-bar { margin: 15px auto; width: 1020px; display: flex; justify-content: space-between; gap: 10px; }
+        .action-bar { margin: 15px auto; width: 1040px; display: flex; justify-content: space-between; gap: 10px; }
         #command-panel {
             background: #0f172a; border: 2px solid #334155; padding: 10px; border-radius: 8px; display: flex; gap: 10px; align-items: center; flex-grow: 1;
         }
@@ -191,7 +202,7 @@ HTML_TEMPLATE = """
         .send-btn:hover { background: #0369a1; }
 
         #activity-terminal {
-            margin: 0 auto 20px auto; width: 1020px; background: #020617; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden;
+            margin: 0 auto 20px auto; width: 1040px; background: #020617; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden;
         }
         .terminal-header { background: #0f172a; padding: 8px 15px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; }
         .terminal-body { padding: 10px; height: 90px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; }
@@ -207,44 +218,72 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // STABLE 3D ISOMETRIC HQ</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // ARCHITECTURAL 3D HQ</div>
         <div>
             <span class="top-btn" onclick="checkPlantStatus()">🌿 BİTKİ DURUMU</span>
             <span class="top-btn" onclick="triggerWatering()">💧 SULAMA YAP</span>
         </div>
     </div>
 
-    <!-- 3D Sahne Konteyneri -->
+    <!-- 3D Mimari Ofis Sahnesi -->
     <div id="office-container">
         <div id="office-floor">
-            <!-- Koridorlar -->
-            <div class="hallway-h" style="top: 130px;"></div>
-            <div class="hallway-h" style="top: 260px;"></div>
-            <div class="hallway-v" style="left: 235px;"></div>
-            <div class="hallway-v" style="left: 540px;"></div>
+            <!-- Parke Kaplı Koridorlar -->
+            <div class="corridor-h" style="top: 132px;"></div>
+            <div class="corridor-h" style="top: 267px;"></div>
+            <div class="corridor-v" style="left: 225px;"></div>
+            <div class="corridor-v" style="left: 450px;"></div>
+            <div class="corridor-v" style="left: 745px;"></div>
 
-            <!-- Sol ve Orta Bölüm: 9 Özgün Oda -->
-            <div class="room" style="left: 20px; top: 15px;"><div class="room-label">1. MARCO (DESTEK)</div></div>
-            <div class="room" style="left: 245px; top: 15px;"><div class="room-label">2. TALİSCA (OPERASYON)</div></div>
-            <div class="room" style="left: 475px; top: 15px;"><div class="room-label">3. BROWN (YAZILIM)</div></div>
+            <!-- 9 Özgün Duvarlı Oda ve Kapı Detayları -->
+            <div class="room" style="left: 20px; top: 15px;">
+                <div class="room-label">1. MARCO (DESTEK)</div>
+                <div class="room-door" style="right: -4px; top: 40px; width: 6px; height: 25px;"></div>
+            </div>
+            <div class="room" style="left: 245px; top: 15px;">
+                <div class="room-label">2. TALİSCA (OPERASYON)</div>
+                <div class="room-door" style="right: -4px; top: 40px; width: 6px; height: 25px;"></div>
+            </div>
+            <div class="room" style="left: 470px; top: 15px;">
+                <div class="room-label">3. BROWN (YAZILIM)</div>
+                <div class="room-door" style="bottom: -4px; left: 80px; width: 25px; height: 6px;"></div>
+            </div>
             
-            <div class="room" style="left: 20px; top: 145px;"><div class="room-label">4. KANTE (PAZARLAMA)</div></div>
-            <div class="room" style="left: 245px; top: 145px;"><div class="room-label">5. İRFAN (FİNANS)</div></div>
-            <div class="room" style="left: 475px; top: 145px;"><div class="room-label">6. İSMAİL (İK)</div></div>
+            <div class="room" style="left: 20px; top: 150px;">
+                <div class="room-label">4. KANTE (PAZARLAMA)</div>
+                <div class="room-door" style="right: -4px; top: 40px; width: 6px; height: 25px;"></div>
+            </div>
+            <div class="room" style="left: 245px; top: 150px;">
+                <div class="room-label">5. İRFAN (FİNANS)</div>
+                <div class="room-door" style="right: -4px; top: 40px; width: 6px; height: 25px;"></div>
+            </div>
+            <div class="room" style="left: 470px; top: 150px;">
+                <div class="room-label">6. İSMAİL (İK)</div>
+                <div class="room-door" style="bottom: -4px; left: 80px; width: 25px; height: 6px;"></div>
+            </div>
 
-            <div class="room" style="left: 20px; top: 275px;"><div class="room-label">7. ALEX (HUKUK)</div></div>
-            <div class="room" style="left: 245px; top: 275px;"><div class="room-label">8. SKRİNAR (SİBER)</div></div>
-            <div class="room" style="left: 475px; top: 275px;"><div class="room-label">9. KEREM (BAŞARI)</div></div>
+            <div class="room" style="left: 20px; top: 285px;">
+                <div class="room-label">7. ALEX (HUKUK)</div>
+                <div class="room-door" style="right: -4px; top: 40px; width: 6px; height: 25px;"></div>
+            </div>
+            <div class="room" style="left: 245px; top: 285px;">
+                <div class="room-label">8. SKRİNAR (SİBER)</div>
+                <div class="room-door" style="right: -4px; top: 40px; width: 6px; height: 25px;"></div>
+            </div>
+            <div class="room" style="left: 470px; top: 285px;">
+                <div class="room-label">9. KEREM (BAŞARI)</div>
+                <div class="room-door" style="top: -4px; left: 80px; width: 25px; height: 6px;"></div>
+            </div>
 
             <!-- Sağ Taraf: Mutfak ve Zirve Odası -->
-            <div class="kitchen-room">☕ MUTFAK & KAHVE ALANI</div>
+            <div class="kitchen-room">☕ MUTFAK & MOLA ALANI</div>
             <div class="boardroom">🤝 OTONOM ZİRVE ODASI</div>
 
             <!-- Saksılar -->
-            <div class="plant-pot" style="left: 215px; top: 90px;" id="plant-1">
+            <div class="plant-pot" style="left: 210px; top: 95px;" id="plant-1">
                 <span class="plant-status" id="plant-status-1">🌿 %100</span>🌱
             </div>
-            <div class="plant-pot" style="left: 730px; top: 90px;" id="plant-2">
+            <div class="plant-pot" style="left: 715px; top: 95px;" id="plant-2">
                 <span class="plant-status" id="plant-status-2">🌿 %100</span>🌵
             </div>
 
@@ -275,11 +314,11 @@ HTML_TEMPLATE = """
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ STABLE 3D OPERATIONS TERMINAL</span>
-            <span style="color: #34d399;">● GRID & CORRIDOR SYNCED</span>
+            <span>⚡ ARCHITECTURAL 3D OPERATIONS TERMINAL</span>
+            <span style="color: #34d399;">● WALLS & CORRIDORS SYNCED</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Kararlı 3D izometrik şebeke, koridorlar ve çakışma koruması etkinleştirildi.</div>
+            <div class="log-line">[SYSTEM]: Gerçek 3D kalın duvarlı odalar ve parke koridor mimarisi başarıyla yüklendi.</div>
         </div>
     </div>
 
@@ -310,7 +349,7 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "🤖 " + name;
             document.getElementById('modal-role').innerText = "Departman: " + role;
-            document.getElementById('modal-status').innerText = "Anlık Durum: Kararlı odasında görevde.";
+            document.getElementById('modal-status').innerText = "Anlık Durum: Kendi odasında mimari görevde.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -372,7 +411,7 @@ HTML_TEMPLATE = """
             .then(res => res.json())
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
-                if(data.action_type === 'kitchen') appendLog(`> [OTONOM]: ${agentName} mutfağa geçti.`);
+                if(data.action_type === 'kitchen') appendLog(`> [OTONOM]: ${agentName} mutfağa koridordan yürüdü.`);
                 if(data.action_type === 'boardroom') appendLog(`> [OTONOM]: ${agentName} zirve odasına geçti.`);
             });
         }
@@ -385,7 +424,7 @@ HTML_TEMPLATE = """
 
         function triggerWatering() {
             fetch('/api/water-plants', {method: 'POST'}).then(res => res.json()).then(data => {
-                appendLog(`> [SULAMA]: Çiçekler sulandı, sağlık %100!`);
+                appendLog(`> [SULAMA]: Çiçekler sulandı, bitki sağlığı %100!`);
             });
         }
     </script>
@@ -409,20 +448,18 @@ def simulation_tick():
     agent_list = []
     for name, data in employees.items():
         if random.random() < 0.2:
-            # Hedefler: Ya kendi odası (home) ya Mutfak ya da Zirve Odası
             destinations = [
                 (data["home_x"], data["home_y"]),
-                (random.randint(810, 930), random.randint(40, 180)),   # Mutfak içi
-                (random.randint(810, 930), random.randint(280, 420))  # Toplantı odası içi
+                (random.randint(810, 970), random.randint(40, 180)),   # Mutfak içi
+                (random.randint(810, 970), random.randint(280, 420))  # Toplantı odası içi
             ]
             dest = random.choice(destinations)
             data["target_x"], data["target_y"] = dest
-            if dest[0] > 700:
+            if dest[0] > 750:
                 data["state"] = "☕ Molada" if dest[1] < 220 else "🤝 Toplantıda"
             else:
                 data["state"] = "Ofisinde"
 
-        # Hedefe doğru akıcı ilerleme
         if data["x"] < data["target_x"]: data["x"] += min(12, data["target_x"] - data["x"])
         elif data["x"] > data["target_x"]: data["x"] -= min(12, data["x"] - data["target_x"])
 
