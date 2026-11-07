@@ -2,8 +2,9 @@ import os
 import time
 import random
 import datetime
+import base64
 import psycopg2
-from flask import Flask, render_template_string, jsonify, request, Response
+from flask import Flask, render_template_string, jsonify, request
 from groq import Groq
 
 app = Flask(__name__)
@@ -13,7 +14,6 @@ GROQ_API_KEY = "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"
 COINGECKO_API_KEY = "CG-rU5NZkTSGvA1dXfNV58J26fK"
 
 UPTIMEROBOT_API_KEY = "u3671342-858d5db4b2fd40032fce3ce6"
-SUPABASE_REST_URL = "[https://prphsmgaujdwrqqdmmrd.supabase.co/rest/v1/](https://prphsmgaujdwrqqdmmrd.supabase.co/rest/v1/)"
 
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
@@ -41,7 +41,6 @@ def init_db():
                 project_type TEXT,
                 status TEXT DEFAULT 'Tamamlandı',
                 repo_url TEXT,
-                html_code TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
@@ -56,7 +55,7 @@ init_db()
 def get_crypto_price(coin_id="bitcoin"):
     try:
         import requests
-        url = f"[https://api.coingecko.com/api/v3/simple/price?ids=](https://api.coingecko.com/api/v3/simple/price?ids=){coin_id}&vs_currencies=usd"
+        url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd"
         headers = {"x-cg-demo-api-key": COINGECKO_API_KEY}
         response = requests.get(url, headers=headers, timeout=5)
         data = response.json()
@@ -69,7 +68,7 @@ def get_crypto_price(coin_id="bitcoin"):
 def check_system_uptime():
     try:
         import requests
-        url = "[https://api.uptimerobot.com/v2/getMonitors](https://api.uptimerobot.com/v2/getMonitors)"
+        url = "https://api.uptimerobot.com/v2/getMonitors"
         payload = {"api_key": UPTIMEROBOT_API_KEY, "format": "json"}
         response = requests.post(url, data=payload, timeout=5)
         data = response.json()
@@ -86,7 +85,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Tek Tıkla Link Üretiyor"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Anlık Canlı Link Üretiyor"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -198,7 +197,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 BROWN TEK TIKLA LİNK MODU</span>
+        <span style="color: #fbbf24;">🚀 BROWN ANLIK BASE64 ÖNİZLEME AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -220,10 +219,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● CLEAN LINK OUTPUT ACTIVE</span>
+            <span style="color: #38bdf8; font-weight: bold;">● INSTANT DATA-URI LINK ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown hazır. Site tamamlandığında devasa kodlar ekrana basılmayacak, doğrudan tıklanabilir canlı web servis linki çıkacak!</div>
+            <div class="log-line">[SYSTEM]: Brown hazır. Site üretildiği an doğrudan tıklanabilir canlı sekme linki belirecek!</div>
         </div>
     </div>
 
@@ -240,7 +239,7 @@ HTML_TEMPLATE = """
             logDiv.className = 'log-line';
             logDiv.innerHTML = `[${time}] ${text}`;
             terminalLogs.prepend(logDiv);
-            terminalLogs.scrollTop = 0; // En üste kaydır
+            terminalLogs.scrollTop = 0;
         }
 
         function selectAgent(name) {
@@ -413,7 +412,7 @@ HTML_TEMPLATE = """
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
                 if(data.preview_url) {
-                    appendLog(`> 🚀 <b style="color: #38bdf8; font-size: 14px;">CANLI WEBSERVİS LİNKİ (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">${data.preview_url}</a>`);
+                    appendLog(`> 🚀 <b style="color: #38bdf8; font-size: 14px;">CANLI SİTE LİNKİ (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Tarayıcıda Canlı Aç 🌐</a>`);
                 }
             })
             .catch(err => {
@@ -507,21 +506,6 @@ def simulation_tick():
 def index():
     return render_template_string(HTML_TEMPLATE, employees=employees)
 
-@app.route('/preview/<int:project_id>')
-def preview_project(project_id):
-    try:
-        conn = psycopg2.connect(DB_URL)
-        cur = conn.cursor()
-        cur.execute("SELECT html_code FROM client_orders WHERE id = %s", (project_id,))
-        row = cur.fetchone()
-        cur.close()
-        conn.close()
-        if row and row[0]:
-            return Response(row[0], mimetype='text/html')
-    except Exception as e:
-        print(f"Preview Hatası: {e}")
-    return "Proje bulunamadı veya henüz oluşturulmadı.", 404
-
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
     data = request.json
@@ -535,7 +519,7 @@ def api_chat():
     reply = ""
     html_code = ""
 
-    # SADECE BROWN KOD ÜRETİR
+    # SADECE BROWN KOD ÜRETİR VE ANINDA BASE64 DATA-URI LİNKİ VERİR
     if agent_name == "Brown" and any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
         try:
             code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, şık ve tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ham HTML kodunu döndür, asla markdown işaretleri (```html) veya açıklama metni ekleme."
@@ -554,24 +538,24 @@ def api_chat():
         except Exception as e:
             html_code = f"<!DOCTYPE html><html><body><h1>Hata: {e}</h1></body></html>"
 
+        # Veritabanı hatası riskini sıfırlamak için doğrudan Base64 Data URI oluşturuyoruz
+        encoded_html = base64.b64encode(html_code.encode('utf-8')).decode('utf-8')
+        preview_url = f"data:text/html;base64,{encoded_html}"
+
         try:
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
-            cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
-                        ("Brown (Yazılımcı)", user_message[:40], "Web Servis Canlı", html_code))
-            project_id = cur.fetchone()[0]
+            cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url) VALUES (%s, %s, %s)", 
+                        ("Brown (Yazılımcı)", user_message[:40], "Data URI Canlı"))
             conn.commit()
             cur.close()
             conn.close()
-
-            host_url = request.host_url.rstrip('/')
-            preview_url = f"{host_url}/preview/{project_id}"
         except Exception as e:
             print(f"DB Kayıt Hatası: {e}")
 
     try:
         if agent_name == "Brown" and preview_url:
-            reply = "Patron, site kodlandı ve web servis üzerinde yayına alındı!"
+            reply = "Patron, site kodlandı ve canlı önizleme linki hazır!"
         else:
             system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} departmanında çalışan {agent_name} adında bir uzmansın. Patronun sana yazdı: '{user_message}'. Kendi departmanına uygun, kısa ve net bir yanıt ver."
             completion = groq_client.chat.completions.create(
@@ -607,14 +591,14 @@ def api_tasks():
         rows = cur.fetchall()
         cur.close()
         conn.close()
-        tasks = [f"[{r[1]}]: {r[2]} (Link: /preview/{r[0]})" for r in rows]
+        tasks = [f"[{r[1]}]: {r[2]}" for r in rows]
         return jsonify({"tasks": tasks if tasks else ["Proje yok."]})
     except:
         return jsonify({"tasks": ["Yüklenemedi."]})
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu yazılım görevlerinin sadece Brown tarafından yürütülmesini onayladı."})
+    return jsonify({"decision": "Yönetim kurulu anlık Base64 önizleme altyapısını onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
