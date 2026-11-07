@@ -263,7 +263,7 @@ HTML_TEMPLATE = """
         <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - UNIFIED BRIDGE</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">WEBUI / CHAT SYNC</span>
+            <span class="top-btn" style="color: #34d399;">GUARDED SYNC</span>
         </div>
     </div>
 
@@ -316,7 +316,7 @@ HTML_TEMPLATE = """
             <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
             {% endfor %}
         </select>
-        <input type="text" id="ceo-message" placeholder="Komut ver (Örn: Yeni eleman al: Cem, rolü: Destek)..." onkeypress="checkEnter(event)">
+        <input type="text" id="ceo-message" placeholder="Komut ver (Örn: Kaç personelimiz var?)..." onkeypress="checkEnter(event)">
         <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
     </div>
 
@@ -327,7 +327,7 @@ HTML_TEMPLATE = """
             <span style="color: #34d399;">● READY</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Harici chat istemcisi ve ofis köprüsü kuruldu.</div>
+            <div class="log-line">[SYSTEM]: Sistem hazır. Boş yanıt koruması aktif.</div>
         </div>
     </div>
 
@@ -381,6 +381,33 @@ HTML_TEMPLATE = """
 </html>
 """
 
+def generate_agent_reply(agent_name, role, user_message):
+    try:
+        # Eğer soru personel sayısı vb. durumlar içeriyorsa doğrudan net yanıt verelim
+        system_prompt = f"Sen E-Trade Pro şirketinde {role} olarak çalışan {agent_name} adında bir yapay zeka ajanısın. Patronun Mertcan sana soru sordu. Ona kısa, net ve esprili bir yanıt ver. Kesinlikle boş bırakma."
+        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_message}
+        ]
+        
+        completion = groq_client.chat.completions.create(
+            model="openai/gpt-oss-20b",
+            messages=messages,
+            max_tokens=150,
+            temperature=0.7
+        )
+        
+        reply = ""
+        if completion.choices and completion.choices[0].message and completion.choices[0].message.content:
+            reply = completion.choices[0].message.content.strip('"').strip()
+            
+        if not reply:
+            reply = f"Emredersiniz patron, {role} olarak görevdeyim!"
+        return reply
+    except Exception as e:
+        return f"Şu an görev başındayım patron! ({str(e)[:30]})"
+
 @app.route('/')
 def index():
     return render_template_string(HTML_TEMPLATE, employees=employees)
@@ -389,9 +416,8 @@ def index():
 def api_chat():
     data = request.json
     agent_name = data.get('agent')
-    user_message = data.get('message')
+    user_message = data.get('message', '')
 
-    # HR Komut Kontrolü
     if "yeni eleman al" in user_message.lower() or "eleman ekle" in user_message.lower():
         try:
             parts = user_message.split(":")
@@ -407,78 +433,50 @@ def api_chat():
                 return jsonify({"status": f"{new_name} ({new_role}) işe alındı!", "short_status": "İşe alındı", "is_hr_action": True})
         except: pass
 
-    if agent_name not in employees: agent_name = "İrfan" # Varsayılan
+    if agent_name not in employees: agent_name = "İsmail"
     agent = employees[agent_name]
 
-    try:
-        messages = [
-            {"role": "system", "content": f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {agent_name} adında bir yapay zeka ajanısın. Patronun Mertcan'a net, profesyonel ve kısa yanıt ver."},
-            {"role": "user", "content": user_message}
-        ]
-        completion = groq_client.chat.completions.create(model="openai/gpt-oss-20b", messages=messages, max_tokens=120, temperature=0.7)
-        status_text = completion.choices[0].message.content.strip('"').strip() if completion.choices else "Tamam patron."
-        return jsonify({"status": status_text, "short_status": status_text[:22] + "...", "is_hr_action": False})
-    except:
-        return jsonify({"status": "Komut işlendi.", "short_status": "Tamam", "is_hr_action": False})
+    status_text = generate_agent_reply(agent_name, agent['role'], user_message)
 
-# --- DIŞARIDAKİ CHAT UYGULAMASI (Open WebUI vb.) İÇİN OPENAI UYUMLU ENDPOINT ---
+    return jsonify({
+        "status": status_text, 
+        "short_status": status_text[:22] + "..." if len(status_text) > 22 else status_text,
+        "is_hr_action": False
+    })
+
 @app.route('/v1/chat/completions', methods=['POST'])
 def v1_chat_completions():
     req_data = request.json
     incoming_messages = req_data.get('messages', [])
     
-    # Kullanıcının son mesajını al
     last_user_msg = "Selam"
     if incoming_messages:
         last_user_msg = incoming_messages[-1].get('content', 'Selam')
 
-    # Mesaj içinde hangi ajana hitap edildiğini bulmaya çalışalım (Örn: "Selam İsmail", "İrfan Bitcoin ne kadar?")
-    target_agent = "İrfan" # Varsayılan trader/uzman
+    target_agent = "İsmail"
     for name in employees.keys():
         if name.lower() in last_user_msg.lower():
             target_agent = name
             break
 
     agent = employees[target_agent]
+    reply_text = generate_agent_reply(target_agent, agent['role'], last_user_msg)
 
-    try:
-        system_prompt = f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {target_agent} adında bir yapay zeka ajanısın. Patronun Mertcan sana dışarıdaki chat panelinden yazdı. Ona profesyonel, net ve nokta atışı yanıt ver."
-        
-        full_messages = [{"role": "system", "content": system_prompt}] + incoming_messages
-
-        completion = groq_client.chat.completions.create(
-            model="openai/gpt-oss-20b",
-            messages=full_messages,
-            max_tokens=150,
-            temperature=0.7
-        )
-        
-        reply_text = completion.choices[0].message.content if completion.choices else "Emredersiniz patron."
-
-        # OpenAI formatında yanıt dönüyoruz ki harici chat uygulaması patlamasın!
-        return jsonify({
-            "id": "chatcmpl-etrade",
-            "object": "chat.completion",
-            "created": 1700000000,
-            "model": "openai/gpt-oss-20b",
-            "choices": [{
-                "index": 0,
-                "message": {
-                    "role": "assistant",
-                    "content": f"[{target_agent} - {agent['role']}]: {reply_text}"
-                },
-                "finish_reason": "stop"
-            }],
-            "usage": {"prompt_tokens": 10, "completion_tokens": 10, "total_tokens": 20}
-        })
-    except Exception as e:
-        return jsonify({
-            "choices": [{
-                "index": 0,
-                "message": {"role": "assistant", "content": f"[Sistem Hatası]: {str(e)}"},
-                "finish_reason": "stop"
-            }]
-        })
+    return jsonify({
+        "id": "chatcmpl-etrade",
+        "object": "chat.completion",
+        "created": 1700000000,
+        "model": "openai/gpt-oss-20b",
+        "choices": [{
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": f"[{target_agent} - {agent['role']}]: {reply_text}"
+            },
+            "finish_reason": "stop"
+        }],
+        "usage": {"prompt_tokens": 10, "completion_tokens": 10, "total_tokens": 20}
+    })
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
