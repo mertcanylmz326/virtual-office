@@ -8,7 +8,7 @@ app = Flask(__name__)
 GROQ_API_KEY = "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"
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
-# 9 Kişilik E-Trade Pro Rüya Takımımız ve Görevleri
+# Dinamik Çalışan Kadromuz (Artık dışarıdan eklenebilir!)
 employees = {
     "Marco": {"role": "Müşteri İlişkileri & Destek", "room": "Destek Odası", "home_x": 90, "home_y": 70, "color": "#3b82f6", "default": "Destek hattında..."},
     "Talisca": {"role": "Sipariş Takip & Operasyon", "room": "Operasyon Odası", "home_x": 270, "home_y": 70, "color": "#ef4444", "default": "Sipariş işliyor"},
@@ -26,7 +26,7 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - CEO Command Center</title>
+    <title>E-Trade Pro - Command Center & HR</title>
     <style>
         body { 
             background-color: #05070b; 
@@ -193,7 +193,7 @@ HTML_TEMPLATE = """
             100% { transform: translateY(-4px) rotate(2deg); }
         }
 
-        /* CEO Komuta ve Mesaj Paneli */
+        /* CEO Komuta ve HR Paneli */
         #command-panel {
             margin: 10px auto;
             width: 910px;
@@ -262,10 +262,10 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - COMMAND CENTER</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - HR & COMMAND CENTER</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">DIRECT CHAT AKTİF</span>
+            <span class="top-btn" style="color: #34d399;">API SYNCED</span>
         </div>
     </div>
 
@@ -311,25 +311,25 @@ HTML_TEMPLATE = """
         {% endfor %}
     </div>
 
-    <!-- CEO Mesaj Gönderme Paneli -->
+    <!-- CEO Komuta ve HR Paneli -->
     <div id="command-panel">
         <select id="agent-select">
             {% for name, data in employees.items() %}
             <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
             {% endfor %}
         </select>
-        <input type="text" id="ceo-message" placeholder="Ajana emir ver veya soru sor (Örn: Bitcoin ne kadar?)..." onkeypress="checkEnter(event)">
-        <button class="send-btn" onclick="sendDirectMessage()">EMİR GÖNDER</button>
+        <input type="text" id="ceo-message" placeholder="Komut ver (Örn: Yeni eleman al: Cem, rolü: Destek)..." onkeypress="checkEnter(event)">
+        <button class="send-btn" onclick="sendDirectMessage()">KOMUT GÖNDER</button>
     </div>
 
     <!-- Canlı Terminal Ekranı -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ E-TRADE PRO AI OPERATIONS TERMINAL</span>
-            <span style="color: #34d399;">● CONNECTED</span>
+            <span>⚡ E-TRADE PRO HR & OPERATIONS TERMINAL</span>
+            <span style="color: #34d399;">● READY FOR COMMANDS</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Komuta merkezi hazır. Çalışan seçip mesajınızı yazabilirsiniz patron.</div>
+            <div class="log-line">[SYSTEM]: İK ve Komuta merkezi aktif. Yeni eleman almak için komut yazabilirsiniz.</div>
         </div>
     </div>
 
@@ -362,8 +362,7 @@ HTML_TEMPLATE = """
 
             if (!messageText) return;
 
-            appendLog(`> [CEO -> <b>${agentName}</b>]: "${messageText}"`);
-            document.getElementById('bubble-' + agentName).innerText = "Düşünüyor...";
+            appendLog(`> [KOMUT]: "${messageText}"`);
             messageInput.value = "";
 
             fetch('/api/chat', {
@@ -373,11 +372,16 @@ HTML_TEMPLATE = """
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('bubble-' + agentName).innerText = data.short_status;
-                appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
+                if (data.is_hr_action) {
+                    appendLog(`> [İK / SİSTEM]: ${data.status}`);
+                    setTimeout(() => { location.reload(); }, 1500); // Yeni eleman eklenirse sayfayı yenile
+                } else {
+                    document.getElementById('bubble-' + agentName).innerText = data.short_status;
+                    appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
+                }
             })
             .catch(err => {
-                appendLog(`> [HATA]: ${agentName} yanıt veremedi.`);
+                appendLog(`> [HATA]: Komut işlenemedi.`);
             });
         }
     </script>
@@ -395,17 +399,49 @@ def api_chat():
     agent_name = data.get('agent')
     user_message = data.get('message')
 
+    if not groq_client:
+        return jsonify({"status": "API anahtarı aktif değil.", "short_status": "Offline", "is_hr_action": False})
+
+    # İK Komutu Algılama: "Yeni eleman al: [İsim], rolü: [Rol]" gibi komutlar
+    if "yeni eleman al" in user_message.lower() or "eleman ekle" in user_message.lower() or "işe al" in user_message.lower():
+        try:
+            # Basit bir parser mantığı
+            parts = user_message.split(":")
+            new_name = "Agent"
+            new_role = "Genel Personel"
+            
+            if len(parts) > 1:
+                sub_parts = parts[1].split(",")
+                new_name = sub_parts[0].strip().split()[0] # İlk ismi al
+                if len(sub_parts) > 1:
+                    new_role = sub_parts[1].replace("rolü", "").replace(":", "").strip()
+
+            if new_name not in employees:
+                # Yeni elemanı sisteme ekle (Rastgele koordinatlar veriyoruz)
+                employees[new_name] = {
+                    "role": new_role, 
+                    "room": "Yeni Ofis Alanı", 
+                    "home_x": 450, 
+                    "home_y": 180, 
+                    "color": "#ec4899", 
+                    "default": "İşe başladı!"
+                }
+                return jsonify({
+                    "status": f"Yeni personel {new_name} ({new_role}) başarıyla işe alındı ve ofise yerleştirildi!", 
+                    "short_status": "İşe alındı", 
+                    "is_hr_action": True
+                })
+        except Exception as e:
+            pass
+
     if agent_name not in employees:
-        return jsonify({"status": "Bilinmeyen ajan", "short_status": "Hata"})
+        return jsonify({"status": "Bilinmeyen ajan", "short_status": "Hata", "is_hr_action": False})
 
     agent = employees[agent_name]
 
-    if not groq_client:
-        return jsonify({"status": "API anahtarı aktif değil.", "short_status": "Offline"})
-
     try:
         messages = [
-            {"role": "system", "content": f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name if 'name' in locals() else agent_name} adında profesyonel bir yapay zeka ajanısın. Patronun Mertcan sana doğrudan soru sordu veya emir verdi. Ona profesyonel, akıllı ve nokta atışı bir yanıt ver. Eğer kripto, borsa veya veri sorulursa kendi alanına göre bilgi ver. Cevabın çok uzun olmasın ama tatmin edici ve net olsun."},
+            {"role": "system", "content": f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {agent_name} adında profesyonel bir yapay zeka ajanısın. Patronun Mertcan sana komut verdi veya soru sordu. Ona profesyonel, akıllı ve nokta atışı bir yanıt ver. Cevabın çok uzun olmasın ama tatmin edici ve net olsun."},
             {"role": "user", "content": user_message}
         ]
         
@@ -421,16 +457,16 @@ def api_chat():
             status_text = completion.choices[0].message.content.strip('"').strip()
             
         if not status_text:
-            status_text = f"Emredersiniz patron, ilgileniyorum."
+            status_text = f"Emredersiniz patron, talimatınız işleniyor."
 
         return jsonify({
             "status": status_text, 
-            "short_status": status_text[:22] + "..." if len(status_text) > 22 else status_text
+            "short_status": status_text[:22] + "..." if len(status_text) > 22 else status_text,
+            "is_hr_action": False
         })
     
     except Exception as e:
-        fallback_msg = f"Komut işlendi patron."
-        return jsonify({"status": fallback_msg, "short_status": "Tamamlandı"})
+        return jsonify({"status": f"Komut işlendi patron.", "short_status": "Tamamlandı", "is_hr_action": False})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
