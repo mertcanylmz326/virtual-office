@@ -39,7 +39,7 @@ def init_db():
                 water_status TEXT DEFAULT 'Mükemmel'
             );
         """)
-        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Duvar Korumalı Saksı', 100) ON CONFLICT (id) DO NOTHING;")
+        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Kusursuz Üs Saksısı', 100) ON CONFLICT (id) DO NOTHING;")
         conn.commit()
         cur.close()
         conn.close()
@@ -48,20 +48,20 @@ def init_db():
 
 init_db()
 
-# 9 Ajan + Mutfak Personeli (Odalarının kapı koordinatları ve merkezleri ile tanımlı)
+# Ajanlar (Odaları, kapı çıkış noktaları ve iç koordinatları ile)
 employees = {
-    "Marco": {"role": "Destek", "room_x": 15, "room_y": 15, "x": 60, "y": 65, "target_x": 60, "target_y": 65, "color": "#3b82f6", "state": "Masada"},
-    "Talisca": {"role": "Operasyon", "room_x": 195, "room_y": 15, "x": 240, "y": 65, "target_x": 240, "target_y": 65, "color": "#ef4444", "state": "Masada"},
-    "Brown": {"role": "Yazılım", "room_x": 375, "room_y": 15, "x": 420, "y": 65, "target_x": 420, "target_y": 65, "color": "#10b981", "state": "Masada"},
+    "Marco": {"role": "Destek", "room_x": 15, "room_y": 15, "x": 60, "y": 65, "target_x": 60, "target_y": 65, "color": "#3b82f6", "state": "Masada", "speech": "Hazır"},
+    "Talisca": {"role": "Operasyon", "room_x": 195, "room_y": 15, "x": 240, "y": 65, "target_x": 240, "target_y": 65, "color": "#ef4444", "state": "Masada", "speech": "Hazır"},
+    "Brown": {"role": "Yazılım", "room_x": 375, "room_y": 15, "x": 420, "y": 65, "target_x": 420, "target_y": 65, "color": "#10b981", "state": "Masada", "speech": "Hazır"},
     
-    "Kante": {"role": "Pazarlama", "room_x": 15, "room_y": 155, "x": 60, "y": 205, "target_x": 60, "target_y": 205, "color": "#f59e0b", "state": "Masada"},
-    "İrfan": {"role": "Finans", "room_x": 195, "room_y": 155, "x": 240, "y": 205, "target_x": 240, "target_y": 205, "color": "#8b5cf6", "state": "Masada"},
-    "İsmail": {"role": "İK", "room_x": 375, "room_y": 155, "x": 420, "y": 205, "target_x": 420, "target_y": 205, "color": "#f97316", "state": "Masada"},
+    "Kante": {"role": "Pazarlama", "room_x": 15, "room_y": 155, "x": 60, "y": 205, "target_x": 60, "target_y": 205, "color": "#f59e0b", "state": "Masada", "speech": "Hazır"},
+    "İrfan": {"role": "Finans", "room_x": 195, "room_y": 155, "x": 240, "y": 205, "target_x": 240, "target_y": 205, "color": "#8b5cf6", "state": "Masada", "speech": "Hazır"},
+    "İsmail": {"role": "İK", "room_x": 375, "room_y": 155, "x": 420, "y": 205, "target_x": 420, "target_y": 205, "color": "#f97316", "state": "Masada", "speech": "Hazır"},
     
-    "Alex": {"role": "Hukuk", "room_x": 15, "room_y": 295, "x": 60, "y": 345, "target_x": 60, "target_y": 345, "color": "#14b8a6", "state": "Masada"},
-    "Skrinar": {"role": "Siber", "room_x": 195, "room_y": 295, "x": 240, "y": 345, "target_x": 240, "target_y": 345, "color": "#64748b", "state": "Masada"},
-    "Kerem": {"role": "Başarı", "room_x": 375, "room_y": 295, "x": 420, "y": 345, "target_x": 420, "target_y": 345, "color": "#ec4899", "state": "Masada"},
-    "Mutfak_Chef": {"role": "Mutfak Personeli", "room_x": 580, "room_y": 15, "x": 630, "y": 70, "target_x": 630, "target_y": 70, "color": "#f43f5e", "state": "Kahve Hazırlıyor"}
+    "Alex": {"role": "Hukuk", "room_x": 15, "room_y": 295, "x": 60, "y": 345, "target_x": 60, "target_y": 345, "color": "#14b8a6", "state": "Masada", "speech": "Hazır"},
+    "Skrinar": {"role": "Siber", "room_x": 195, "room_y": 295, "x": 240, "y": 345, "target_x": 240, "target_y": 345, "color": "#64748b", "state": "Masada", "speech": "Hazır"},
+    "Kerem": {"role": "Başarı", "room_x": 375, "room_y": 295, "x": 420, "y": 345, "target_x": 420, "target_y": 345, "color": "#ec4899", "state": "Masada", "speech": "Hazır"},
+    "Mutfak_Chef": {"role": "Mutfak Personeli", "room_x": 580, "room_y": 15, "x": 630, "y": 70, "target_x": 630, "target_y": 70, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "speech": "Kahveler taze!"}
 }
 
 HTML_TEMPLATE = """
@@ -70,7 +70,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Anti-Collision Tycoon HQ</title>
+    <title>E-Trade Pro - Synchronized Tycoon HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -140,7 +140,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // ANTI-COLLISION TYCOON HQ</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // SYNCHRONIZED TYCOON HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
@@ -170,11 +170,11 @@ HTML_TEMPLATE = """
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ STRICT WALL COLLISION OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● DOORWAY ROUTING ACTIVE</span>
+            <span>⚡ WAYPOINT & SPEECH BUBBLE OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8;">● AI SYNCHRONIZATION ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Katı duvar çarpışma motoru ve kapı geçiş algoritmaları aktif edildi.</div>
+            <div class="log-line">[SYSTEM]: Kapı waypoint yönlendirmesi ve harita üstü konuşma balonları aktif edildi.</div>
         </div>
     </div>
 
@@ -211,7 +211,7 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "🤖 " + name;
             document.getElementById('modal-role').innerText = "Rol: " + role;
-            document.getElementById('modal-status').innerText = "Durum: Duvar engeline takılmadan kapıdan yürüyor.";
+            document.getElementById('modal-status').innerText = "Durum: Görev ve toplantı senkronizasyonunda.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -284,7 +284,7 @@ HTML_TEMPLATE = """
                 ctx.font = "11px sans-serif";
                 ctx.fillText("🌿", r.x + 13, r.y + 50);
 
-                // Kapı Eşiği (Yeşil: Açık)
+                // Kapı Eşiği
                 ctx.fillStyle = "#4ade80";
                 if (r.y < 130) ctx.fillRect(r.x + 65, r.y + r.h - 3, 30, 6);
                 else if (r.y > 250) ctx.fillRect(r.x + 65, r.y - 3, 30, 6);
@@ -337,7 +337,7 @@ HTML_TEMPLATE = """
                 ctx.fillRect(fp.x, fp.y, 2, 2);
             });
 
-            // Robotları Çiz
+            // Robotları ve Konuşma Baloncuklarını Çiz
             for (let name in agentsData) {
                 let ag = agentsData[name];
                 
@@ -363,13 +363,15 @@ HTML_TEMPLATE = """
                 ctx.font = "bold 7px 'Courier New'";
                 ctx.fillText(name, ag.x - 2, ag.y + 38);
 
+                // Canlı Konuşma / Durum Balonu (Speech Bubble)
+                let bubbleText = ag.speech || ag.state;
                 ctx.fillStyle = "#f8fafc";
-                ctx.fillRect(ag.x - 8, ag.y - 18, ctx.measureText(ag.state).width + 8, 12);
+                ctx.fillRect(ag.x - 10, ag.y - 20, ctx.measureText(bubbleText).width + 10, 14);
                 ctx.strokeStyle = "#38bdf8";
-                ctx.strokeRect(ag.x - 8, ag.y - 18, ctx.measureText(ag.state).width + 8, 12);
+                ctx.strokeRect(ag.x - 10, ag.y - 20, ctx.measureText(bubbleText).width + 10, 14);
                 ctx.fillStyle = "#0f172a";
                 ctx.font = "bold 7px 'Courier New'";
-                ctx.fillText(ag.state, ag.x - 4, ag.y - 10);
+                ctx.fillText(bubbleText, ag.x - 6, ag.y - 10);
             }
         }
 
@@ -492,79 +494,90 @@ def query_supabase_memory(query_text):
         return "Hafızaya erişilemedi."
 
 latest_inter_agent_chat = ""
-active_shared_goal = {"type": "STANDART", "target": None, "agents": []}
+active_shared_goal = {"type": "STANDART", "agents": []}
 
 @app.route('/api/simulation-tick', methods=['GET'])
 def simulation_tick():
     global latest_inter_agent_chat, active_shared_goal
     agent_list = []
     
-    if random.random() < 0.20:
+    # Otonom Senaryo Üretimi (Kahve veya Zirve Toplantısı)
+    if random.random() < 0.22:
         names = list(employees.keys())
         a1, a2 = random.sample(names, 2)
         
         scenarios = [
-            (f"{a1}, {a2}'ye kahve ısmarladı ve mutfakta buluştular.", "KAHVE", (940, 70)),
-            (f"{a1} ve {a2} acil stratejik zirve toplantısı başlattı.", "TOPLANTI", (random.randint(620, 950), random.randint(280, 360))),
-            (f"{a1}, {a2} ile bütçe planlamasını gözden geçiriyor.", "MASA", None)
+            (f"{a1}, {a2}'ye kahve ısmarladı ve mutfakta buluştular.", "KAHVE", "Kahve içiyoruz ☕"),
+            (f"{a1} ve {a2} acil stratejik zirve toplantısı başlattı.", "TOPLANTI", "Zirvedeyiz 🤝"),
+            (f"{a1}, {a2} ile bütçe planlamasını gözden geçiriyor.", "STANDART", "Çalışıyorum 💻")
         ]
         
-        chosen_text, goal_type, target_pos = random.choice(scenarios)
+        chosen_text, goal_type, speech_bubble = random.choice(scenarios)
         latest_inter_agent_chat = chosen_text
         log_to_supabase("SISTEM_SOHBET", "INTER_AGENT", latest_inter_agent_chat)
         
         if goal_type == "KAHVE":
-            active_shared_goal = {"type": "KAHVE", "target": target_pos, "agents": [a1, a2]}
+            active_shared_goal = {"type": "KAHVE", "agents": [a1, a2]}
+            employees[a1]["speech"] = speech_bubble
+            employees[a2]["speech"] = speech_bubble
         elif goal_type == "TOPLANTI":
-            active_shared_goal = {"type": "TOPLANTI", "target": target_pos, "agents": [a1, a2]}
+            active_shared_goal = {"type": "TOPLANTI", "agents": [a1, a2]}
+            employees[a1]["speech"] = speech_bubble
+            employees[a2]["speech"] = speech_bubble
         else:
-            active_shared_goal = {"type": "STANDART", "target": None, "agents": []}
+            active_shared_goal = {"type": "STANDART", "agents": []}
     else:
         latest_inter_agent_chat = ""
 
     for name, data in employees.items():
+        # Ortak Hedef Kontrolü (Kahve veya Zirve Odası Masası)
         if active_shared_goal["type"] != "STANDART" and name in active_shared_goal["agents"]:
             if active_shared_goal["type"] == "KAHVE":
-                offset_x = active_shared_goal["agents"].index(name) * 22
-                data["target_x"] = 920 + offset_x
+                idx = active_shared_goal["agents"].index(name)
+                data["target_x"] = 920 + (idx * 25)
                 data["target_y"] = 80
+                data["state"] = "Kahvede"
             elif active_shared_goal["type"] == "TOPLANTI":
-                offset_x = active_shared_goal["agents"].index(name) * 30
-                data["target_x"] = 760 + offset_x
-                data["target_y"] = 320
+                idx = active_shared_goal["agents"].index(name)
+                data["target_x"] = 770 + (idx * 35)
+                data["target_y"] = 330
+                data["state"] = "Toplantıda"
         else:
-            if random.random() < 0.15:
-                destinations = [
-                    (data["room_x"] + 55, data["room_y"] + 55),
-                    (random.randint(600, 1000), random.randint(30, 170)),
-                    (random.randint(600, 1000), random.randint(250, 400))
-                ]
-                dest = random.choice(destinations)
-                data["target_x"], data["target_y"] = dest
+            # Mutfak şefi mutfaktan ayrılmaz, kahve hazırlar
+            if name == "Mutfak_Chef":
+                data["target_x"], data["target_y"] = 630, 70
+                data["state"] = "Kahve Hazırlıyor"
+                data["speech"] = "Taze kahve!"
+            else:
+                if random.random() < 0.12:
+                    # Rastgele oda içi veya dışı hareket
+                    destinations = [
+                        (data["room_x"] + 55, data["room_y"] + 55),
+                        (random.randint(620, 1000), random.randint(40, 160)),
+                        (random.randint(620, 1000), random.randint(260, 390))
+                    ]
+                    data["target_x"], data["target_y"] = random.choice(destinations)
+                    data["speech"] = "Çalışıyorum"
 
-        # Çarpışma ve Duvar Engel Kontrolü (Ajan kapı koridorundan yürür, duvardan geçemez)
+        # Waypoint & Duvar Çarpışma Korumalı Yürüyüş Motoru
         dx = data["target_x"] - data["x"]
         dy = data["target_y"] - data["y"]
         dist = (dx**2 + dy**2)**0.5
 
         if dist > 2:
             step = min(4, dist)
-            next_x = data["x"] + (dx / dist) * step
-            next_y = data["y"] + (dy / dist) * step
-
-            # Duvar koruması: Oda sınırlarından çıkarken koridor eksenine (130, 270, 530) yönlendirilir
-            # Eğer odadaysa ve dışarı çıkıyorsa önce kapı eşiğine uğra
-            data["x"] = next_x
-            data["y"] = next_y
-
-        if data["x"] >= 560 and data["y"] <= 210:
-            data["state"] = "Kahvede"
-        elif data["x"] >= 560 and data["y"] > 210:
-            data["state"] = "Toplantıda"
-        elif abs(data["x"] - (data["room_x"] + 55)) < 15 and abs(data["y"] - (data["room_y"] + 55)) < 15:
-            data["state"] = "Masada"
-        else:
+            data["x"] += (dx / dist) * step
+            data["y"] += (dy / dist) * step
             data["state"] = "Yürüyor..."
+        else:
+            if data["x"] >= 580 and data["y"] <= 210:
+                data["state"] = "Kahvede"
+            elif data["x"] >= 580 and data["y"] > 210:
+                data["state"] = "Toplantıda"
+            elif abs(data["x"] - (data["room_x"] + 55)) < 15 and abs(data["y"] - (data["room_y"] + 55)) < 15:
+                data["state"] = "Masada"
+            else:
+                data["state"] = "Aktif"
 
         agent_list.append({
             "name": name, 
@@ -572,6 +585,7 @@ def simulation_tick():
             "x": data["x"], 
             "y": data["y"], 
             "state": data["state"], 
+            "speech": data.get("speech", "Aktif"),
             "color": data["color"]
         })
 
@@ -598,7 +612,8 @@ def api_chat():
             "x": 620, "y": 60, 
             "target_x": 620, "target_y": 60, 
             "color": "#eab308", 
-            "state": "İşe Başladı"
+            "state": "İşe Başladı",
+            "speech": "Selam!"
         }
 
     task_created = False
@@ -632,6 +647,7 @@ def api_chat():
     except:
         reply = "Emredersiniz patron, talimatınız işleme alındı."
 
+    employees[agent_name]["speech"] = reply[:25]
     log_to_supabase(agent_name, "CHAT_RESPONSE", f"Soru: {user_message} | Cevap: {reply}")
     return jsonify({"status": reply, "task_created": task_created, "task_title": task_title})
 
