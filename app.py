@@ -15,7 +15,7 @@ DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-
 GROQ_API_KEY = "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"
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
-# Veritabanı Tablolarını Oluşturma (Bağlantı Kontrolü)
+# Veritabanı Tablosunu Oluşturma
 def init_db():
     try:
         conn = psycopg2.connect(DB_URL)
@@ -37,173 +37,322 @@ def init_db():
 
 init_db()
 
-# Ajan Kadromuz
+# Ajan Kadromuz ve Konumları
 employees = {
-    "Marco": {"role": "Müşteri İlişkileri & Destek", "room": "Destek Odası", "color": "#3b82f6", "default": "Destek hattında..."},
-    "Talisca": {"role": "Sipariş Takip & Operasyon", "room": "Operasyon Odası", "color": "#ef4444", "default": "Sipariş işliyor"},
-    "Brown": {"role": "Yazılım Mühendisi", "room": "Yazılım Üssü", "color": "#10b981", "default": "Kod derleniyor..."},
-    "Kante": {"role": "Pazarlama Uzmanı", "room": "Pazarlama Odası", "color": "#f59e0b", "default": "Kampanya kurguluyor"},
-    "İrfan": {"role": "Finans & Trader", "room": "Finans Odası", "color": "#8b5cf6", "default": "Piyasayı tarıyor"},
-    "İsmail": {"role": "İnsan Kaynakları", "room": "İK Odası", "color": "#f97316", "default": "Mülakatta..."},
-    "Alex": {"role": "Hukuk Danışmanı", "room": "Hukuk Bürosu", "color": "#14b8a6", "default": "Sözleşme inceliyor"},
-    "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik Odası", "color": "#64748b", "default": "Sistem taranıyor"},
-    "Kerem": {"role": "Müşteri Başarı", "room": "Başarı Odası", "color": "#ec4899", "default": "Onboarding aktif"}
+    "Marco": {"role": "Müşteri İlişkileri & Destek", "room": "Destek Odası", "home_x": 90, "home_y": 70, "color": "#3b82f6", "default": "Destek hattında..."},
+    "Talisca": {"role": "Sipariş Takip & Operasyon", "room": "Operasyon Odası", "home_x": 390, "home_y": 70, "color": "#ef4444", "default": "Sipariş işliyor"},
+    "Brown": {"role": "Yazılım Mühendisi", "room": "Yazılım Üssü", "home_x": 690, "home_y": 70, "color": "#10b981", "default": "Kod derleniyor..."},
+    "Kante": {"role": "Pazarlama Uzmanı", "room": "Pazarlama Odası", "home_x": 90, "home_y": 200, "color": "#f59e0b", "default": "Kampanya kurguluyor"},
+    "İrfan": {"role": "Finans & Trader", "room": "Finans Odası", "home_x": 390, "home_y": 200, "color": "#8b5cf6", "default": "Piyasayı tarıyor"},
+    "İsmail": {"role": "İnsan Kaynakları", "room": "İK Odası", "home_x": 690, "home_y": 200, "color": "#f97316", "default": "Mülakatta..."},
+    "Alex": {"role": "Hukuk Danışmanı", "room": "Hukuk Bürosu", "home_x": 90, "home_y": 330, "color": "#14b8a6", "default": "Sözleşme inceliyor"},
+    "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik Odası", "home_x": 390, "home_y": 330, "color": "#64748b", "default": "Sistem taranıyor"},
+    "Kerem": {"role": "Müşteri Başarı", "room": "Başarı Odası", "home_x": 690, "home_y": 330, "color": "#ec4899", "default": "Onboarding aktif"}
 }
 
-# Sadeleştirilmiş ve Şık Tasarımlı Arayüz
+# Orijinal Harika Görsel Ofis Tasarımı + Supabase & Otonom Arka Plan
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - Autonomous Command Center</title>
+    <title>E-Trade Pro - Autonomous Private Offices</title>
     <style>
         body { 
-            background-color: #030712; 
-            color: #f8fafc; 
-            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            background-color: #05070b; 
+            color: #fff; 
+            font-family: 'Courier New', Courier, monospace; 
+            text-align: center; 
             margin: 0; 
-            padding: 20px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 0; 
+            overflow-x: hidden; 
         }
-        header {
-            width: 100%;
-            max-width: 900px;
+        
+        #game-topbar {
+            background: #0f172a;
+            border-bottom: 3px solid #1e293b;
+            padding: 8px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #0f172a;
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: 1px solid #1e293b;
-            margin-bottom: 20px;
+            font-size: 11px;
         }
-        .badge { background: #1e293b; color: #38bdf8; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
-        
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            width: 100%;
-            max-width: 900px;
-            margin-bottom: 20px;
-        }
-        .agent-card {
-            background: #0f172a;
-            border: 1px solid #1e293b;
-            border-radius: 8px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .agent-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
-        .agent-title { font-size: 13px; font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
-        .agent-role { font-size: 11px; color: #94a3b8; }
-        .agent-status { font-size: 11px; color: #4ade80; margin-top: 8px; font-style: italic; }
+        .top-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 4px 10px; border-radius: 4px; font-weight: bold; }
 
-        .control-panel {
-            width: 100%;
-            max-width: 900px;
-            background: #0f172a;
-            border: 1px solid #1e293b;
-            padding: 15px;
+        #office-floor { 
+            position: relative; 
+            width: 960px; 
+            height: 480px; 
+            margin: 10px auto; 
+            background-color: #1a120b;
+            background-image: 
+                linear-gradient(90deg, rgba(255,255,255,0.04) 2px, transparent 2px),
+                linear-gradient(rgba(0,0,0,0.3) 2px, transparent 2px);
+            background-size: 60px 30px;
+            border: 6px solid #1e293b; 
+            border-radius: 10px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.95); 
+            overflow: hidden;
+        }
+
+        .private-room {
+            position: absolute;
+            border: 3px solid #475569;
+            background: rgba(30, 41, 59, 0.75);
+            border-radius: 6px;
+            width: 280px;
+            height: 115px;
+        }
+        .room-label {
+            position: absolute;
+            font-size: 8px;
+            color: #38bdf8;
+            top: 4px;
+            left: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .room-door {
+            position: absolute;
+            right: 0;
+            top: 40px;
+            width: 8px;
+            height: 35px;
+            background: #78350f;
+            border: 1px solid #451a03;
+        }
+
+        .desk { position: absolute; width: 45px; height: 24px; background: #1c1917; border: 2px solid #44403c; border-radius: 3px; }
+        .pc-monitor { position: absolute; width: 16px; height: 9px; background: #38bdf8; top: 3px; left: 14px; border-radius: 2px; box-shadow: 0 0 6px #38bdf8; }
+        
+        .ceo-hq {
+            position: absolute;
+            left: 440px;
+            top: 400px;
+            width: 80px;
+            height: 65px;
+            background: radial-gradient(circle, #dc2626 0%, #7f1d1d 100%);
+            border: 3px solid #fff;
             border-radius: 8px;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            box-shadow: 0 0 25px rgba(220, 38, 38, 0.9);
+            z-index: 50;
+        }
+
+        .agent { 
+            position: absolute; 
+            width: 45px; 
+            height: 55px; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            transition: left 2.2s ease, top 2.2s ease;
+            z-index: 30;
+        }
+        
+        .robot-sprite {
+            width: 28px;
+            height: 28px;
+            background-color: #18181b;
+            border: 2px solid;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.8);
+            animation: robotStep 0.4s infinite alternate;
+        }
+
+        .agent-name {
+            font-size: 7px;
+            font-weight: bold;
+            background: rgba(15, 23, 42, 0.95);
+            padding: 1px 3px;
+            border-radius: 3px;
+            margin-top: 2px;
+            white-space: nowrap;
+            border: 1px solid #475569;
+        }
+        
+        .speech-bubble {
+            position: absolute;
+            top: -22px;
+            background: #f8fafc;
+            color: #0f172a;
+            font-size: 6px;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 4px;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            pointer-events: none;
+            max-width: 110px;
+        }
+
+        .agent:hover { transform: scale(1.3); z-index: 100; }
+
+        @keyframes robotStep {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-4px) rotate(2deg); }
+        }
+
+        #command-panel {
+            margin: 10px auto;
+            width: 950px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            padding: 10px;
+            border-radius: 6px;
+            display: flex;
             gap: 10px;
-            margin-bottom: 20px;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         select, input[type="text"] {
             background: #1e293b;
             color: #fff;
-            border: 1px solid #334155;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 13px;
+            border: 1px solid #475569;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
         }
         input[type="text"] { flex-grow: 1; }
-        .btn {
+        .send-btn {
             background: #0284c7;
             color: #fff;
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 600;
+            padding: 6px 15px;
+            border-radius: 4px;
+            font-weight: bold;
             cursor: pointer;
         }
-        .btn:hover { background: #0369a1; }
+        .send-btn:hover { background: #0369a1; }
 
-        .terminal {
-            width: 100%;
-            max-width: 900px;
+        #activity-terminal {
+            margin: 0 auto 20px auto;
+            width: 950px;
             background: #020617;
-            border: 1px solid #1e293b;
-            border-radius: 8px;
-            padding: 15px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
-            height: 150px;
-            overflow-y: auto;
-            color: #4ade80;
+            border: 2px solid #334155;
+            border-radius: 6px;
+            text-align: left;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            overflow: hidden;
         }
-        .log-item { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 4px; }
+        .terminal-header {
+            background: #0f172a;
+            padding: 6px 12px;
+            font-size: 10px;
+            color: #38bdf8;
+            border-bottom: 1px solid #1e293b;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+        .terminal-body {
+            padding: 10px;
+            height: 100px;
+            overflow-y: auto;
+            font-size: 10px;
+            color: #4ade80;
+            line-height: 1.4;
+        }
+        .log-line { margin-bottom: 4px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div>🏢 <b>E-TRADE PRO</b> // AUTONOMOUS HQ</div>
+    <div id="game-topbar">
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - AUTONOMOUS PRIVATE OFFICES</div>
         <div>
-            <span class="badge">CEO: MERTCAN</span>
-            <span class="badge" style="background: #064e3b; color: #34d399;">SUPABASE AKTİF</span>
+            <span class="top-btn">CEO: MERTCAN</span>
+            <span class="top-btn" style="color: #34d399;">SUPABASE & OTONOM AKTİF</span>
         </div>
-    </header>
+    </div>
 
-    <!-- Sadeleştirilmiş Grid Görünümü -->
-    <div class="grid-container">
+    <!-- Orijinal Müstakil Odalı Ofis Haritası -->
+    <div id="office-floor">
+        <div class="private-room" style="left: 20px; top: 15px;"><div class="room-label">MARCO (DESTEK)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 340px; top: 15px;"><div class="room-label">TALİSCA (OPERASYON)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 660px; top: 15px;"><div class="room-label">BROWN (YAZILIM)</div><div class="room-door"></div></div>
+        
+        <div class="private-room" style="left: 20px; top: 145px;"><div class="room-label">KANTE (PAZARLAMA)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 340px; top: 145px;"><div class="room-label">İRFAN (FİNANS & TRADER)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 660px; top: 145px;"><div class="room-label">İSMAİL (İK)</div><div class="room-door"></div></div>
+
+        <div class="private-room" style="left: 20px; top: 275px;"><div class="room-label">ALEX (HUKUK)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 340px; top: 275px;"><div class="room-label">SKRİNAR (SİBER)</div><div class="room-door"></div></div>
+        <div class="private-room" style="left: 660px; top: 275px;"><div class="room-label">KEREM (BAŞARI)</div><div class="room-door"></div></div>
+
+        <div class="desk" style="left: 135px; top: 60px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 455px; top: 60px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 775px; top: 60px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 135px; top: 190px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 455px; top: 190px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 775px; top: 190px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 135px; top: 320px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 455px; top: 320px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 775px; top: 320px;"><div class="pc-monitor"></div></div>
+
+        <div class="ceo-hq">
+            <span>👑 SEN</span>
+            <span style="font-size: 7px; color: #fca5a5;">CEO OFİSİ</span>
+        </div>
+
         {% for name, data in employees.items() %}
-        <div class="agent-card" onclick="selectAgent('{{ name }}')">
-            <div class="agent-title">
-                <span style="width: 10px; height: 10px; background: {{ data.color }}; border-radius: 50%;"></span>
-                {{ name }}
-            </div>
-            <div class="agent-role">{{ data.role }}</div>
-            <div class="agent-status" id="status-{{ name }}">{{ data.default }}</div>
+        <div class="agent" id="agent-{{ name }}" style="left: {{ data.home_x }}px; top: {{ data.home_y }}px;" 
+             onclick="selectAgent('{{ name }}')">
+            <div class="speech-bubble" id="bubble-{{ name }}">{{ data.default }}</div>
+            <div class="robot-sprite" style="border-color: {{ data.color }};">🤖</div>
+            <div class="agent-name" style="color: {{ data.color }};">{{ name }}</div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- Kontrol Paneli -->
-    <div class="control-panel">
+    <!-- Komuta Paneli -->
+    <div id="command-panel">
         <select id="agent-select">
             {% for name, data in employees.items() %}
             <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
             {% endfor %}
         </select>
-        <input type="text" id="ceo-message" placeholder="Ajana talimat ver veya piyasa sor..." onkeypress="checkEnter(event)">
-        <button class="btn" onclick="sendDirectMessage()">EMİR GÖNDER</button>
+        <input type="text" id="ceo-message" placeholder="Stratejik komut ver veya piyasa sor..." onkeypress="checkEnter(event)">
+        <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
     </div>
 
-    <!-- Canlı Otonom Terminal -->
-    <div class="terminal" id="terminal-logs">
-        <div class="log-item">[SYSTEM]: Otonom veritabanı ve arka plan döngüsü devrede. Ajanlar göreve hazır.</div>
+    <!-- Terminal -->
+    <div id="activity-terminal">
+        <div class="terminal-header">
+            <span>⚡ AUTONOMOUS OPERATIONS TERMINAL</span>
+            <span style="color: #34d399;">● LIVE SYNCED</span>
+        </div>
+        <div class="terminal-body" id="terminal-logs">
+            <div class="log-line">[SYSTEM]: Supabase veritabanı ve otonom arka plan işçisi devreye girdi.</div>
+        </div>
     </div>
 
     <script>
-        const terminal = document.getElementById('terminal-logs');
+        const terminalLogs = document.getElementById('terminal-logs');
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
-            const div = document.createElement('div');
-            div.className = 'log-item';
-            div.innerHTML = `[${time}] ${text}`;
-            terminal.prepend(div);
+            const logDiv = document.createElement('div');
+            logDiv.className = 'log-line';
+            logDiv.innerHTML = `[${time}] ${text}`;
+            terminalLogs.prepend(logDiv);
         }
 
         function selectAgent(name) {
             document.getElementById('agent-select').value = name;
-            appendLog(`> [SEÇİM]: ${name} odak noktasına alındı.`);
+            appendLog(`> [SEÇİM]: ${name} odasına bağlanıldı.`);
         }
 
         function checkEnter(event) {
@@ -211,25 +360,25 @@ HTML_TEMPLATE = """
         }
 
         function sendDirectMessage() {
-            const agent = document.getElementById('agent-select').value;
-            const input = document.getElementById('ceo-message');
-            const message = input.value.trim();
-            if (!message) return;
+            const agentName = document.getElementById('agent-select').value;
+            const messageInput = document.getElementById('ceo-message');
+            const messageText = messageInput.value.trim();
+            if (!messageText) return;
 
-            appendLog(`> [CEO -> ${agent}]: "${message}"`);
-            input.value = "";
+            appendLog(`> [KOMUT]: "${messageText}"`);
+            messageInput.value = "";
 
             fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ agent: agent, message: message })
+                body: JSON.stringify({ agent: agentName, message: messageText })
             })
             .then(res => res.json())
             .then(data => {
-                document.getElementById('status-' + agent).innerText = data.short_status;
-                appendLog(`> [<b>${agent}</b>]: "${data.status}"`);
+                document.getElementById('bubble-' + agentName).innerText = data.short_status;
+                appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
                 if (data.handoff) {
-                    appendLog(`> [OTONOM PASLAŞMA]: ${data.handoff}`);
+                    appendLog(`> [PASLAŞMA]: ${data.handoff}`);
                 }
             });
         }
@@ -261,18 +410,16 @@ def fetch_crypto_price():
     except:
         return "Piyasa verisi geçici olarak alınamadı."
 
-# Otonom Arka Plan Döngüsü (Background Autonomous Loop)
+# Otonom Arka Plan Döngüsü
 def autonomous_background_worker():
-    """Ajanların sen sormadan arka planda periyodik olarak çalışmasını sağlayan döngü"""
     while True:
-        time.sleep(180) # Her 3 dakikada bir otonom tetiklenme
+        time.sleep(180) # Her 3 dakikada bir otomatik çalışma
         try:
             live_market = fetch_crypto_price()
             log_to_supabase("İrfan", "AUTONOMOUS_SCAN", f"Periyodik Piyasa Taraması: {live_market}")
         except Exception as e:
             print(f"Otonom İşçi Hatası: {e}")
 
-# Arka plan işçisini başlatıyoruz
 threading.Thread(target=autonomous_background_worker, daemon=True).start()
 
 def generate_agent_reply(agent_name, role, user_message):
@@ -281,17 +428,16 @@ def generate_agent_reply(agent_name, role, user_message):
         handoff_text = ""
         
         if any(w in user_message.lower() for w in ["btc", "bitcoin", "eth", "ethereum", "fiyat", "piyasa"]):
-            extra_context = f"\n[CANLI PİYASA VERİSİ]: {fetch_crypto_price()}\n"
+            extra_context = f"\n[GÜNCEL PİYASA VERİSİ]: {fetch_crypto_price()}\n"
 
-        # Ajanlar Arası İletişim / Paslaşma Mantığı (Agent Handoff)
         if "kod" in user_message.lower() or "yazılım" in user_message.lower():
-            handoff_text = "Not: İşlem güvenliği için konu Siber Güvenlik Uzmanı Skrinar'a bildirildi."
+            handoff_text = "Siber Güvenlik Uzmanı Skrinar güvenlik testi için bilgilendirildi."
         elif "sözleşme" in user_message.lower() or "hukuk" in user_message.lower():
-            handoff_text = "Not: İnsan Kaynakları yöneticisi İsmail bilgilendirildi."
+            handoff_text = "İnsan Kaynakları yöneticisi İsmail onay için bilgilendirildi."
 
         system_prompt = (
             f"Sen E-Trade Pro şirketinde {role} olarak çalışan {agent_name} adında üst düzey bir uzmansın. "
-            f"Patronun Mertcan sana yazdı: '{user_message}'.\n"
+            f"Kendi müstakil odandasın. Patronun Mertcan sana yazdı: '{user_message}'.\n"
             f"{extra_context}\n"
             f"Profesyonel, net, stratejik ve doğrudan konuya odaklanan bir rapor sun. Kısa ve öz ol."
         )
@@ -310,7 +456,6 @@ def generate_agent_reply(agent_name, role, user_message):
         
         reply = completion.choices[0].message.content.strip('"').strip() if completion.choices else "Görev başında."
         
-        # Supabase'e kaydet
         log_to_supabase(agent_name, "CHAT_RESPONSE", f"Soru: {user_message} | Cevap: {reply}")
 
         return reply, handoff_text
@@ -334,7 +479,7 @@ def api_chat():
 
     return jsonify({
         "status": status_text, 
-        "short_status": status_text[:25] + "..." if len(status_text) > 25 else status_text,
+        "short_status": status_text[:22] + "..." if len(status_text) > 22 else status_text,
         "handoff": handoff
     })
 
