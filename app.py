@@ -41,11 +41,10 @@ def init_db():
 
 init_db()
 
-# Ajanların ofis içi tam koordinatları (Odalardaki masalarının başı)
 employees = {
     "Marco": {"role": "Destek", "home_x": 90, "home_y": 70, "x": 90, "y": 70, "target_x": 90, "target_y": 70, "color": "#3b82f6", "state": "Masada"},
     "Talisca": {"role": "Operasyon", "home_x": 310, "home_y": 70, "x": 310, "y": 70, "target_x": 310, "target_y": 70, "color": "#ef4444", "state": "Masada"},
-    "Brown": {"role": "Yazılım", "home_x": 530, "home_y": 70, "x": 530, "y": 70, "target_x": 530, "target_y": 530, "color": "#10b981", "state": "Masada"},
+    "Brown": {"role": "Yazılım", "home_x": 530, "home_y": 70, "x": 530, "y": 70, "target_x": 530, "target_y": 70, "color": "#10b981", "state": "Masada"},
     
     "Kante": {"role": "Pazarlama", "home_x": 90, "home_y": 200, "x": 90, "y": 200, "target_x": 90, "target_y": 200, "color": "#f59e0b", "state": "Masada"},
     "İrfan": {"role": "Finans", "home_x": 310, "home_y": 200, "x": 310, "y": 200, "target_x": 310, "target_y": 200, "color": "#8b5cf6", "state": "Masada"},
@@ -87,14 +86,12 @@ HTML_TEMPLATE = """
         }
         .top-btn:hover { border-color: #ef4444; }
 
-        /* Üstten Görünüm (Top-Down) Oyun Haritası */
         #office-floor { 
             position: relative; 
             width: 1000px; 
             height: 480px; 
             margin: 15px auto; 
             background-color: #1a2234;
-            /* Harita Zemin Dokusu */
             background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
             background-size: 20px 20px;
             border: 4px solid #374151; 
@@ -103,17 +100,15 @@ HTML_TEMPLATE = """
             overflow: hidden;
         }
 
-        /* Ortadaki Ana Koridor */
         .central-hallway {
             position: absolute; left: 0; right: 0; top: 130px; height: 160px;
             background: #151c2c; border-top: 3px solid #27354f; border-bottom: 3px solid #27354f;
         }
 
-        /* Odalar (Üstten Görünüm / Duvarlı Plan) */
         .office-room {
             position: absolute;
             background: #1e293b;
-            border: 3px solid #64748b; /* Duvar Rengi */
+            border: 3px solid #64748b;
             border-radius: 4px;
             width: 200px;
             height: 110px;
@@ -122,7 +117,6 @@ HTML_TEMPLATE = """
             position: absolute; top: 3px; left: 5px; font-size: 7px; color: #38bdf8; font-weight: bold;
             background: #0f172a; padding: 1px 4px; border-radius: 2px; border: 1px solid #334155;
         }
-        /* Oda İçi Çalışma Masası */
         .office-desk {
             position: absolute; bottom: 15px; left: 50px; width: 100px; height: 35px;
             background: #292524; border: 2px solid #57534e; border-radius: 4px;
@@ -133,7 +127,6 @@ HTML_TEMPLATE = """
             box-shadow: 0 0 5px #38bdf8;
         }
 
-        /* Sağ Taraf: Mutfak ve Toplantı Odası */
         .kitchen-zone {
             position: absolute; left: 780px; top: 15px; width: 205px; height: 210px;
             border: 3px solid #d97706; background: rgba(120, 53, 15, 0.2); border-radius: 6px;
@@ -145,21 +138,18 @@ HTML_TEMPLATE = """
             display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #e9d5ff;
         }
 
-        /* Saksılar & Çiçekler */
         .plant-pot {
             position: absolute; width: 28px; height: 28px; background: #78350f; border: 2px solid #b45309;
             border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 10;
         }
         .plant-status { position: absolute; top: -12px; font-size: 6px; background: #000; color: #4ade80; padding: 1px 3px; border-radius: 3px; white-space: nowrap; }
 
-        /* Ayak İzleri */
         .footprint {
             position: absolute; width: 4px; height: 4px; background: rgba(56, 189, 248, 0.6);
             border-radius: 50%; pointer-events: none; z-index: 15; animation: fadeOut 1s forwards;
         }
         @keyframes fadeOut { 0% { opacity: 0.8; } 100% { opacity: 0; transform: scale(1.4); } }
 
-        /* Ajanlar */
         .agent { 
             position: absolute; width: 40px; height: 50px; cursor: pointer; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -204,17 +194,14 @@ HTML_TEMPLATE = """
     <div id="game-topbar">
         <div style="font-weight: bold; color: #ef4444;">🏢 E-TRADE PRO // AGENTSPACE 2D HQ</div>
         <div>
-            <span class="top-btn" onclick="checkPlantStatus()">🌿 BİTKİLER</span>
+            <span class="top-btn" onclick="checkPlantStatus()">🌿 BİTKİler</span>
             <span class="top-btn" onclick="triggerWatering()">💧 SULA</span>
         </div>
     </div>
 
-    <!-- Üstten Görünüm Oyun Haritası -->
     <div id="office-floor">
-        <!-- Ortadaki Ana Geniş Koridor -->
         <div class="central-hallway"></div>
 
-        <!-- Üst Sıra Odalar -->
         <div class="office-room" style="left: 20px; top: 15px;">
             <div class="room-title">1. MARCO (DESTEK)</div>
             <div class="office-desk"><div class="pc-screen"></div></div>
@@ -228,7 +215,6 @@ HTML_TEMPLATE = """
             <div class="office-desk"><div class="pc-screen"></div></div>
         </div>
 
-        <!-- Alt Sıra Odalar -->
         <div class="office-room" style="left: 20px; top: 315px;">
             <div class="room-title">4. KANTE (PAZARLAMA)</div>
             <div class="office-desk"><div class="pc-screen"></div></div>
@@ -242,11 +228,9 @@ HTML_TEMPLATE = """
             <div class="office-desk"><div class="pc-screen"></div></div>
         </div>
 
-        <!-- Sağ Taraf: Mutfak ve Zirve Toplantı Odası -->
         <div class="kitchen-zone">☕ MUTFAK & KAHVE</div>
         <div class="boardroom-zone">🤝 OTONOM ZİRVE</div>
 
-        <!-- Saksılar -->
         <div class="plant-pot" style="left: 235px; top: 145px;" id="plant-1">
             <span class="plant-status" id="plant-status-1">🌿 %100</span>🌱
         </div>
@@ -254,7 +238,6 @@ HTML_TEMPLATE = """
             <span class="plant-status" id="plant-status-2">🌿 %100</span>🌵
         </div>
 
-        <!-- Ajanlar -->
         {% for name, data in employees.items() %}
         <div class="agent" id="agent-{{ name }}" style="left: {{ data.x }}px; top: {{ data.y }}px;" onclick="openAgentCard('{{ name }}', '{{ data.role }}')">
             <div class="speech-bubble" id="bubble-{{ name }}">{{ data.state }}</div>
@@ -264,7 +247,6 @@ HTML_TEMPLATE = """
         {% endfor %}
     </div>
 
-    <!-- Kontrol Paneli -->
     <div class="action-bar">
         <div id="command-panel">
             <select id="agent-select">
@@ -277,18 +259,16 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
-    <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ AGENTSPACE 2D OPERATIONS TERMINAL</span>
-            <span style="color: #4ade80;">● TOP-DOWN MAP ACTIVE</span>
+            <span style="color: #4ade80;">● ACCURATE STATE SYNC</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Gönderdiğin örnek görseldeki gibi üstten görünüm (top-down) oyun haritası mimarisi yüklendi.</div>
+            <div class="log-line">[SYSTEM]: Ajan durum göstergeleri fiziksel koordinatlara sabitlendi. Hatalı etiketler giderildi.</div>
         </div>
     </div>
 
-    <!-- RPG Kartı -->
     <div id="agent-modal">
         <h3 id="modal-title" style="color: #ef4444; margin-top: 0;"></h3>
         <p id="modal-role" style="font-size: 12px; color: #94a3b8;"></p>
@@ -315,7 +295,7 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "🤖 " + name;
             document.getElementById('modal-role').innerText = "Departman: " + role;
-            document.getElementById('modal-status').innerText = "Durum: Kendi ofis odasında görevde.";
+            document.getElementById('modal-status').innerText = "Durum: Ofisinde aktif görevde.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -327,7 +307,6 @@ HTML_TEMPLATE = """
             if (event.key === 'Enter') sendDirectMessage();
         }
 
-        // Akıcı Hareket ve Ayak İzi Döngüsü
         setInterval(() => {
             fetch('/api/simulation-tick')
             .then(res => res.json())
@@ -377,8 +356,8 @@ HTML_TEMPLATE = """
             .then(res => res.json())
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
-                if(data.action_type === 'kitchen') appendLog(`> [OTONOM]: ${agentName} koridordan mutfağa yürüdü.`);
-                if(data.action_type === 'boardroom') appendLog(`> [OTONOM]: ${agentName} toplantı salonuna geçti.`);
+                if(data.action_type === 'kitchen') appendLog(`> [OTONOM]: ${agentName} mutfağa geçti.`);
+                if(data.action_type === 'boardroom') appendLog(`> [OTONOM]: ${agentName} zirve odasına geçti.`);
             });
         }
 
@@ -390,7 +369,7 @@ HTML_TEMPLATE = """
 
         function triggerWatering() {
             fetch('/api/water-plants', {method: 'POST'}).then(res => res.json()).then(data => {
-                appendLog(`> [SULAMA]: Saksılar sulandı, bitki sağlığı %100!`);
+                appendLog(`> [SULAMA]: Çiçekler sulandı, bitki sağlığı %100!`);
             });
         }
     </script>
@@ -414,24 +393,30 @@ def simulation_tick():
     agent_list = []
     for name, data in employees.items():
         if random.random() < 0.2:
-            # Hedefler: Odası, Ortadaki Koridor, Mutfak veya Toplantı Odası
             destinations = [
                 (data["home_x"], data["home_y"]),
-                (random.randint(810, 950), random.randint(30, 160)),  # Mutfak
-                (random.randint(810, 950), random.randint(270, 400)) # Toplantı Odası
+                (random.randint(800, 940), random.randint(30, 160)),  # Mutfak koordinatları
+                (random.randint(800, 940), random.randint(270, 400)) # Toplantı odası koordinatları
             ]
             dest = random.choice(destinations)
             data["target_x"], data["target_y"] = dest
-            if dest[0] > 750:
-                data["state"] = "☕ Molada" if dest[1] < 220 else "🤝 Toplantıda"
-            else:
-                data["state"] = "Masada"
 
+        # Hedefe doğru akıcı ilerleme
         if data["x"] < data["target_x"]: data["x"] += min(12, data["target_x"] - data["x"])
         elif data["x"] > data["target_x"]: data["x"] -= min(12, data["x"] - data["target_x"])
 
         if data["y"] < data["target_y"]: data["y"] += min(12, data["target_y"] - data["y"])
         elif data["y"] > data["target_y"]: data["y"] -= min(12, data["y"] - data["target_y"])
+
+        # KESİN VE HATASIZ KOORDİNAT TABANLI DURUM BELİRLEME
+        if data["x"] >= 760 and data["y"] <= 230:
+            data["state"] = "☕ Molada"
+        elif data["x"] >= 760 and data["y"] > 230:
+            data["state"] = "🤝 Toplantıda"
+        elif abs(data["x"] - data["home_x"]) < 15 and abs(data["y"] - data["home_y"]) < 15:
+            data["state"] = "Masada"
+        else:
+            data["state"] = "Yürüyor..."
 
         agent_list.append({"name": name, "x": data["x"], "y": data["y"], "state": data["state"]})
 
@@ -453,11 +438,11 @@ def api_chat():
     action_type = "chat"
     if "kahve" in user_message.lower() or "mola" in user_message.lower():
         agent["target_x"], agent["target_y"] = 850, 100
-        agent["state"] = "Kahve Molasında"
+        agent["state"] = "☕ Molada"
         action_type = "kitchen"
     elif "toplantı" in user_message.lower():
         agent["target_x"], agent["target_y"] = 850, 320
-        agent["state"] = "Zirvede"
+        agent["state"] = "🤝 Toplantıda"
         action_type = "boardroom"
 
     try:
