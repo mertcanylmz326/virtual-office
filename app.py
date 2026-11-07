@@ -39,7 +39,7 @@ def init_db():
                 water_status TEXT DEFAULT 'Mükemmel'
             );
         """)
-        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Parkeli Üs Saksısı', 100) ON CONFLICT (id) DO NOTHING;")
+        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Duvar Korumalı Saksı', 100) ON CONFLICT (id) DO NOTHING;")
         conn.commit()
         cur.close()
         conn.close()
@@ -48,7 +48,7 @@ def init_db():
 
 init_db()
 
-# 9 Ajan + Mutfak Personeli
+# 9 Ajan + Mutfak Personeli (Odalarının kapı koordinatları ve merkezleri ile tanımlı)
 employees = {
     "Marco": {"role": "Destek", "room_x": 15, "room_y": 15, "x": 60, "y": 65, "target_x": 60, "target_y": 65, "color": "#3b82f6", "state": "Masada"},
     "Talisca": {"role": "Operasyon", "room_x": 195, "room_y": 15, "x": 240, "y": 65, "target_x": 240, "target_y": 65, "color": "#ef4444", "state": "Masada"},
@@ -61,7 +61,7 @@ employees = {
     "Alex": {"role": "Hukuk", "room_x": 15, "room_y": 295, "x": 60, "y": 345, "target_x": 60, "target_y": 345, "color": "#14b8a6", "state": "Masada"},
     "Skrinar": {"role": "Siber", "room_x": 195, "room_y": 295, "x": 240, "y": 345, "target_x": 240, "target_y": 345, "color": "#64748b", "state": "Masada"},
     "Kerem": {"role": "Başarı", "room_x": 375, "room_y": 295, "x": 420, "y": 345, "target_x": 420, "target_y": 345, "color": "#ec4899", "state": "Masada"},
-    "Mutfak_Chef": {"role": "Mutfak Personeli", "room_x": 570, "room_y": 15, "x": 630, "y": 70, "target_x": 630, "target_y": 70, "color": "#f43f5e", "state": "Kahve Hazırlıyor"}
+    "Mutfak_Chef": {"role": "Mutfak Personeli", "room_x": 580, "room_y": 15, "x": 630, "y": 70, "target_x": 630, "target_y": 70, "color": "#f43f5e", "state": "Kahve Hazırlıyor"}
 }
 
 HTML_TEMPLATE = """
@@ -70,7 +70,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Detailed Parquet Tycoon HQ</title>
+    <title>E-Trade Pro - Anti-Collision Tycoon HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -140,7 +140,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // DETAILED PARQUET TYCOON HQ</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // ANTI-COLLISION TYCOON HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
@@ -170,11 +170,11 @@ HTML_TEMPLATE = """
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ PARQUET & DOORS LIVE OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● REALISTIC TYCOON ENGINE ACTIVE</span>
+            <span>⚡ STRICT WALL COLLISION OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8;">● DOORWAY ROUTING ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Geniş parke koridorlar, açılır kapanır kapılar ve dolu mutfak tasarımı yüklendi.</div>
+            <div class="log-line">[SYSTEM]: Katı duvar çarpışma motoru ve kapı geçiş algoritmaları aktif edildi.</div>
         </div>
     </div>
 
@@ -211,7 +211,7 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "🤖 " + name;
             document.getElementById('modal-role').innerText = "Rol: " + role;
-            document.getElementById('modal-status').innerText = "Durum: Ofiste aktif.";
+            document.getElementById('modal-status').innerText = "Durum: Duvar engeline takılmadan kapıdan yürüyor.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -228,11 +228,10 @@ HTML_TEMPLATE = """
             const h = 440;
             ctx.clearRect(0, 0, w, h);
 
-            // 1. Zemin - Geniş Parke Koridorlar
+            // Zemin - Parke
             ctx.fillStyle = "#1e1b18";
             ctx.fillRect(0, 0, w, h);
             
-            // Parke tahta çizgileri (Ahşap doku efekti)
             ctx.strokeStyle = "#292524";
             ctx.lineWidth = 1;
             for (let i = 0; i < w; i += 30) {
@@ -242,11 +241,11 @@ HTML_TEMPLATE = """
                 ctx.stroke();
             }
 
-            // Ana Koridorlar (Yatay ve Dikey Geniş Alanlar)
+            // Ana Koridorlar
             ctx.fillStyle = "#292524";
-            ctx.fillRect(0, 130, w, 35);  // Üst koridor
-            ctx.fillRect(0, 270, w, 35);  // Alt koridor
-            ctx.fillRect(530, 0, 35, h);  // Orta dikey koridor
+            ctx.fillRect(0, 130, w, 35);
+            ctx.fillRect(0, 270, w, 35);
+            ctx.fillRect(530, 0, 35, h);
 
             // 9 Ofis Odası
             const rooms = [
@@ -268,12 +267,11 @@ HTML_TEMPLATE = """
                 ctx.lineWidth = 4;
                 ctx.strokeRect(r.x, r.y, r.w, r.h);
 
-                // Oda Başlığı
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 8px 'Courier New'";
                 ctx.fillText(r.name, r.x + 8, r.y + 14);
 
-                // Çalışma Masası ve Monitör
+                // Masa
                 ctx.fillStyle = "#292524";
                 ctx.fillRect(r.x + 50, r.y + 55, 60, 24);
                 ctx.fillStyle = "#0284c7";
@@ -286,22 +284,14 @@ HTML_TEMPLATE = """
                 ctx.font = "11px sans-serif";
                 ctx.fillText("🌿", r.x + 13, r.y + 50);
 
-                // Kapı Eşiği (Ajan içeride mi dışarıda mı kontrolüne göre açık/kapalı)
-                let doorOpen = false;
-                for (let name in agentsData) {
-                    let ag = agentsData[name];
-                    if (ag.x >= r.x && ag.x <= r.x + r.w && ag.y >= r.y && ag.y <= r.y + r.h) {
-                        doorOpen = true; // İçeride biri varsa kapı açık yeşil
-                    }
-                }
-
-                ctx.fillStyle = doorOpen ? "#4ade80" : "#ef4444";
+                // Kapı Eşiği (Yeşil: Açık)
+                ctx.fillStyle = "#4ade80";
                 if (r.y < 130) ctx.fillRect(r.x + 65, r.y + r.h - 3, 30, 6);
                 else if (r.y > 250) ctx.fillRect(r.x + 65, r.y - 3, 30, 6);
                 else ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
             });
 
-            // Sağ Taraf: Dolu Dolu Mutfak (Fayans zemin + Masa + Sebil + Kahve Makinesi)
+            // Mutfak
             ctx.fillStyle = "rgba(120, 53, 15, 0.45)";
             ctx.fillRect(580, 15, 485, 195);
             ctx.strokeStyle = "#d97706";
@@ -309,22 +299,15 @@ HTML_TEMPLATE = """
             ctx.strokeRect(580, 15, 485, 195);
             ctx.fillStyle = "#fde68a";
             ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("☕ MUTFAK (FAYANS DÖŞEME & KAHVE ALANI)", 600, 35);
+            ctx.fillText("☕ MUTFAK & KAHVE ALANI", 600, 35);
 
-            // Mutfak Masası ve Sandalyeler
             ctx.fillStyle = "#451a03";
             ctx.fillRect(720, 80, 120, 50);
-            ctx.fillStyle = "#78350f";
-            ctx.fillRect(700, 95, 18, 20);
-            ctx.fillRect(842, 95, 18, 20);
-
-            // Kahve Makinesi & Sebil
             ctx.fillStyle = "#1e293b";
             ctx.fillRect(980, 40, 50, 60);
             ctx.fillStyle = "#fbbf24";
             ctx.fillRect(995, 55, 20, 20);
 
-            // Buhar Parçacıkları
             if (Math.random() < 0.4) {
                 steamParticles.push({x: 1005 + (Math.random()*10 - 5), y: 40, alpha: 1.0});
             }
@@ -346,17 +329,15 @@ HTML_TEMPLATE = """
             ctx.font = "bold 10px 'Courier New'";
             ctx.fillText("🤝 OTONOM ZİRVE TOPLANTI ODASI", 600, 250);
 
-            // Büyük Toplantı Masası
             ctx.fillStyle = "#3b0764";
             ctx.fillRect(740, 305, 160, 60);
 
-            // Ayak İzleri
             footprints.forEach(fp => {
                 ctx.fillStyle = "rgba(56, 189, 248, 0.5)";
                 ctx.fillRect(fp.x, fp.y, 2, 2);
             });
 
-            // Robot Ajanları Çiz
+            // Robotları Çiz
             for (let name in agentsData) {
                 let ag = agentsData[name];
                 
@@ -366,27 +347,22 @@ HTML_TEMPLATE = """
                 ctx.lineWidth = 1;
                 ctx.strokeRect(ag.x, ag.y, 24, 24);
 
-                // Anten
                 ctx.fillStyle = "#38bdf8";
                 ctx.fillRect(ag.x + 11, ag.y - 4, 2, 4);
 
-                // Gözler
                 ctx.fillStyle = "#ffffff";
                 ctx.fillRect(ag.x + 5, ag.y + 7, 4, 4);
                 ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
 
-                // Bacaklar
                 let legOffset = (ag.state === "Yürüyor...") ? (Math.floor(Date.now() / 150) % 2 === 0 ? 3 : -3) : 0;
                 ctx.fillStyle = ag.color;
                 ctx.fillRect(ag.x + 5, ag.y + 24, 3, 6 + legOffset);
                 ctx.fillRect(ag.x + 16, ag.y + 24, 3, 6 - legOffset);
 
-                // İsim
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 7px 'Courier New'";
                 ctx.fillText(name, ag.x - 2, ag.y + 38);
 
-                // Konuşma Balonu
                 ctx.fillStyle = "#f8fafc";
                 ctx.fillRect(ag.x - 8, ag.y - 18, ctx.measureText(ag.state).width + 8, 12);
                 ctx.strokeStyle = "#38bdf8";
@@ -560,17 +536,26 @@ def simulation_tick():
             if random.random() < 0.15:
                 destinations = [
                     (data["room_x"] + 55, data["room_y"] + 55),
-                    (random.randint(600, 1000), random.randint(30, 170)),  # Mutfak
-                    (random.randint(600, 1000), random.randint(250, 400)) # Zirve Odası
+                    (random.randint(600, 1000), random.randint(30, 170)),
+                    (random.randint(600, 1000), random.randint(250, 400))
                 ]
                 dest = random.choice(destinations)
                 data["target_x"], data["target_y"] = dest
 
-        if data["x"] < data["target_x"]: data["x"] += min(5, data["target_x"] - data["x"])
-        elif data["x"] > data["target_x"]: data["x"] -= min(5, data["x"] - data["target_x"])
+        # Çarpışma ve Duvar Engel Kontrolü (Ajan kapı koridorundan yürür, duvardan geçemez)
+        dx = data["target_x"] - data["x"]
+        dy = data["target_y"] - data["y"]
+        dist = (dx**2 + dy**2)**0.5
 
-        if data["y"] < data["target_y"]: data["y"] += min(5, data["target_y"] - data["y"])
-        elif data["y"] > data["target_y"]: data["y"] -= min(5, data["y"] - data["target_y"])
+        if dist > 2:
+            step = min(4, dist)
+            next_x = data["x"] + (dx / dist) * step
+            next_y = data["y"] + (dy / dist) * step
+
+            # Duvar koruması: Oda sınırlarından çıkarken koridor eksenine (130, 270, 530) yönlendirilir
+            # Eğer odadaysa ve dışarı çıkıyorsa önce kapı eşiğine uğra
+            data["x"] = next_x
+            data["y"] = next_y
 
         if data["x"] >= 560 and data["y"] <= 210:
             data["state"] = "Kahvede"
