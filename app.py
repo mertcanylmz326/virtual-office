@@ -39,7 +39,7 @@ def init_db():
                 water_status TEXT DEFAULT 'Mükemmel'
             );
         """)
-        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Canvas Saksı', 100) ON CONFLICT (id) DO NOTHING;")
+        cur.execute("INSERT INTO office_plants (id, plant_name, health_level) VALUES (1, 'Sharp Saksı', 100) ON CONFLICT (id) DO NOTHING;")
         conn.commit()
         cur.close()
         conn.close()
@@ -48,19 +48,18 @@ def init_db():
 
 init_db()
 
-# 9 Ajan ve Canvas üzerindeki koordinatları (Odalarının merkezleri)
 employees = {
-    "Marco": {"role": "Destek", "home_x": 80, "home_y": 70, "x": 80, "y": 70, "target_x": 80, "target_y": 70, "color": "#3b82f6", "state": "Masada"},
-    "Talisca": {"role": "Operasyon", "home_x": 240, "home_y": 70, "x": 240, "y": 70, "target_x": 240, "target_y": 70, "color": "#ef4444", "state": "Masada"},
-    "Brown": {"role": "Yazılım", "home_x": 400, "home_y": 70, "x": 400, "y": 70, "target_x": 400, "target_y": 70, "color": "#10b981", "state": "Masada"},
+    "Marco": {"role": "Destek", "home_x": 45, "home_y": 25, "x": 45, "y": 25, "target_x": 45, "target_y": 25, "color": "#3b82f6", "state": "Masada"},
+    "Talisca": {"role": "Operasyon", "home_x": 195, "home_y": 25, "x": 195, "y": 25, "target_x": 195, "target_y": 25, "color": "#ef4444", "state": "Masada"},
+    "Brown": {"role": "Yazılım", "home_x": 345, "home_y": 25, "x": 345, "y": 25, "target_x": 345, "target_y": 25, "color": "#10b981", "state": "Masada"},
     
-    "Kante": {"role": "Pazarlama", "home_x": 80, "home_y": 200, "x": 80, "y": 200, "target_x": 80, "target_y": 200, "color": "#f59e0b", "state": "Masada"},
-    "İrfan": {"role": "Finans", "home_x": 240, "home_y": 200, "x": 240, "y": 200, "target_x": 240, "target_y": 200, "color": "#8b5cf6", "state": "Masada"},
-    "İsmail": {"role": "İK", "home_x": 400, "home_y": 200, "x": 400, "y": 200, "target_x": 400, "target_y": 200, "color": "#f97316", "state": "Masada"},
+    "Kante": {"role": "Pazarlama", "home_x": 45, "home_y": 145, "x": 45, "y": 145, "target_x": 45, "target_y": 145, "color": "#f59e0b", "state": "Masada"},
+    "İrfan": {"role": "Finans", "home_x": 195, "home_y": 145, "x": 195, "y": 145, "target_x": 195, "target_y": 145, "color": "#8b5cf6", "state": "Masada"},
+    "İsmail": {"role": "İK", "home_x": 345, "home_y": 145, "x": 345, "y": 145, "target_x": 345, "target_y": 145, "color": "#f97316", "state": "Masada"},
     
-    "Alex": {"role": "Hukuk", "home_x": 80, "home_y": 330, "x": 80, "y": 330, "target_x": 80, "target_y": 330, "color": "#14b8a6", "state": "Masada"},
-    "Skrinar": {"role": "Siber", "home_x": 240, "home_y": 330, "x": 240, "y": 330, "target_x": 240, "target_y": 330, "color": "#64748b", "state": "Masada"},
-    "Kerem": {"role": "Başarı", "home_x": 400, "home_y": 330, "x": 400, "y": 330, "target_x": 400, "target_y": 330, "color": "#ec4899", "state": "Masada"}
+    "Alex": {"role": "Hukuk", "home_x": 45, "home_y": 265, "x": 45, "y": 265, "target_x": 45, "target_y": 265, "color": "#14b8a6", "state": "Masada"},
+    "Skrinar": {"role": "Siber", "home_x": 195, "home_y": 265, "x": 195, "y": 265, "target_x": 195, "target_y": 265, "color": "#64748b", "state": "Masada"},
+    "Kerem": {"role": "Başarı", "home_x": 345, "home_y": 265, "x": 345, "y": 265, "target_x": 345, "target_y": 265, "color": "#ec4899", "state": "Masada"}
 }
 
 HTML_TEMPLATE = """
@@ -68,7 +67,8 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - Canvas 2D Tycoon HQ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Trade Pro - Sharp Canvas Tycoon HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -94,23 +94,25 @@ HTML_TEMPLATE = """
         }
         .top-btn:hover { background: #38bdf8; color: #030712; }
 
-        /* HTML5 Canvas Oyun Ekranı */
+        /* Kristal Netliğinde Canvas Konteyneri */
         #game-container {
             position: relative;
-            width: 960px;
-            height: 480px;
-            margin: 15px auto;
-            border: 4px solid #334155;
-            border-radius: 10px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.9);
-            background: #111827;
+            width: 980px;
+            height: 400px;
+            margin: 10px auto;
+            border: 3px solid #38bdf8;
+            border-radius: 8px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.9);
+            background: #0b0f19;
+            overflow: hidden;
         }
         canvas {
             display: block;
-            background: #0f172a;
+            width: 100%;
+            height: 100%;
         }
 
-        .action-bar { margin: 10px auto; width: 960px; display: flex; justify-content: space-between; gap: 10px; }
+        .action-bar { margin: 10px auto; width: 980px; display: flex; justify-content: space-between; gap: 10px; }
         #command-panel {
             background: #0f172a; border: 2px solid #334155; padding: 8px; border-radius: 8px; display: flex; gap: 8px; align-items: center; flex-grow: 1;
         }
@@ -120,10 +122,10 @@ HTML_TEMPLATE = """
         .send-btn:hover { background: #0369a1; }
 
         #activity-terminal {
-            margin: 0 auto 15px auto; width: 960px; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden;
+            margin: 0 auto 15px auto; width: 980px; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden;
         }
         .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 10px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; }
-        .terminal-body { padding: 8px; height: 80px; overflow-y: auto; font-size: 10px; color: #4ade80; line-height: 1.3; }
+        .terminal-body { padding: 8px; height: 75px; overflow-y: auto; font-size: 10px; color: #4ade80; line-height: 1.3; }
         .log-line { margin-bottom: 3px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
 
         #agent-modal {
@@ -136,7 +138,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // CANVAS 2D TYCOON ENGINE</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // SHARP 2D TYCOON ENGINE</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 RAG HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
@@ -145,9 +147,9 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
-    <!-- HTML5 Canvas Oyun Haritası -->
+    <!-- Canvas Haritası -->
     <div id="game-container">
-        <canvas id="officeCanvas" width="960" height="480"></canvas>
+        <canvas id="officeCanvas"></canvas>
     </div>
 
     <!-- Komuta Paneli -->
@@ -166,11 +168,11 @@ HTML_TEMPLATE = """
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ CANVAS 2D OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● GAME ENGINE ACTIVE</span>
+            <span>⚡ SHARP CANVAS OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8;">● CRISP RETINA RENDER ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: HTML5 Canvas 2D piksel oyun motoru başarıyla yüklendi.</div>
+            <div class="log-line">[SYSTEM]: Yüksek çözünürlüklü Retina ölçeklemeli Canvas motoru yüklendi. Görüntü netleştirildi.</div>
         </div>
     </div>
 
@@ -189,6 +191,19 @@ HTML_TEMPLATE = """
 
         let agentsData = {};
 
+        // Canvas Boyutunu ve Yüksek Çözünürlük (Retina) Ölçeğini Ayarla
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const displayWidth = 980;
+            const displayHeight = 400;
+
+            canvas.width = displayWidth * dpr;
+            canvas.height = displayHeight * dpr;
+            
+            ctx.scale(dpr, dpr);
+        }
+        resizeCanvas();
+
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
             const logDiv = document.createElement('div');
@@ -205,7 +220,7 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "👤 " + name;
             document.getElementById('modal-role').innerText = "Departman: " + role;
-            document.getElementById('modal-status').innerText = "Durum: Canvas motorunda aktif görevde.";
+            document.getElementById('modal-status').innerText = "Durum: Net Canvas motorunda aktif.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -217,118 +232,123 @@ HTML_TEMPLATE = """
             if (event.key === 'Enter') sendDirectMessage();
         }
 
-        // Canvas Üzerinde Oyunu Çizen Render Döngüsü
+        // Kristal Netliğinde Harita Çizim Motoru
         function drawOffice() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const w = 980;
+            const h = 400;
+            ctx.clearRect(0, 0, w, h);
 
-            // 1. Zemin ve Parke Koridorlar
-            ctx.fillStyle = "#0f172a";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Zemin
+            ctx.fillStyle = "#0b0f19";
+            ctx.fillRect(0, 0, w, h);
 
-            // Yatay ve Dikey Parke Koridorlar
-            ctx.fillStyle = "#1e1b18";
-            ctx.fillRect(0, 130, canvas.width, 35);  // Üst koridor
-            ctx.fillRect(0, 260, canvas.width, 35);  // Alt koridor
-            ctx.fillRect(480, 0, 40, canvas.height); // Orta dikey koridor
+            // Koridorlar (Parke Dokusu Hissiyatı)
+            ctx.fillStyle = "#151c2c";
+            ctx.fillRect(0, 115, w, 25); // Üst yatay koridor
+            ctx.fillRect(0, 235, w, 25); // Alt yatay koridor
+            ctx.fillRect(490, 0, 30, h);  // Dikey koridor
 
-            // 2. 9 Oda (Duvarlar ve Masalar)
+            // 9 Oda (Sol ve Orta Bölüm)
             const rooms = [
-                {x: 10, y: 10, w: 140, h: 110, name: "1. MARCO"},
-                {x: 170, y: 10, w: 140, h: 110, name: "2. TALİSCA"},
-                {x: 330, y: 10, w: 140, h: 110, name: "3. BROWN"},
-                {x: 10, y: 175, w: 140, h: 110, name: "4. KANTE"},
-                {x: 170, y: 175, w: 140, h: 110, name: "5. İRFAN"},
-                {x: 330, y: 175, w: 140, h: 110, name: "6. İSMAİL"},
-                {x: 10, y: 310, w: 140, h: 110, name: "7. ALEX"},
-                {x: 170, y: 310, w: 140, h: 110, name: "8. SKRİNAR"},
-                {x: 330, y: 310, w: 140, h: 110, name: "9. KEREM"}
+                {x: 10, y: 10, w: 140, h: 95, name: "1. MARCO"},
+                {x: 160, y: 10, w: 140, h: 95, name: "2. TALİSCA"},
+                {x: 310, y: 10, w: 140, h: 95, name: "3. BROWN"},
+                {x: 10, y: 145, w: 140, h: 95, name: "4. KANTE"},
+                {x: 160, y: 145, w: 140, h: 95, name: "5. İRFAN"},
+                {x: 310, y: 145, w: 140, h: 95, name: "6. İSMAİL"},
+                {x: 10, y: 280, w: 140, h: 95, name: "7. ALEX"},
+                {x: 160, y: 280, w: 140, h: 95, name: "8. SKRİNAR"},
+                {x: 310, y: 280, w: 140, h: 95, name: "9. KEREM"}
             ];
 
             rooms.forEach(r => {
                 ctx.fillStyle = "#1e293b";
                 ctx.fillRect(r.x, r.y, r.w, r.h);
                 ctx.strokeStyle = "#475569";
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 2;
                 ctx.strokeRect(r.x, r.y, r.w, r.h);
 
                 // Oda Başlığı
                 ctx.fillStyle = "#38bdf8";
-                ctx.font = "8px 'Courier New'";
-                ctx.fillText(r.name, r.x + 6, r.y + 14);
+                ctx.font = "bold 8px 'Courier New'";
+                ctx.fillText(r.name, r.x + 6, r.y + 12);
 
                 // Çalışma Masası ve Monitör
                 ctx.fillStyle = "#292524";
-                ctx.fillRect(r.x + 40, r.y + 60, 60, 25);
+                ctx.fillRect(r.x + 40, r.y + 50, 60, 22);
                 ctx.fillStyle = "#0284c7";
-                ctx.fillRect(r.x + 58, r.y + 65, 24, 12);
+                ctx.fillRect(r.x + 58, r.y + 54, 24, 10);
             });
 
-            // 3. Sağ Taraf: Mutfak ve Zirve Toplantı Odası
+            // Sağ Taraf: Mutfak ve Zirve Odası
             ctx.fillStyle = "rgba(120, 53, 15, 0.25)";
-            ctx.fillRect(540, 15, 400, 210);
+            ctx.fillRect(535, 10, 435, 185);
             ctx.strokeStyle = "#d97706";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(540, 15, 400, 210);
+            ctx.lineWidth = 2;
+            ctx.strokeRect(535, 10, 435, 185);
             ctx.fillStyle = "#fde68a";
-            ctx.font = "10px 'Courier New'";
-            ctx.fillText("☕ MUTFAK & KAHVE ALANI", 560, 40);
+            ctx.font = "bold 9px 'Courier New'";
+            ctx.fillText("☕ MUTFAK & KAHVE ALANI", 555, 30);
 
             ctx.fillStyle = "rgba(109, 40, 217, 0.25)";
-            ctx.fillRect(540, 245, 400, 210);
+            ctx.fillRect(535, 205, 435, 185);
             ctx.strokeStyle = "#8b5cf6";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(540, 245, 400, 210);
+            ctx.lineWidth = 2;
+            ctx.strokeRect(535, 205, 435, 185);
             ctx.fillStyle = "#e9d5ff";
-            ctx.fillText("🤝 OTONOM ZİRVE ODASI", 560, 270);
+            ctx.font = "bold 9px 'Courier New'";
+            ctx.fillText("🤝 OTONOM ZİRVE ODASI", 555, 225);
 
-            // 4. Ajanları Çiz
+            // Ajanları Çiz
             for (let name in agentsData) {
                 let ag = agentsData[name];
                 
-                // Ajan Kartı Kutusu
+                // Ajan Kartı
                 ctx.fillStyle = ag.color;
-                ctx.fillRect(ag.x, ag.y, 36, 26);
-                ctx.strokeStyle = "#fff";
+                ctx.fillRect(ag.x, ag.y, 32, 22);
+                ctx.strokeStyle = "#ffffff";
                 ctx.lineWidth = 1;
-                ctx.strokeRect(ag.x, ag.y, 36, 26);
+                ctx.strokeRect(ag.x, ag.y, 32, 22);
 
                 // Baş Harfler
-                ctx.fillStyle = "#fff";
-                ctx.font = "bold 9px 'Courier New'";
-                ctx.fillText(name.substring(0, 2).toUpperCase(), ag.x + 10, ag.y + 17);
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 8px 'Courier New'";
+                ctx.fillText(name.substring(0, 2).toUpperCase(), ag.x + 8, ag.y + 14);
 
                 // İsim Etiketi
                 ctx.fillStyle = "#38bdf8";
-                ctx.font = "7px 'Courier New'";
-                ctx.fillText(name, ag.x, ag.y + 36);
+                ctx.font = "bold 7px 'Courier New'";
+                ctx.fillText(name, ag.x, ag.y + 32);
 
-                // Durum Balonu (Emote / State)
+                // Durum Balonu
                 ctx.fillStyle = "#f8fafc";
-                ctx.fillRect(ag.x - 10, ag.y - 14, ctx.measureText(ag.state).width + 8, 12);
+                ctx.fillRect(ag.x - 8, ag.y - 12, ctx.measureText(ag.state).width + 6, 11);
                 ctx.strokeStyle = "#0f172a";
-                ctx.strokeRect(ag.x - 10, ag.y - 14, ctx.measureText(ag.state).width + 8, 12);
+                ctx.strokeRect(ag.x - 8, ag.y - 12, ctx.measureText(ag.state).width + 6, 11);
                 ctx.fillStyle = "#0f172a";
                 ctx.font = "bold 7px 'Courier New'";
-                ctx.fillText(ag.state, ag.x - 6, ag.y - 5);
+                ctx.fillText(ag.state, ag.x - 5, ag.y - 4);
             }
         }
 
-        // Tıklama Algılama (Hangi ajana tıklandı?)
+        // Tıklama Algılama
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+            const scaleX = 980 / rect.width;
+            const scaleY = 400 / rect.height;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleY;
 
             for (let name in agentsData) {
                 let ag = agentsData[name];
-                if (mouseX >= ag.x && mouseX <= ag.x + 36 && mouseY >= ag.y && mouseY <= ag.y + 36) {
+                if (mouseX >= ag.x && mouseX <= ag.x + 32 && mouseY >= ag.y && mouseY <= ag.y + 32) {
                     openAgentCard(name, "Personel");
                     break;
                 }
             }
         });
 
-        // Simülasyon Verisini Sürekli Çek ve Canvas'ı Güncelle
+        // Simülasyon Verisini Çek
         setInterval(() => {
             fetch('/api/simulation-tick')
             .then(res => res.json())
@@ -436,24 +456,24 @@ def simulation_tick():
         if random.random() < 0.2:
             destinations = [
                 (data["home_x"], data["home_y"]),
-                (random.randint(560, 900), random.randint(30, 180)),  # Mutfak koordinatları
-                (random.randint(560, 900), random.randint(260, 410)) # Zirve Odası koordinatları
+                (random.randint(550, 920), random.randint(20, 160)),  # Mutfak koordinatları
+                (random.randint(550, 920), random.randint(220, 360)) # Zirve Odası koordinatları
             ]
             dest = random.choice(destinations)
             data["target_x"], data["target_y"] = dest
 
-        if data["x"] < data["target_x"]: data["x"] += min(10, data["target_x"] - data["x"])
-        elif data["x"] > data["target_x"]: data["x"] -= min(10, data["x"] - data["target_x"])
+        if data["x"] < data["target_x"]: data["x"] += min(8, data["target_x"] - data["x"])
+        elif data["x"] > data["target_x"]: data["x"] -= min(8, data["x"] - data["target_x"])
 
-        if data["y"] < data["target_y"]: data["y"] += min(10, data["target_y"] - data["y"])
-        elif data["y"] > data["target_y"]: data["y"] -= min(10, data["y"] - data["target_y"])
+        if data["y"] < data["target_y"]: data["y"] += min(8, data["target_y"] - data["y"])
+        elif data["y"] > data["target_y"]: data["y"] -= min(8, data["y"] - data["target_y"])
 
         # Canvas koordinatlarına göre kesin durum
-        if data["x"] >= 520 and data["y"] <= 230:
+        if data["x"] >= 510 and data["y"] <= 200:
             data["state"] = "☕ Molada"
-        elif data["x"] >= 520 and data["y"] > 230:
+        elif data["x"] >= 510 and data["y"] > 200:
             data["state"] = "🤝 Toplantıda"
-        elif abs(data["x"] - data["home_x"]) < 15 and abs(data["y"] - data["home_y"]) < 15:
+        elif abs(data["x"] - data["home_x"]) < 12 and abs(data["y"] - data["home_y"]) < 12:
             data["state"] = "Masada"
         else:
             data["state"] = "Yürüyor..."
