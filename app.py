@@ -1,4 +1,5 @@
 import os
+import requests
 from flask import Flask, render_template_string, jsonify, request
 from groq import Groq
 
@@ -14,7 +15,7 @@ employees = {
     "Talisca": {"role": "Sipariş Takip & Operasyon", "room": "Operasyon Odası", "home_x": 390, "home_y": 70, "color": "#ef4444", "default": "Sipariş işliyor"},
     "Brown": {"role": "Yazılım Mühendisi", "room": "Yazılım Üssü", "home_x": 690, "home_y": 70, "color": "#10b981", "default": "Kod derleniyor..."},
     "Kante": {"role": "Pazarlama Uzmanı", "room": "Pazarlama Odası", "home_x": 90, "home_y": 200, "color": "#f59e0b", "default": "Kampanya kurguluyor"},
-    "İrfan": {"role": "Finans & Trader", "room": "Finans Odası", "home_x": 390, "home_y": 200, "color": "#8b5cf6", "default": "Bütçe kontrolü"},
+    "İrfan": {"role": "Finans & Trader", "room": "Finans Odası", "home_x": 390, "home_y": 200, "color": "#8b5cf6", "default": "Piyasayı tarıyor"},
     "İsmail": {"role": "İnsan Kaynakları", "room": "İK Odası", "home_x": 690, "home_y": 200, "color": "#f97316", "default": "Mülakatta..."},
     "Alex": {"role": "Hukuk Danışmanı", "room": "Hukuk Bürosu", "home_x": 90, "home_y": 330, "color": "#14b8a6", "default": "Sözleşme inceliyor"},
     "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik Odası", "home_x": 390, "home_y": 330, "color": "#64748b", "default": "Sistem taranıyor"},
@@ -26,7 +27,7 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - Private Offices HQ</title>
+    <title>E-Trade Pro - Active Research HQ</title>
     <style>
         body { 
             background-color: #05070b; 
@@ -241,10 +242,10 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - PRIVATE OFFICES</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - ACTIVE RESEARCH</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">ANTI-BULLSHIT MODE</span>
+            <span class="top-btn" style="color: #34d399;">LIVE API ENTEGRE</span>
         </div>
     </div>
 
@@ -294,18 +295,18 @@ HTML_TEMPLATE = """
             <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
             {% endfor %}
         </select>
-        <input type="text" id="ceo-message" placeholder="Komut ver (Örn: Rapor ver veya görevini yap)..." onkeypress="checkEnter(event)">
+        <input type="text" id="ceo-message" placeholder="Komut ver (Örn: İrfan BTC fiyatı kaç?)..." onkeypress="checkEnter(event)">
         <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
     </div>
 
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ PRIVATE OFFICES OPERATIONS TERMINAL</span>
-            <span style="color: #34d399;">● ONLINE</span>
+            <span>⚡ ACTIVE RESEARCH TERMINAL</span>
+            <span style="color: #34d399;">● LIVE DATA ENGINE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Kesin kurallı akıllı yanıt motoru devreye girdi.</div>
+            <div class="log-line">[SYSTEM]: Arka plan veri araştırma motoru entegre edildi.</div>
         </div>
     </div>
 
@@ -359,14 +360,30 @@ HTML_TEMPLATE = """
 </html>
 """
 
+def fetch_crypto_price():
+    """Arka planda CoinGecko API üzerinden canlı Bitcoin ve Ethereum fiyatını çeker"""
+    try:
+        url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd"
+        response = requests.get(url, timeout=3)
+        data = response.json()
+        btc = data.get("bitcoin", {}).get("usd", "Bilinmiyor")
+        eth = data.get("ethereum", {}).get("usd", "Bilinmiyor")
+        return f"CANLI PİYASA VERİSİ -> Bitcoin (BTC): ${btc} USD, Ethereum (ETH): ${eth} USD"
+    except Exception as e:
+        return "Canlı piyasa verisi şu an API yoğunluğundan çekilemedi."
+
 def generate_agent_reply(agent_name, role, user_message):
     try:
-        # Kesin kural: Asla uydurma veri verme, net ve profesyonel ol, saçmalama!
+        extra_context = ""
+        # Eğer kullanıcı piyasa / kripto / fiyat sorarsa arka planda canlı veriyi çekip sisteme enjekte ediyoruz
+        if any(word in user_message.lower() for word in ["btc", "bitcoin", "eth", "ethereum", "fiyat", "piyasa", "kripto"]):
+            extra_context = f"\n[ARKA PLAN ARAŞTIRMA SERVİSİNDEN GELEN CANLI VERİ]: {fetch_crypto_price()}"
+
         system_prompt = (
             f"Sen E-Trade Pro şirketinde {role} olarak çalışan {agent_name} adında profesyonel bir yapay zeka ajanısın. "
-            f"Kendi müstakil odandasın. Patronun Mertcan sana bir komut verdi veya soru sordu. "
-            f"KESİN KURALLAR: Asla anlık borsa, kripto veya dış dünya fiyatı uydurma. Eğer fiyat sorulursa 'Anlık veri bağlantım yok patron' de. "
-            f"Asla boş veya saçma sapan yanıtlar verme. Sadece kendi departmanının işiyle ilgili profesyonel, net, kısa ve ciddi bir yanıt ver."
+            f"Kendi müstakil odandasın. Patronun Mertcan sana soru sordu veya komut verdi.{extra_context}\n"
+            f"Eğer yukarıda canlı veri varsa onu kullanarak net, profesyonel ve kısa bir rapor ver. "
+            f"Asla kafadan atma, verilen canlı veriyi kullan."
         )
         
         messages = [
@@ -377,8 +394,8 @@ def generate_agent_reply(agent_name, role, user_message):
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
             messages=messages,
-            max_tokens=100,
-            temperature=0.2  # Düşük sıcaklık = Saçmalamayı tamamen keser
+            max_tokens=150,
+            temperature=0.3
         )
         
         reply = ""
@@ -386,10 +403,10 @@ def generate_agent_reply(agent_name, role, user_message):
             reply = completion.choices[0].message.content.strip('"').strip()
             
         if not reply or len(reply) < 3:
-            reply = f"Emredersiniz patron, {role} olarak görev başındayım."
+            reply = f"Emredersiniz patron, raporum hazırlanıyor."
         return reply
     except Exception as e:
-        return f"Görev başındayım patron."
+        return f"Veri işlenirken hata oluştu patron."
 
 @app.route('/')
 def index():
