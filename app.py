@@ -1,12 +1,9 @@
 import os
 from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'sirket-sirri-123'
-socketio = SocketIO(app, cors_allowed_origins="*")
 
-# 9 Kişilik Rüya Takımımız ve Başlangıç Konumları / Durumları
+# 9 Kişilik Rüya Takımımız ve Ofis Konumları & Durumları
 employees = {
     "Marco": {"role": "Müşteri İlişkileri", "x": 100, "y": 100, "status": "Müşteri Desteğinde", "color": "#3498db"},
     "Talisca": {"role": "Sipariş Takip", "x": 250, "y": 100, "status": "Veri İşliyor", "color": "#e74c3c"},
@@ -21,13 +18,8 @@ employees = {
 
 @app.route('/')
 def index():
-    return render_template('index.html')
-
-@socketio.on('connect')
-def handle_connect():
-    # Bağlanan yeni kişiye mevcut çalışan listesini gönder
-    emit('update_office', employees)
+    return render_template('index.html', employees=employees)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    socketio.run(app, host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port)
