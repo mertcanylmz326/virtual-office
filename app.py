@@ -48,20 +48,20 @@ def init_db():
 
 init_db()
 
-# Personel Listesi (Mutfak Personeli dahil dinamik yapı)
+# 9 Ajan + Mutfak Personeli ve Saksı Eşleşmeleri
 employees = {
-    "Marco": {"role": "Destek", "room_x": 15, "room_y": 15, "x": 60, "y": 55, "target_x": 60, "target_y": 55, "color": "#3b82f6", "state": "Masada", "plant": "Saksı #1"},
-    "Talisca": {"role": "Operasyon", "room_x": 175, "room_y": 15, "x": 220, "y": 55, "target_x": 220, "target_y": 55, "color": "#ef4444", "state": "Masada", "plant": "Saksı #2"},
-    "Brown": {"role": "Yazılım", "room_x": 335, "room_y": 15, "x": 380, "y": 55, "target_x": 380, "target_y": 55, "color": "#10b981", "state": "Masada", "plant": "Saksı #3"},
+    "Marco": {"role": "Destek", "room_x": 15, "room_y": 15, "x": 60, "y": 55, "target_x": 60, "target_y": 55, "color": "#3b82f6", "state": "Masada", "plant_health": 100},
+    "Talisca": {"role": "Operasyon", "room_x": 175, "room_y": 15, "x": 220, "y": 55, "target_x": 220, "target_y": 55, "color": "#ef4444", "state": "Masada", "plant_health": 95},
+    "Brown": {"role": "Yazılım", "room_x": 335, "room_y": 15, "x": 380, "y": 55, "target_x": 380, "target_y": 55, "color": "#10b981", "state": "Masada", "plant_health": 100},
     
-    "Kante": {"role": "Pazarlama", "room_x": 15, "room_y": 145, "x": 60, "y": 185, "target_x": 60, "target_y": 185, "color": "#f59e0b", "state": "Masada", "plant": "Saksı #4"},
-    "İrfan": {"role": "Finans", "room_x": 175, "room_y": 145, "x": 220, "y": 185, "target_x": 220, "target_y": 185, "color": "#8b5cf6", "state": "Masada", "plant": "Saksı #5"},
-    "İsmail": {"role": "İK", "room_x": 335, "room_y": 145, "x": 380, "y": 185, "target_x": 380, "target_y": 185, "color": "#f97316", "state": "Masada", "plant": "Saksı #6"},
+    "Kante": {"role": "Pazarlama", "room_x": 15, "room_y": 145, "x": 60, "y": 185, "target_x": 60, "target_y": 185, "color": "#f59e0b", "state": "Masada", "plant_health": 90},
+    "İrfan": {"role": "Finans", "room_x": 175, "room_y": 145, "x": 220, "y": 185, "target_x": 220, "target_y": 185, "color": "#8b5cf6", "state": "Masada", "plant_health": 100},
+    "İsmail": {"role": "İK", "room_x": 335, "room_y": 145, "x": 380, "y": 185, "target_x": 380, "target_y": 185, "color": "#f97316", "state": "Masada", "plant_health": 85},
     
-    "Alex": {"role": "Hukuk", "room_x": 15, "room_y": 275, "x": 60, "y": 315, "target_x": 60, "target_y": 315, "color": "#14b8a6", "state": "Masada", "plant": "Saksı #7"},
-    "Skrinar": {"role": "Siber", "room_x": 175, "room_y": 275, "x": 220, "y": 315, "target_x": 220, "target_y": 315, "color": "#64748b", "state": "Masada", "plant": "Saksı #8"},
-    "Kerem": {"role": "Başarı", "room_x": 335, "room_y": 275, "x": 380, "y": 315, "target_x": 380, "target_y": 315, "color": "#ec4899", "state": "Masada", "plant": "Saksı #9"},
-    "Mutfak_Chef": {"role": "Mutfak Personeli", "room_x": 520, "room_y": 15, "x": 560, "y": 55, "target_x": 560, "target_y": 55, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "plant": "Mutfak Saksısı"}
+    "Alex": {"role": "Hukuk", "room_x": 15, "room_y": 275, "x": 60, "y": 315, "target_x": 60, "target_y": 315, "color": "#14b8a6", "state": "Masada", "plant_health": 100},
+    "Skrinar": {"role": "Siber", "room_x": 175, "room_y": 275, "x": 220, "y": 315, "target_x": 220, "target_y": 315, "color": "#64748b", "state": "Masada", "plant_health": 95},
+    "Kerem": {"role": "Başarı", "room_x": 335, "room_y": 275, "x": 380, "y": 315, "target_x": 380, "target_y": 315, "color": "#ec4899", "state": "Masada", "plant_health": 100},
+    "Mutfak_Chef": {"role": "Mutfak Personeli", "room_x": 530, "room_y": 15, "x": 560, "y": 55, "target_x": 560, "target_y": 55, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "plant_health": 100}
 }
 
 HTML_TEMPLATE = """
@@ -70,7 +70,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Ultimate Robot Tycoon HQ</title>
+    <title>E-Trade Pro - AAA Indie Tycoon HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -140,7 +140,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // ULTIMATE ROBOT TYCOON HQ</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // AAA INDE TYCOON HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
@@ -167,14 +167,14 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
-    <!-- Terminal (Ajan Sohbetleri ve Loglar) -->
+    <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ CANLI AJAN SOHBETLERİ & İŞLEMLER TERMINALİ</span>
-            <span style="color: #38bdf8;">● ROBOT SIMÜLASYONU AKTİF</span>
+            <span>⚡ AAA TYCOON LIVE OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8;">● TILE FLOORS & PARTICLES & BUBBLES ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Mutfak personeli, robot bacak animasyonları ve kapı mekanikleri yüklendi.</div>
+            <div class="log-line">[SYSTEM]: Departman zemin motifleri, kahve buharı, saksı barları ve konuşma balonları yüklendi.</div>
         </div>
     </div>
 
@@ -193,6 +193,7 @@ HTML_TEMPLATE = """
 
         let agentsData = {};
         let footprints = [];
+        let steamParticles = []; // Kahve makinesi buhar parçacıkları
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
@@ -210,7 +211,7 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "🤖 " + name;
             document.getElementById('modal-role').innerText = "Rol: " + role;
-            document.getElementById('modal-status').innerText = "Durum: Görev başında, saksısı kontrol ediliyor.";
+            document.getElementById('modal-status').innerText = "Durum: Görev başında, saksısı ve masası aktif.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -237,21 +238,21 @@ HTML_TEMPLATE = """
             ctx.fillRect(0, 245, w, 25);
             ctx.fillRect(480, 0, 30, h);
 
-            // 9 Ofis Odası + İçerisinde Saksı ve Masa
+            // 9 Ofis Odası (Departmana Özel Zemin Motifleri)
             const rooms = [
-                {x: 15, y: 15, w: 145, h: 95, name: "1. MARCO"},
-                {x: 175, y: 15, w: 145, h: 95, name: "2. TALİSCA"},
-                {x: 335, y: 15, w: 145, h: 95, name: "3. BROWN"},
-                {x: 15, y: 145, w: 145, h: 95, name: "4. KANTE"},
-                {x: 175, y: 145, w: 145, h: 95, name: "5. İRFAN"},
-                {x: 335, y: 145, w: 145, h: 95, name: "6. İSMAİL"},
-                {x: 15, y: 275, w: 145, h: 95, name: "7. ALEX"},
-                {x: 175, y: 275, w: 145, h: 95, name: "8. SKRİNAR"},
-                {x: 335, y: 275, w: 145, h: 95, name: "9. KEREM"}
+                {x: 15, y: 15, w: 145, h: 95, name: "1. MARCO", theme: "#111827"},
+                {x: 175, y: 15, w: 145, h: 95, name: "2. TALİSCA", theme: "#111827"},
+                {x: 335, y: 15, w: 145, h: 95, name: "3. BROWN (YAZILIM)", theme: "#064e3b"}, // Yazılım yeşilimsi zemin
+                {x: 15, y: 145, w: 145, h: 95, name: "4. KANTE", theme: "#111827"},
+                {x: 175, y: 145, w: 145, h: 95, name: "5. İRFAN (FİNANS)", theme: "#3b0764"}, // Finans morumsu zemin
+                {x: 335, y: 145, w: 145, h: 95, name: "6. İSMAİL", theme: "#111827"},
+                {x: 15, y: 275, w: 145, h: 95, name: "7. ALEX", theme: "#111827"},
+                {x: 175, y: 275, w: 145, h: 95, name: "8. SKRİNAR", theme: "#111827"},
+                {x: 335, y: 275, w: 145, h: 95, name: "9. KEREM", theme: "#111827"}
             ];
 
             rooms.forEach(r => {
-                ctx.fillStyle = "#111827";
+                ctx.fillStyle = r.theme;
                 ctx.fillRect(r.x, r.y, r.w, r.h);
                 ctx.strokeStyle = "#475569";
                 ctx.lineWidth = 3;
@@ -268,44 +269,63 @@ HTML_TEMPLATE = """
                 ctx.fillStyle = "#0284c7";
                 ctx.fillRect(r.x + 60, r.y + 54, 22, 10);
 
-                // Odalara Özel Saksı 🌱
+                // Odalara Özel Saksı 🌱 ve Sağlık Barı
                 ctx.fillStyle = "#78350f";
                 ctx.fillRect(r.x + 15, r.y + 50, 14, 16);
                 ctx.fillStyle = "#4ade80";
                 ctx.font = "10px sans-serif";
                 ctx.fillText("🌿", r.x + 13, r.y + 45);
 
-                // Kapı (Açılıp kapanır eşik)
+                // Sağlık Barı
+                ctx.fillStyle = "#1e293b";
+                ctx.fillRect(r.x + 12, r.y + 70, 20, 4);
+                ctx.fillStyle = "#4ade80";
+                ctx.fillRect(r.x + 12, r.y + 70, 16, 4);
+
+                // Kapı Eşiği
                 ctx.fillStyle = "#38bdf8";
                 if (r.y < 120) ctx.fillRect(r.x + 60, r.y + r.h - 2, 25, 4);
                 else if (r.y > 200) ctx.fillRect(r.x + 60, r.y - 2, 25, 4);
                 else ctx.fillRect(r.x + r.w - 2, r.y + 40, 4, 20);
             });
 
-            // Sağ Taraf: Mutfak (Kahve Makineli) ve Zirve Odası
-            ctx.fillStyle = "rgba(120, 53, 15, 0.25)";
+            // Sağ Taraf: Mutfak (Karo Fayans Zemin ve Kahve Makinesi + Buhar)
+            ctx.fillStyle = "rgba(120, 53, 15, 0.35)";
             ctx.fillRect(530, 15, 475, 185);
             ctx.strokeStyle = "#d97706";
             ctx.lineWidth = 3;
             ctx.strokeRect(530, 15, 475, 185);
             ctx.fillStyle = "#fde68a";
             ctx.font = "bold 9px 'Courier New'";
-            ctx.fillText("☕ MUTFAK & KAHVE MAKİNESİ", 550, 35);
+            ctx.fillText("☕ MUTFAK & KAHVE MAKİNESİ (FAYANS ZEMİN)", 545, 35);
             
-            // Kahve Makinesi Çizimi
+            // Kahve Makinesi
             ctx.fillStyle = "#451a03";
             ctx.fillRect(920, 50, 40, 50);
             ctx.fillStyle = "#fbbf24";
             ctx.fillRect(930, 60, 20, 15);
 
-            ctx.fillStyle = "rgba(109, 40, 217, 0.25)";
+            // Kahve Buharı Parçacıkları (Animasyonlu)
+            if (Math.random() < 0.4) {
+                steamParticles.push({x: 940 + randomRange(-5, 5), y: 50, alpha: 1.0});
+            }
+            steamParticles.forEach((p, index) => {
+                p.y -= 0.8;
+                p.alpha -= 0.03;
+                ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+                ctx.fillRect(p.x, p.y, 3, 3);
+                if (p.alpha <= 0) steamParticles.splice(index, 1);
+            });
+
+            // Zirve Odası
+            ctx.fillStyle = "rgba(109, 40, 217, 0.3)";
             ctx.fillRect(530, 215, 475, 185);
             ctx.strokeStyle = "#8b5cf6";
             ctx.lineWidth = 3;
             ctx.strokeRect(530, 215, 475, 185);
             ctx.fillStyle = "#e9d5ff";
             ctx.font = "bold 9px 'Courier New'";
-            ctx.fillText("🤝 OTONOM ZİRVE ODASI", 550, 235);
+            ctx.fillText("🤝 OTONOM ZİRVE TOPLANTI ODASI", 545, 235);
 
             // Ayak İzleri
             footprints.forEach(fp => {
@@ -313,7 +333,7 @@ HTML_TEMPLATE = """
                 ctx.fillRect(fp.x, fp.y, 2, 2);
             });
 
-            // Robot Ajanları Çiz (Kutu değil, Robot Gövde + Anten + Hareketli Bacaklar)
+            // Robot Ajanları Çiz (Animasyonlu Eller, Bacaklar ve Konuşma Baloncukları)
             for (let name in agentsData) {
                 let ag = agentsData[name];
                 
@@ -333,26 +353,43 @@ HTML_TEMPLATE = """
                 ctx.fillRect(ag.x + 4, ag.y + 6, 4, 4);
                 ctx.fillRect(ag.x + 14, ag.y + 6, 4, 4);
 
-                // Hareketli Bacaklar (Yürüyorsa sallanır)
+                // Hareketli Bacaklar
                 let legOffset = (ag.state === "Yürüyor...") ? (Math.floor(Date.now() / 150) % 2 === 0 ? 3 : -3) : 0;
                 ctx.fillStyle = ag.color;
                 ctx.fillRect(ag.x + 4, ag.y + 22, 3, 6 + legOffset);
                 ctx.fillRect(ag.x + 15, ag.y + 22, 3, 6 - legOffset);
+
+                // Çalışırken veya kahvedeyken eller / kupa simgesi
+                if (ag.state === "Masada") {
+                    ctx.fillStyle = "#fbbf24";
+                    ctx.fillRect(ag.x - 2, ag.y + 10, 2, 4); // Klavye üstü eller
+                    ctx.fillRect(ag.x + 22, ag.y + 10, 2, 4);
+                } else if (ag.state === "Kahvede") {
+                    ctx.fillStyle = "#fff";
+                    ctx.font = "8px sans-serif";
+                    ctx.fillText("☕", ag.x + 24, ag.y + 12);
+                }
 
                 // İsim Etiketi
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 7px 'Courier New'";
                 ctx.fillText(name, ag.x - 2, ag.y + 36);
 
-                // Durum Balonu
+                // Canvas Üstü İnteraktif Konuşma / Durum Balonu (Comic Bubble)
                 ctx.fillStyle = "#f8fafc";
-                ctx.fillRect(ag.x - 6, ag.y - 16, ctx.measureText(ag.state).width + 6, 10);
-                ctx.strokeStyle = "#0f172a";
-                ctx.strokeRect(ag.x - 6, ag.y - 16, ctx.measureText(ag.state).width + 6, 10);
+                ctx.fillRect(ag.x - 8, ag.y - 18, ctx.measureText(ag.state).width + 8, 12);
+                ctx.strokeStyle = "#38bdf8";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(ag.x - 8, ag.y - 18, ctx.measureText(ag.state).width + 8, 12);
+                
                 ctx.fillStyle = "#0f172a";
-                ctx.font = "bold 6px 'Courier New'";
-                ctx.fillText(ag.state, ag.x - 3, ag.y - 9);
+                ctx.font = "bold 7px 'Courier New'";
+                ctx.fillText(ag.state, ag.x - 4, ag.y - 10);
             }
+        }
+
+        function randomRange(min, max) {
+            return Math.random() * (max - min) + min;
         }
 
         canvas.addEventListener('click', (e) => {
@@ -371,7 +408,7 @@ HTML_TEMPLATE = """
             }
         });
 
-        // Simülasyon Verisini Çek ve Ajan Konuşmalarını Monitörle
+        // Simülasyon Verisini Çek
         setInterval(() => {
             fetch('/api/simulation-tick')
             .then(res => res.json())
@@ -387,7 +424,6 @@ HTML_TEMPLATE = """
                 agentsData = mapped;
                 drawOffice();
 
-                // Eğer sunucudan yeni inter-agent sohbet logu geldiyse ekle
                 if (data.latest_dialogue) {
                     appendLog(`💬 [AJAN SOHBETİ]: ${data.latest_dialogue}`);
                 }
@@ -475,7 +511,6 @@ def query_supabase_memory(query_text):
     except:
         return "Hafızaya erişilemedi."
 
-# Son inter-agent sohbeti saklamak için bellek değişkeni
 latest_inter_agent_chat = ""
 
 @app.route('/api/simulation-tick', methods=['GET'])
@@ -483,7 +518,6 @@ def simulation_tick():
     global latest_inter_agent_chat
     agent_list = []
     
-    # Arada sırada ajanlar birbirleriyle konuşsun ve CEO görsün
     if random.random() < 0.15:
         names = list(employees.keys())
         a1, a2 = random.sample(names, 2)
@@ -499,27 +533,24 @@ def simulation_tick():
 
     for name, data in employees.items():
         if random.random() < 0.2:
-            # Koridorları ve kapıları kullanarak odalardan çıkış hedefleri
             destinations = [
-                (data["room_x"] + 45, data["room_y"] + 40), # Kendi odası / masası
-                (random.randint(550, 930), random.randint(30, 150)),  # Mutfak (Kahve makinesi yanı)
+                (data["room_x"] + 45, data["room_y"] + 40),
+                (random.randint(550, 930), random.randint(30, 150)),  # Mutfak
                 (random.randint(550, 930), random.randint(230, 350)) # Zirve Odası
             ]
             dest = random.choice(destinations)
             data["target_x"], data["target_y"] = dest
 
-        # Yumuşak hareket
         if data["x"] < data["target_x"]: data["x"] += min(5, data["target_x"] - data["x"])
         elif data["x"] > data["target_x"]: data["x"] -= min(5, data["x"] - data["target_x"])
 
         if data["y"] < data["target_y"]: data["y"] += min(5, data["target_y"] - data["y"])
         elif data["y"] > data["target_y"]: data["y"] -= min(5, data["y"] - data["target_y"])
 
-        # Durum tespiti
         if data["x"] >= 510 and data["y"] <= 200:
-            data["state"] = "☕ Kahvede"
+            data["state"] = "Kahvede"
         elif data["x"] >= 510 and data["y"] > 200:
-            data["state"] = "🤝 Toplantıda"
+            data["state"] = "Toplantıda"
         elif abs(data["x"] - (data["room_x"] + 45)) < 15 and abs(data["y"] - (data["room_y"] + 40)) < 15:
             data["state"] = "Masada"
         else:
@@ -549,17 +580,16 @@ def api_chat():
     if agent_name not in employees: agent_name = "İrfan"
     agent = employees[agent_name]
 
-    # Yeni personel ekleme isteği gelirse sisteme anında ekle
     if "işe al" in user_message.lower() or "personel" in user_message.lower():
         new_name = "Personel_" + str(random.randint(10, 99))
         employees[new_name] = {
             "role": "Yeni Personel", 
-            "room_x": 520, "room_y": 15, 
+            "room_x": 530, "room_y": 15, 
             "x": 550, "y": 50, 
             "target_x": 550, "target_y": 50, 
             "color": "#eab308", 
             "state": "İşe Başladı", 
-            "plant": "Yeni Saksı"
+            "plant_health": 100
         }
 
     task_created = False
