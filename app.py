@@ -210,10 +210,10 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - GPT-OSS SYNC</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - INTERACTIVE CHAT</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">GPT-OSS 20B AKTİF</span>
+            <span class="top-btn" style="color: #34d399;">CANLI BAĞLANTI</span>
         </div>
     </div>
 
@@ -266,15 +266,15 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-console">
-        > [GPT-OSS AKTİF]: Arayüzdeki model ile tam senkronize edildi. Ajanlara tıklayarak test et patron!
+        > [CANLI SOHBET AKTİF]: Ajanlara tıklayarak doğrudan selam ver ve yanıtını al patron!
     </div>
 
     <script>
         const consoleBox = document.getElementById('game-console');
 
         function getAiReport(name, role) {
-            consoleBox.innerHTML = `> [YAPAY ZEKA]: <b>${name} (${role})</b> rapor hazırlıyor...`;
-            document.getElementById('bubble-' + name).innerText = "Rapor yazılıyor...";
+            consoleBox.innerHTML = `> [YAPAY ZEKA]: <b>CEO Mertcan</b>, ${name} (${role}) ile konuşuyor...`;
+            document.getElementById('bubble-' + name).innerText = "Dinliyor...";
             
             fetch('/api/agent-status/' + name)
                 .then(response => response.json())
@@ -306,21 +306,34 @@ def agent_status(name):
         return jsonify({"status": "API anahtarı aktif değil.", "short_status": "Offline"})
 
     try:
-        prompt = f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name} adında bir yapay zeka ajanısın. Patronun Mertcan için masanda yaptığın işle ilgili Türkçe, çok kısa, esprili ve havalı bir durum raporu ver. En fazla 4-5 kelime olsun."
+        # Doğrudan "Selam" mesajı ve rol bazlı etkileşim yapısı
+        messages = [
+            {"role": "system", "content": f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name} adında bir yapay zeka ajanısın. Patronun Mertcan sana tıkladı ve selam verdi. Ona masanda yaptığın işle ilgili Türkçe, çok kısa, esprili ve havalı bir yanıt ver. Maksimum 4-5 kelime olsun."},
+            {"role": "user", "content": f"Selam {name}, durum nedir?"}
+        ]
         
-        # Arayüzde seçtiğimiz modelle tam uyumlu
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=25,
-            temperature=0.8
+            messages=messages,
+            max_tokens=60,
+            temperature=0.9
         )
         
-        status_text = completion.choices[0].message.content.strip('"')
-        return jsonify({"status": status_text, "short_status": status_text[:18] + "..." if len(status_text) > 18 else status_text})
+        status_text = ""
+        if completion.choices and completion.choices[0].message.content:
+            status_text = completion.choices[0].message.content.strip('"').strip()
+            
+        if not status_text:
+            status_text = f"Emredersiniz patron!"
+
+        return jsonify({
+            "status": status_text, 
+            "short_status": status_text[:18] + "..." if len(status_text) > 18 else status_text
+        })
     
     except Exception as e:
-        return jsonify({"status": f"Hata: {str(e)}", "short_status": "Çalışıyor"})
+        fallback_msg = f"Buradayım patron!"
+        return jsonify({"status": fallback_msg, "short_status": "Hazır"})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
