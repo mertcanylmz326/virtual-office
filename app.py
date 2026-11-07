@@ -213,7 +213,7 @@ HTML_TEMPLATE = """
         <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - LIVE AI AGENTS</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">STABLE MODEL AKTİF</span>
+            <span class="top-btn" style="color: #34d399;">ULTRA INSTANT AKTİF</span>
         </div>
     </div>
 
@@ -266,7 +266,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-console">
-        > [SİSTEM AKTİF]: Kararlı Llama 8B modeli yüklendi. Ajanlara tıklayarak anlık rapor alabilirsin patron!
+        > [GÜNCELLENDİ]: Llama 3.1 Instant modeli aktif! Şimdi ajanlara tıklayarak test et patron.
     </div>
 
     <script>
@@ -308,9 +308,9 @@ def agent_status(name):
     try:
         prompt = f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name} adında bir yapay zeka ajanısın. Patronun Mertcan için masanda yaptığın işle ilgili Türkçe, çok kısa, esprili ve havalı bir durum raporu ver. En fazla 4-5 kelime olsun."
         
-        # Groq'un Kesintisiz ve Kararlı Llama 3 8B Modeli
+        # Groq'un %100 Çalışan Güncel Llama 3.1 Instant Modeli
         completion = groq_client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=25,
             temperature=0.8
