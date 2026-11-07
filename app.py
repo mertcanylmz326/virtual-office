@@ -86,7 +86,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri talebi alıyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Web Servis Endpoint Üretiyor"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Tek Tıkla Link Üretiyor"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -171,8 +171,8 @@ HTML_TEMPLATE = """
             margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
         .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
-        .terminal-body { padding: 10px; height: 130px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
-        .log-line { margin-bottom: 4px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
+        .terminal-body { padding: 10px; height: 140px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
+        .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
 
         @media (max-width: 768px) {
             #game-topbar { flex-direction: column; align-items: stretch; text-align: center; }
@@ -186,7 +186,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // WEB SERVICE ENDPOINTS</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // TEK TIKLA CANLI SİTE</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -198,7 +198,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 DESTEK -> YAZILIM ENTEGRASYONU AKTİF</span>
+        <span style="color: #fbbf24;">🚀 OTOMATİK LİNK SUNUCUSU AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -212,7 +212,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Marco'ya müşteri talebi ver veya Brown'a site kurdur..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Örn: Bana şık bir çiçekçi sitesi kur..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -220,10 +220,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● DYNAMIC PREVIEW ROUTER ACTIVE</span>
+            <span style="color: #38bdf8; font-weight: bold;">● DİREK TIKLANABİLİR LİNK MODU</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Destek ve Yazılım departmanları arası web servis bağlayıcısı hazır. Üretilen siteler doğrudan `/preview/ID` olarak sunulacak.</div>
+            <div class="log-line">[SYSTEM]: Brown hazır. İstediğin siteyi kurdurduğun an doğrudan tıklanabilir canlı link ekrana düşecek!</div>
         </div>
     </div>
 
@@ -401,7 +401,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} projeyi kodluyor ve canlı link hazırlıyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -412,7 +412,7 @@ HTML_TEMPLATE = """
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
                 if(data.preview_url) {
-                    appendLog(`> [CANLI WEB SERVİS LİNKİ]: <a href="${data.preview_url}" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: underline;">${data.preview_url}</a> (Müşteriye atılacak veya direkt açılacak link)`);
+                    appendLog(`> 🚀 <b style="color: #38bdf8; font-size: 13px;">CANLI WEBSERVİS LİNKİ (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 13px;">${data.preview_url}</a>`);
                 }
             })
             .catch(err => {
@@ -533,7 +533,6 @@ def api_chat():
     preview_url = ""
     reply = ""
 
-    # Eğer Marco (Destek) veya Brown (Yazılım) üzerinden bir site/proje talebi gelirse
     if any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
         try:
             code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, şık ve tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ham HTML kodunu döndür, asla markdown işaretleri (```html) veya açıklama metni ekleme."
@@ -556,23 +555,21 @@ def api_chat():
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
             cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
-                        ("Destek Müşterisi", user_message[:40], "Web Servis Canlı", html_code))
+                        ("Mertcan (CEO)", user_message[:40], "Web Servis Canlı", html_code))
             project_id = cur.fetchone()[0]
             conn.commit()
             cur.close()
             conn.close()
 
-            # Sunucumuzun kendi linkini üretiyoruz
             host_url = request.host_url.rstrip('/')
             preview_url = f"{host_url}/preview/{project_id}"
         except Exception as e:
             print(f"DB Kayıt Hatası: {e}")
 
-    # Ajanların yanıt üretmesi
     try:
-        system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} uzmanısın. Patronun veya müşteri sana yazdı: '{user_message}'. Kısa ve karizmatik yanıt ver."
+        system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} uzmanısın. Patronun sana yazdı: '{user_message}'. Kısa ve karizmatik yanıt ver."
         if preview_url:
-            system_prompt += f" Proje başarıyla kodlandı, web servis linki hazır: {preview_url}"
+            system_prompt += f" Proje kodlandı, web servis linki hazır."
 
         completion = groq_client.chat.completions.create(
             model="qwen/qwen3.8-27b",
@@ -581,10 +578,10 @@ def api_chat():
         )
         reply = completion.choices[0].message.content.strip('"').strip()
     except:
-        reply = f"Emredersiniz patron, {agent['role']} olarak talimatınız işleme alındı."
+        reply = f"Emredersiniz patron, talimatınız işleme alındı."
 
     if not reply:
-        reply = f"İşlem tamamlandı patron, web servis linki hazır."
+        reply = f"İşlem tamamlandı patron, link aşağıda hazır."
 
     employees[agent_name]["speech"] = reply[:25]
     log_to_supabase(agent_name, "SYSTEM_OP", f"Talimat: {user_message}")
@@ -614,7 +611,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu destek ve web servis entegrasyonunu onayladı."})
+    return jsonify({"decision": "Yönetim kurulu tek tıkla önizleme altyapısını onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
