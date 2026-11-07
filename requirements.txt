@@ -1,4 +1,5 @@
-flask
+Flask
 gunicorn
 groq
 requests
+psycopg2-binary
