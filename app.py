@@ -242,10 +242,10 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - ACTIVE RESEARCH</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - SMART AGENTS</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">LIVE API ENTEGRE</span>
+            <span class="top-btn" style="color: #34d399;">DİNAMİK YANIT AKTİF</span>
         </div>
     </div>
 
@@ -295,18 +295,18 @@ HTML_TEMPLATE = """
             <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
             {% endfor %}
         </select>
-        <input type="text" id="ceo-message" placeholder="Komut ver (Örn: İrfan BTC fiyatı kaç?)..." onkeypress="checkEnter(event)">
+        <input type="text" id="ceo-message" placeholder="Komut ver veya soru sor..." onkeypress="checkEnter(event)">
         <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
     </div>
 
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ ACTIVE RESEARCH TERMINAL</span>
-            <span style="color: #34d399;">● LIVE DATA ENGINE</span>
+            <span>⚡ SMART AGENTS OPERATIONS TERMINAL</span>
+            <span style="color: #34d399;">● LIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Arka plan veri araştırma motoru entegre edildi.</div>
+            <div class="log-line">[SYSTEM]: Ajanların yaratıcılık kısıtlaması kaldırıldı, sorularınıza doğrudan odaklanıyorlar.</div>
         </div>
     </div>
 
@@ -361,7 +361,7 @@ HTML_TEMPLATE = """
 """
 
 def fetch_crypto_price():
-    """Arka planda CoinGecko API üzerinden canlı Bitcoin ve Ethereum fiyatını çeker"""
+    """CoinGecko API üzerinden canlı Bitcoin ve Ethereum fiyatını çeker"""
     try:
         url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd"
         response = requests.get(url, timeout=3)
@@ -370,20 +370,20 @@ def fetch_crypto_price():
         eth = data.get("ethereum", {}).get("usd", "Bilinmiyor")
         return f"CANLI PİYASA VERİSİ -> Bitcoin (BTC): ${btc} USD, Ethereum (ETH): ${eth} USD"
     except Exception as e:
-        return "Canlı piyasa verisi şu an API yoğunluğundan çekilemedi."
+        return "Canlı piyasa verisi şu an API üzerinden alınamadı."
 
 def generate_agent_reply(agent_name, role, user_message):
     try:
         extra_context = ""
-        # Eğer kullanıcı piyasa / kripto / fiyat sorarsa arka planda canlı veriyi çekip sisteme enjekte ediyoruz
         if any(word in user_message.lower() for word in ["btc", "bitcoin", "eth", "ethereum", "fiyat", "piyasa", "kripto"]):
-            extra_context = f"\n[ARKA PLAN ARAŞTIRMA SERVİSİNDEN GELEN CANLI VERİ]: {fetch_crypto_price()}"
+            extra_context = f"\n[GÜNCEL PİYASA SERVİSİNDEN GELEN VERİ]: {fetch_crypto_price()}"
 
+        # Sistem promptunu çok daha esnek ve doğrudan soruya yanıt verecek şekilde güncelledik
         system_prompt = (
-            f"Sen E-Trade Pro şirketinde {role} olarak çalışan {agent_name} adında profesyonel bir yapay zeka ajanısın. "
-            f"Kendi müstakil odandasın. Patronun Mertcan sana soru sordu veya komut verdi.{extra_context}\n"
-            f"Eğer yukarıda canlı veri varsa onu kullanarak net, profesyonel ve kısa bir rapor ver. "
-            f"Asla kafadan atma, verilen canlı veriyi kullan."
+            f"Sen E-Trade Pro şirketinde {role} olarak çalışan {agent_name} adında akıllı bir yapay zeka ajanısın. "
+            f"Patronun Mertcan sana doğrudan soru sordu veya emir verdi: '{user_message}'.\n"
+            f"{extra_context}\n"
+            f"Lütfen kalıp sözler kullanmadan, doğrudan sorduğu soruya odaklanarak profesyonel, net ve açıklayıcı bir yanıt ver."
         )
         
         messages = [
@@ -391,11 +391,12 @@ def generate_agent_reply(agent_name, role, user_message):
             {"role": "user", "content": user_message}
         ]
         
+        # Sıcaklığı 0.7 yaparak modelin ezber kalıplardan çıkıp özgün ve mantıklı yanıt vermesini sağlıyoruz
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
             messages=messages,
-            max_tokens=150,
-            temperature=0.3
+            max_tokens=200,
+            temperature=0.7
         )
         
         reply = ""
@@ -403,10 +404,10 @@ def generate_agent_reply(agent_name, role, user_message):
             reply = completion.choices[0].message.content.strip('"').strip()
             
         if not reply or len(reply) < 3:
-            reply = f"Emredersiniz patron, raporum hazırlanıyor."
+            reply = f"Patron, talimatınız üzerine {role} olarak çalışıyorum."
         return reply
     except Exception as e:
-        return f"Veri işlenirken hata oluştu patron."
+        return f"Sistem hatası: {str(e)[:40]}"
 
 @app.route('/')
 def index():
