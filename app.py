@@ -242,10 +242,10 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - ROBUST RESEARCH</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - SMART AGENTS</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">ROBUST API SYNC</span>
+            <span class="top-btn" style="color: #34d399;">DETAYLI RAPOR AKTİF</span>
         </div>
     </div>
 
@@ -295,18 +295,18 @@ HTML_TEMPLATE = """
             <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
             {% endfor %}
         </select>
-        <input type="text" id="ceo-message" placeholder="Komut ver veya piyasa sor..." onkeypress="checkEnter(event)">
+        <input type="text" id="ceo-message" placeholder="Stratejik soru sor veya talimat ver..." onkeypress="checkEnter(event)">
         <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
     </div>
 
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ ROBUST OPERATIONS TERMINAL</span>
+            <span>⚡ SMART AGENTS OPERATIONS TERMINAL</span>
             <span style="color: #34d399;">● LIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Sağlamlaştırılmış veri çekme motoru aktif.</div>
+            <div class="log-line">[SYSTEM]: Ezber kalıplar engellendi. Detaylı stratejik yanıt motoru aktif.</div>
         </div>
     </div>
 
@@ -363,7 +363,6 @@ HTML_TEMPLATE = """
 def fetch_crypto_price():
     """Yedekli ve güvenli CoinGecko / Binance API veri çekme motoru"""
     try:
-        # Birinci kaynak: CoinGecko
         url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd"
         response = requests.get(url, timeout=4)
         if response.status_code == 200:
@@ -376,7 +375,6 @@ def fetch_crypto_price():
         pass
 
     try:
-        # İkinci kaynak (Yedek): Binance Public API
         url_binance = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
         res_b = requests.get(url_binance, timeout=3).json()
         btc_price = float(res_b.get("price", 0))
@@ -387,21 +385,24 @@ def fetch_crypto_price():
         
         return f"GÜNCEL PİYASA VERİSİ (Binance) -> Bitcoin (BTC): ${btc_price:,.2f} USD | Ethereum (ETH): ${eth_price:,.2f} USD"
     except Exception as e:
-        return f"Piyasa verisi alınırken hata oluştu: {str(e)}"
+        return f"Piyasa verisi alınamadı."
 
 def generate_agent_reply(agent_name, role, user_message):
     try:
         extra_context = ""
         if any(word in user_message.lower() for word in ["btc", "bitcoin", "eth", "ethereum", "fiyat", "piyasa", "kripto"]):
             live_data = fetch_crypto_price()
-            extra_context = f"\n[SİSTEM TARAFINDAN GETİRİLEN CANLI VERİ]: {live_data}\n"
+            extra_context = f"\n[GÜNCEL PİYASA VERİSİ]: {live_data}\n"
 
+        # Kesin talimat: Asla kısa ezber cümle kurma, uzun ve stratejik rapor ver
         system_prompt = (
-            f"Sen E-Trade Pro şirketinde {role} olarak çalışan {agent_name} adında akıllı bir yapay zeka ajanısın. "
-            f"Kendi müstakil odandasın. Patronun Mertcan sana şunu yazdı: '{user_message}'.\n"
+            f"Sen E-Trade Pro şirketinde {role} olarak çalışan {agent_name} adında üst düzey bir uzmansın. "
+            f"Kendi müstakil odandasın. Patronun Mertcan sana şu soruyu sordu: '{user_message}'.\n"
             f"{extra_context}\n"
-            f"Eğer yukarıda canlı veri sunulmuşsa, bunu kullanarak patrona net, profesyonel ve güncel rakamlarla yanıt ver. "
-            f"Asla 'verim yok'deme, çünkü sistem o veriyi sana sağladı. Doğrudan rakamı vererek raporla."
+            f"KESİN KURALLAR:\n"
+            f"1. Asla 'Patron, talimatınız işlendi' veya benzeri kısa ezber cümleler KURMA.\n"
+            f"2. Doğrudan kendi uzmanlık alanına ({role}) dayanarak patrona detaylı, akıllı, stratejik ve uzun bir rapor sun.\n"
+            f"3. Şirketi büyütmek, güvenlik açıkları, pazarlama veya piyasa stratejileri hakkında somut fikirler ver."
         )
         
         messages = [
@@ -412,19 +413,20 @@ def generate_agent_reply(agent_name, role, user_message):
         completion = groq_client.chat.completions.create(
             model="openai/gpt-oss-20b",
             messages=messages,
-            max_tokens=150,
-            temperature=0.7
+            max_tokens=300,
+            temperature=0.85
         )
         
         reply = ""
         if completion.choices and completion.choices[0].message and completion.choices[0].message.content:
             reply = completion.choices[0].message.content.strip('"').strip()
             
-        if not reply or len(reply) < 3:
-            reply = f"Patron, talimatınız işlendi."
+        if not reply or len(reply) < 10 or "talimatınız işlendi" in reply.lower():
+            reply = f"Patron, {role} departmanı olarak bu konuda önerim: Süreçleri optimize edip operasyonel gücümüzü artırmalıyız."
+            
         return reply
     except Exception as e:
-        return f"Hata: {str(e)[:40]}"
+        return f"Rapor hazırlanırken teknik bir aksaklık yaşandı patron: {str(e)[:30]}"
 
 @app.route('/')
 def index():
