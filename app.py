@@ -4,21 +4,21 @@ from groq import Groq
 
 app = Flask(__name__)
 
-# Groq API İstemcisi (Senin Anahtarınla Canlı Bağlantı)
-GROQ_API_KEY = "Gsk_LthT8FnpqY3JxFVlMD3PWGdyb3FYA2ruUyfIHUy7T2YDAr6WBbVl"
+# Yeni Groq API Anahtarın ile Canlı Bağlantı
+GROQ_API_KEY = "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"
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
-# 9 Kişilik Rüya Takımımız ve Rolleri
+# 9 Kişilik E-Trade Pro Rüya Takımımız ve Çakışmasız Özel Odaları
 employees = {
-    "Marco": {"role": "Müşteri İlişkileri", "room": "Destek Odası", "home_x": 90, "home_y": 70, "color": "#3b82f6"},
-    "Talisca": {"role": "Sipariş Takip", "room": "Operasyon Odası", "home_x": 270, "home_y": 70, "color": "#ef4444"},
-    "Brown": {"role": "Yazılım (E-Trade Pro)", "room": "Yazılım Üssü", "home_x": 560, "home_y": 70, "color": "#10b981"},
-    "Kante": {"role": "Pazarlama & Büyüme", "room": "Pazarlama Odası", "home_x": 740, "home_y": 70, "color": "#f59e0b"},
-    "İrfan": {"role": "Muhasebe & Finans", "room": "Finans Odası", "home_x": 740, "home_y": 330, "color": "#8b5cf6"},
-    "İsmail": {"role": "İnsan Kaynakları", "room": "İK Odası", "home_x": 90, "home_y": 330, "color": "#f97316"},
-    "Alex": {"role": "Hukuk & Mevzuat", "room": "Hukuk Bürosu", "home_x": 270, "home_y": 330, "color": "#14b8a6"},
-    "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik Odası", "home_x": 540, "home_y": 330, "color": "#64748b"},
-    "Kerem": {"role": "Müşteri Başarı", "room": "Müşteri Başarı Odası", "home_x": 710, "home_y": 330, "color": "#ec4899"}
+    "Marco": {"role": "Müşteri İlişkileri", "room": "Destek Odası", "home_x": 90, "home_y": 70, "color": "#3b82f6", "default": "Destek hattında..."},
+    "Talisca": {"role": "Sipariş Takip", "room": "Operasyon Odası", "home_x": 270, "home_y": 70, "color": "#ef4444", "default": "Sipariş işliyor"},
+    "Brown": {"role": "Yazılım (E-Trade Pro)", "room": "Yazılım Üssü", "home_x": 560, "home_y": 70, "color": "#10b981", "default": "Kod derleniyor..."},
+    "Kante": {"role": "Pazarlama & Büyüme", "room": "Pazarlama Odası", "home_x": 740, "home_y": 70, "color": "#f59e0b", "default": "Kampanya kurguluyor"},
+    "İrfan": {"role": "Muhasebe & Finans", "room": "Finans Odası", "home_x": 820, "home_y": 330, "color": "#8b5cf6", "default": "Bütçe kontrolü"},
+    "İsmail": {"role": "İnsan Kaynakları", "room": "İK Odası", "home_x": 90, "home_y": 330, "color": "#f97316", "default": "Mülakatta..."},
+    "Alex": {"role": "Hukuk & Mevzuat", "room": "Hukuk Bürosu", "home_x": 270, "home_y": 330, "color": "#14b8a6", "default": "Sözleşme inceliyor"},
+    "Skrinar": {"role": "Siber Güvenlik", "room": "Güvenlik Odası", "home_x": 530, "home_y": 330, "color": "#64748b", "default": "Sistem taranıyor"},
+    "Kerem": {"role": "Müşteri Başarı", "room": "Müşteri Başarı Odası", "home_x": 670, "home_y": 330, "color": "#ec4899", "default": "Onboarding aktif"}
 }
 
 HTML_TEMPLATE = """
@@ -26,7 +26,7 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - AI Powered HQ</title>
+    <title>E-Trade Pro - Ultimate AI HQ</title>
     <style>
         body { 
             background-color: #05070b; 
@@ -49,7 +49,6 @@ HTML_TEMPLATE = """
         }
         .top-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 4px 10px; border-radius: 4px; font-weight: bold; }
 
-        /* Parke Zemin */
         #office-floor { 
             position: relative; 
             width: 920px; 
@@ -66,7 +65,6 @@ HTML_TEMPLATE = """
             overflow: hidden;
         }
 
-        /* Odalar */
         .hq-room {
             position: absolute;
             border: 4px solid #334155;
@@ -83,7 +81,6 @@ HTML_TEMPLATE = """
             text-transform: uppercase;
         }
 
-        /* Kapılar */
         .hq-door {
             position: absolute;
             background: #78350f;
@@ -96,8 +93,8 @@ HTML_TEMPLATE = """
             font-weight: bold;
         }
 
-        .desk { position: absolute; width: 50px; height: 26px; background: #1c1917; border: 2px solid #44403c; border-radius: 3px; }
-        .pc-monitor { position: absolute; width: 18px; height: 10px; background: #38bdf8; top: 4px; left: 16px; border-radius: 2px; box-shadow: 0 0 8px #38bdf8; }
+        .desk { position: absolute; width: 45px; height: 24px; background: #1c1917; border: 2px solid #44403c; border-radius: 3px; }
+        .pc-monitor { position: absolute; width: 16px; height: 9px; background: #38bdf8; top: 3px; left: 14px; border-radius: 2px; box-shadow: 0 0 6px #38bdf8; }
         
         .lounge-area {
             position: absolute;
@@ -150,15 +147,15 @@ HTML_TEMPLATE = """
         }
         
         .robot-sprite {
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             background-color: #18181b;
             border: 2px solid;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 14px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.8);
             animation: robotStep 0.4s infinite alternate;
         }
@@ -186,9 +183,7 @@ HTML_TEMPLATE = """
             white-space: nowrap;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
             pointer-events: none;
-            max-width: 120px;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            max-width: 110px;
         }
 
         .agent:hover { transform: scale(1.3); z-index: 100; }
@@ -215,10 +210,10 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - GROQ AI INTEGRATED</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO HQ - LIVE AI AGENTS</div>
         <div>
             <span class="top-btn">CEO: MERTCAN</span>
-            <span class="top-btn" style="color: #34d399;">YAPAY ZEKA AJANLAR AKTİF</span>
+            <span class="top-btn" style="color: #34d399;">YENİ API AKTİF</span>
         </div>
     </div>
 
@@ -228,11 +223,12 @@ HTML_TEMPLATE = """
         <div class="hq-room" style="left: 225px; top: 15px; width: 195px; height: 215px;"><div class="hq-room-title">TALİSCA (SİPARİŞ)</div></div>
         <div class="hq-room" style="left: 495px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">BROWN (YAZILIM)</div></div>
         <div class="hq-room" style="left: 705px; top: 15px; width: 200px; height: 215px;"><div class="hq-room-title">KANTE (PAZARLAMA)</div></div>
+        
         <div class="hq-room" style="left: 15px; top: 255px; width: 200px; height: 215px;"><div class="hq-room-title">İSMAİL (İK)</div></div>
         <div class="hq-room" style="left: 225px; top: 255px; width: 195px; height: 215px;"><div class="hq-room-title">ALEX (HUKUK)</div></div>
-        <div class="hq-room" style="left: 495px; top: 255px; width: 130px; height: 215px;"><div class="hq-room-title">SKRİNAR (SİBER)</div></div>
-        <div class="hq-room" style="left: 635px; top: 255px; width: 130px; height: 215px;"><div class="hq-room-title">KEREM (BAŞARI)</div></div>
-        <div class="hq-room" style="left: 775px; top: 255px; width: 130px; height: 215px;"><div class="hq-room-title">İRFAN (FİNANS)</div></div>
+        <div class="hq-room" style="left: 495px; top: 255px; width: 150px; height: 215px;"><div class="hq-room-title">SKRİNAR (SİBER)</div></div>
+        <div class="hq-room" style="left: 655px; top: 255px; width: 115px; height: 215px;"><div class="hq-room-title">KEREM (BAŞARI)</div></div>
+        <div class="hq-room" style="left: 780px; top: 255px; width: 125px; height: 215px;"><div class="hq-room-title">İRFAN (FİNANS)</div></div>
 
         <!-- Kapılar -->
         <div class="hq-door" style="left: 425px; top: 110px; width: 65px; height: 15px;">KAPI</div>
@@ -248,9 +244,9 @@ HTML_TEMPLATE = """
         <div class="desk" style="left: 770px; top: 75px;"><div class="pc-monitor"></div></div>
         <div class="desk" style="left: 90px; top: 315px;"><div class="pc-monitor"></div></div>
         <div class="desk" style="left: 295px; top: 315px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 535px; top: 315px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 675px; top: 315px;"><div class="pc-monitor"></div></div>
-        <div class="desk" style="left: 815px; top: 315px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 545px; top: 315px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 690px; top: 315px;"><div class="pc-monitor"></div></div>
+        <div class="desk" style="left: 820px; top: 315px;"><div class="pc-monitor"></div></div>
 
         <!-- CEO Makamı -->
         <div class="ceo-hq">
@@ -262,7 +258,7 @@ HTML_TEMPLATE = """
         {% for name, data in employees.items() %}
         <div class="agent" id="agent-{{ name }}" style="left: {{ data.home_x }}px; top: {{ data.home_y }}px;" 
              onclick="getAiReport('{{ name }}', '{{ data.role }}')">
-            <div class="speech-bubble" id="bubble-{{ name }}">Bağlanıyor...</div>
+            <div class="speech-bubble" id="bubble-{{ name }}">{{ data.default }}</div>
             <div class="robot-sprite" style="border-color: {{ data.color }};">🤖</div>
             <div class="agent-name" style="color: {{ data.color }};">{{ name }}</div>
         </div>
@@ -270,39 +266,26 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-console">
-        > [GROQ AI BAĞLANDI]: Ajanlara tıklayarak doğrudan yapay zekadan anlık iş raporu isteyebilirsin patron!
+        > [SİSTEM GÜNCELLENDİ]: Yeni API anahtarı aktif. Ajanlara tıklayarak anlık yapay zeka raporu alabilirsin!
     </div>
 
     <script>
         const consoleBox = document.getElementById('game-console');
 
-        // Ajanlara tıklandığında Groq API'den gerçek zamanlı rapor çeker
         function getAiReport(name, role) {
-            consoleBox.innerHTML = `> [YAPAY ZEKA SORULUYOR]: <b>${name} (${role})</b> rapor hazırlıyor...`;
+            consoleBox.innerHTML = `> [YAPAY ZEKA]: <b>${name} (${role})</b> rapor hazırlıyor...`;
+            document.getElementById('bubble-' + name).innerText = "Rapor yazılıyor...";
             
             fetch('/api/agent-status/' + name)
                 .then(response => response.json())
                 .then(data => {
-                    consoleBox.innerHTML = `> [${name.toUpperCase()} RAPORU]: "${data.status}"`;
+                    consoleBox.innerHTML = `> [${name.toUpperCase()}]: "${data.status}"`;
                     document.getElementById('bubble-' + name).innerText = data.short_status;
                 })
                 .catch(err => {
-                    consoleBox.innerHTML = `> [HATA]: Yapay zeka yanıt vermedi.`;
+                    consoleBox.innerHTML = `> [HATA]: Bağlantı kurulamadı.`;
                 });
         }
-
-        // Sayfa açıldığında otomatik olarak tüm ajanların durumlarını Groq'tan günceller
-        window.onload = function() {
-            {% for name in employees.keys() %}
-            setTimeout(() => {
-                fetch('/api/agent-status/{{ name }}')
-                    .then(res => res.json())
-                    .then(data => {
-                        document.getElementById('bubble-{{ name }}').innerText = data.short_status;
-                    }).catch(e => {});
-            }, {{ loop.index0 * 1000 }});
-            {% endfor %}
-        };
     </script>
 </body>
 </html>
@@ -320,24 +303,23 @@ def agent_status(name):
     agent = employees[name]
     
     if not groq_client:
-        return jsonify({"status": "Groq API anahtarı aktif değil.", "short_status": "Offline"})
+        return jsonify({"status": "API anahtarı aktif değil.", "short_status": "Offline"})
 
     try:
-        # Groq (Llama 3) üzerinden ajana özel anlık iş durumu ürettiriyoruz
-        prompt = f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name} adında bir yapay zeka ajanısın. Patronun Mertcan için şu an masanda yaptığın işle ilgili Türkçe, çok kısa, esprili ve havalı bir durum raporu ver. Maksimum 5-6 kelime olsun."
+        prompt = f"Sen E-Trade Pro şirketinde {agent['role']} olarak çalışan {name} adında bir yapay zeka ajanısın. Patronun Mertcan için masanda yaptığın işle ilgili Türkçe, çok kısa, esprili ve havalı bir durum raporu ver. En fazla 4-5 kelime olsun."
         
         completion = groq_client.chat.completions.create(
             model="llama3-70b-8192",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=30,
-            temperature=0.7
+            max_tokens=25,
+            temperature=0.8
         )
         
         status_text = completion.choices[0].message.content.strip('"')
-        return jsonify({"status": status_text, "short_status": status_text[:20] + "..." if len(status_text) > 20 else status_text})
+        return jsonify({"status": status_text, "short_status": status_text[:18] + "..." if len(status_text) > 18 else status_text})
     
     except Exception as e:
-        return jsonify({"status": f"Sistem hatası: {str(e)}", "short_status": "Çalışıyor"})
+        return jsonify({"status": f"Hata: {str(e)}", "short_status": "Çalışıyor"})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
