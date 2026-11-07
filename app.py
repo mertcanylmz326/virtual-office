@@ -17,7 +17,6 @@ COINGECKO_API_KEY = "CG-rU5NZkTSGvA1dXfNV58J26fK"
 GITHUB_TOKEN = "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"
 GITHUB_USERNAME = "mertcanymlz326"
 
-# İsmail'in Yeni Sistem Sağlığı Anahtarları
 UPTIMEROBOT_API_KEY = "u3671342-858d5db4b2fd40032fce3ce6"
 SUPABASE_REST_URL = "https://prphsmgaujdwrqqdmmrd.supabase.co/rest/v1/"
 
@@ -90,42 +89,47 @@ def check_system_uptime():
             monitors = data.get("monitors", [])
             if monitors:
                 status_code = monitors[0].get("status")
-                # 2: up, 8: seems offline, 9: offline
                 status_text = "Aktif (Çalışıyor)" if status_code == 2.0 or status_code == 2 else f"Kod Durumu: {status_code}"
                 return f"UptimeRobot: Sistem monitörleri {status_text}."
             else:
-                return "UptimeRobot: Tanımlı monitör bulunamadı, ancak API bağlantısı başarılı."
+                return "UptimeRobot: Tanımlı monitör bulunamadı, API bağlantısı başarılı."
     except Exception as e:
         print(f"UptimeRobot API Hatası: {e}")
     return "UptimeRobot API erişiminde geçici hata."
 
 def create_github_repo_and_deploy(project_name, html_content):
     try:
-        repo_name = f"e-trade-{int(time.time())}-{project_name.lower().replace(' ', '-')[:20]}"
+        clean_name = ''.join(c for c in project_name if c.isalnum() or c=='-').lower()[:15]
+        repo_name = f"e-trade-{int(time.time())}-{clean_name}"
         headers = {
             "Authorization": f"Bearer {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github+json"
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28"
         }
         repo_data = {
             "name": repo_name,
-            "description": f"E-Trade Pro AI Agency - Otomatik Üretilen Proje: {project_name}",
+            "description": f"E-Trade Pro AI Agency - Otomatik Proje: {project_name}",
             "private": False,
             "auto_init": True
         }
-        r = requests.post("https://api.github.com/user/repos", json=repo_data, headers=headers, timeout=10)
+        r = requests.post("https://api.github.com/user/repos", json=repo_data, headers=headers, timeout=15)
         if r.status_code != 201:
-            return None
+            print(f"GitHub Repo Açma Hatası: {r.status_code} - {r.text}")
+            return f"HATA: GitHub Repo açılamadı ({r.status_code})"
 
-        time.sleep(2)
+        time.sleep(3)
 
         file_url = f"https://api.github.com/repos/{GITHUB_USERNAME}/{repo_name}/contents/index.html"
         encoded_content = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
         file_data = {
-            "message": "Brown agent: otomatik web sitesi şablonu eklendi",
+            "message": "Brown agent: otomatik web sitesi eklendi",
             "content": encoded_content
         }
-        r_file = requests.put(file_url, json=file_data, headers=headers, timeout=10)
+        r_file = requests.put(file_url, json=file_data, headers=headers, timeout=15)
         if r_file.status_code in [200, 201]:
+            return f"https://{GITHUB_USERNAME}.github.io/{repo_name}/"
+        else:
+            print(f"GitHub Dosya Yükleme Hatası: {r_file.status_code} - {r_file.text}")
             return f"https://github.com/{GITHUB_USERNAME}/{repo_name}"
     except Exception as e:
         print(f"GitHub Entegrasyon Hatası: {e}")
@@ -259,12 +263,10 @@ HTML_TEMPLATE = """
         <span style="color: #fbbf24;">🚀 İSMAIL UPTIME: Aktif</span>
     </div>
 
-    <!-- Canvas Haritası -->
     <div id="game-container">
         <canvas id="officeCanvas" width="1080" height="440"></canvas>
     </div>
 
-    <!-- Komuta Paneli -->
     <div class="action-bar">
         <div id="command-panel">
             <select id="agent-select">
@@ -272,23 +274,21 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="İsmail'e sistem durumunu sor veya Brown'a site kurdur..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Brown'a çiçekçi sitesi kurdur veya İsmail'e sor..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
 
-    <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● UPTIMEROBOT & SUPABASE SYNCED</span>
+            <span style="color: #38bdf8;">● GITHUB & UPTIME SYNCED</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: İsmail UptimeRobot ve Supabase REST denetim motoruyla donatıldı.</div>
+            <div class="log-line">[SYSTEM]: Brown ve İsmail tam yetkiyle aktif.</div>
         </div>
     </div>
 
-    <!-- Karakter Kartı -->
     <div id="agent-modal">
         <h3 id="modal-title" style="color: #38bdf8; margin-top: 0;"></h3>
         <p id="modal-role" style="font-size: 12px; color: #94a3b8;"></p>
@@ -320,8 +320,8 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "🤖 " + name;
             document.getElementById('modal-role').innerText = "Rol: " + role;
-            document.getElementById('modal-xp').innerText = "Departman Uzmanlığı: Sistem Operasyonları";
-            document.getElementById('modal-status').innerText = "Durum: 7/24 Uptime denetimde.";
+            document.getElementById('modal-xp').innerText = "Departman Uzmanlığı: Yazılım ve Otomasyon";
+            document.getElementById('modal-status').innerText = "Durum: Göreve hazır.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -508,6 +508,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
+            appendLog(`> [SİSTEM]: ${agentName} talebi işliyor, GitHub rekosu ve kod hazırlanıyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -517,13 +518,13 @@ HTML_TEMPLATE = """
             .then(res => res.json())
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
-                if(data.task_created) {
-                    appendLog(`> [GİTHUB DEPLOY]: Yeni web sitesi kodlandı ve GitHub'a yüklendi!`);
-                    appendLog(`> [REPO LİNKİ]: <a href="${data.repo_url}" target="_blank" style="color: #38bdf8;">${data.repo_url}</a>`);
+                if(data.task_created && data.repo_url) {
+                    appendLog(`> [GİTHUB DEPLOY BAŞARILI]: Yeni web sitesi canlıya alındı!`);
+                    appendLog(`> [CANLI LİNK]: <a href="${data.repo_url}" target="_blank" style="color: #38bdf8; text-decoration: underline; font-weight: bold;">${data.repo_url}</a>`);
                 }
             })
             .catch(err => {
-                appendLog(`> [HATA]: Bağlantı kurulamadı.`);
+                appendLog(`> [HATA]: Sunucu yanıt vermedi veya zaman aşımı.`);
             });
         }
 
@@ -643,17 +644,17 @@ def api_chat():
     repo_url = ""
 
     # Brown ile GitHub Repo Otomasyonu
-    if agent_name == "Brown" and ("site" in user_message.lower() or "kur" in user_message.lower() or "yap" in user_message.lower() or "kod" in user_message.lower()):
+    if agent_name == "Brown" and any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
         task_created = True
         task_title = user_message[:40]
 
         html_code = "<!DOCTYPE html><html><head><title>Proje</title></head><body><h1>E-Trade Pro AI Sitesi</h1></body></html>"
         try:
-            code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern ve şık tek dosyalık bir HTML/CSS (Bootstrap veya dahili style içeren) web sitesi kodu yaz: '{user_message}'. Sadece ham HTML kodunu döndür, başka açıklama yazma."
+            code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, şık ve tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ham HTML kodunu döndür, asla markdown işaretleri (```html) veya açıklama metni ekleme."
             comp = groq_client.chat.completions.create(
                 model="qwen/qwen3.8-27b",
                 messages=[{"role": "user", "content": code_prompt}],
-                max_tokens=1500, temperature=0.3
+                max_tokens=2500, temperature=0.3
             )
             raw_code = comp.choices[0].message.content.strip()
             if "```html" in raw_code:
@@ -676,14 +677,12 @@ def api_chat():
             conn.close()
         except: pass
 
-    # Canlı Veri (CoinGecko) İrfan için
     live_context = ""
     if agent_name == "İrfan" and ("btc" in user_message.lower() or "bitcoin" in user_message.lower() or "fiyat" in user_message.lower()):
         btc_price = get_crypto_price("bitcoin")
         if btc_price:
             live_context = f"[CANLI PİYASA VERİSİ]: Bitcoin (BTC) şu an anlık olarak ${btc_price:,} USD seviyesinden işlem görmektedir."
 
-    # İsmail için Canlı Uptime Raporu
     uptime_context = ""
     if agent_name == "İsmail" and ("durum" in user_message.lower() or "sağlık" in user_message.lower() or "uptime" in user_message.lower() or "sistem" in user_message.lower()):
         uptime_status = check_system_uptime()
@@ -697,7 +696,7 @@ def api_chat():
             f"Patronun Mertcan sana yazdı: '{user_message}'.\n"
             f"{live_context}\n"
             f"{uptime_context}\n"
-            f"Kıdemli bir uzman gibi kısa, net, karizmatik ve doğrudan sonuca giden bir yanıt ver."
+            f"Kıdemli bir uzman gibi kısa, net ve karizmatik bir yanıt ver."
         )
         if task_created and repo_url:
             system_prompt += f" Proje başarıyla kodlandı ve GitHub'a yüklendi. Repo linki: {repo_url}"
