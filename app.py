@@ -48,19 +48,18 @@ def init_db():
 
 init_db()
 
-# 9 Ajanın ofis içi ev koordinatları
 employees = {
-    "Marco": {"role": "Destek", "home_x": 40, "home_y": 25, "x": 40, "y": 25, "target_x": 40, "target_y": 25, "color": "#3b82f6", "state": "Masada"},
-    "Talisca": {"role": "Operasyon", "home_x": 250, "home_y": 25, "x": 250, "y": 25, "target_x": 250, "target_y": 25, "color": "#ef4444", "state": "Masada"},
-    "Brown": {"role": "Yazılım", "home_x": 460, "home_y": 25, "x": 460, "y": 25, "target_x": 460, "target_y": 25, "color": "#10b981", "state": "Masada"},
+    "Marco": {"role": "Destek", "home_x": 45, "home_y": 30, "x": 45, "y": 30, "target_x": 45, "target_y": 30, "color": "#3b82f6", "state": "Masada"},
+    "Talisca": {"role": "Operasyon", "home_x": 255, "home_y": 30, "x": 255, "y": 30, "target_x": 255, "target_y": 30, "color": "#ef4444", "state": "Masada"},
+    "Brown": {"role": "Yazılım", "home_x": 465, "home_y": 30, "x": 465, "y": 30, "target_x": 465, "target_y": 30, "color": "#10b981", "state": "Masada"},
     
-    "Kante": {"role": "Pazarlama", "home_x": 40, "home_y": 170, "x": 40, "y": 170, "target_x": 40, "target_y": 170, "color": "#f59e0b", "state": "Masada"},
-    "İrfan": {"role": "Finans", "home_x": 250, "home_y": 170, "x": 250, "y": 170, "target_x": 250, "target_y": 170, "color": "#8b5cf6", "state": "Masada"},
-    "İsmail": {"role": "İK", "home_x": 460, "home_y": 170, "x": 460, "y": 170, "target_x": 460, "target_y": 170, "color": "#f97316", "state": "Masada"},
+    "Kante": {"role": "Pazarlama", "home_x": 45, "home_y": 175, "x": 45, "y": 175, "target_x": 45, "target_y": 175, "color": "#f59e0b", "state": "Masada"},
+    "İrfan": {"role": "Finans", "home_x": 255, "home_y": 175, "x": 255, "y": 175, "target_x": 255, "target_y": 175, "color": "#8b5cf6", "state": "Masada"},
+    "İsmail": {"role": "İK", "home_x": 465, "home_y": 175, "x": 465, "y": 175, "target_x": 465, "target_y": 175, "color": "#f97316", "state": "Masada"},
     
-    "Alex": {"role": "Hukuk", "home_x": 40, "home_y": 315, "x": 40, "y": 315, "target_x": 40, "target_y": 315, "color": "#14b8a6", "state": "Masada"},
-    "Skrinar": {"role": "Siber", "home_x": 250, "home_y": 315, "x": 250, "y": 315, "target_x": 250, "target_y": 315, "color": "#64748b", "state": "Masada"},
-    "Kerem": {"role": "Başarı", "home_x": 460, "home_y": 315, "x": 460, "y": 315, "target_x": 460, "target_y": 315, "color": "#ec4899", "state": "Masada"}
+    "Alex": {"role": "Hukuk", "home_x": 45, "home_y": 320, "x": 45, "y": 320, "target_x": 45, "target_y": 320, "color": "#14b8a6", "state": "Masada"},
+    "Skrinar": {"role": "Siber", "home_x": 255, "home_y": 320, "x": 255, "y": 320, "target_x": 255, "target_y": 320, "color": "#64748b", "state": "Masada"},
+    "Kerem": {"role": "Başarı", "home_x": 465, "home_y": 320, "x": 465, "y": 320, "target_x": 465, "target_y": 320, "color": "#ec4899", "state": "Masada"}
 }
 
 HTML_TEMPLATE = """
@@ -68,10 +67,10 @@ HTML_TEMPLATE = """
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>E-Trade Pro - AgentSpace 2D Tycoon HQ</title>
+    <title>E-Trade Pro - Detailed AgentSpace HQ</title>
     <style>
         body { 
-            background-color: #07090e; 
+            background-color: #030712; 
             color: #f8fafc; 
             font-family: 'Courier New', Courier, monospace; 
             text-align: center; 
@@ -92,67 +91,83 @@ HTML_TEMPLATE = """
             background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 5px 10px; 
             border-radius: 4px; font-weight: bold; cursor: pointer; 
         }
-        .top-btn:hover { background: #38bdf8; color: #07090e; }
+        .top-btn:hover { background: #38bdf8; color: #030712; }
 
-        /* 2D Tycoon Oyun Haritası */
+        /* Harita Alanı */
         #office-floor { 
             position: relative; 
-            width: 1020px; 
-            height: 470px; 
+            width: 1040px; 
+            height: 490px; 
             margin: 10px auto; 
-            background-color: #111827;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
-            border: 3px solid #374151; 
-            border-radius: 8px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.8); 
+            background-color: #0b0f19;
+            border: 4px solid #334155; 
+            border-radius: 10px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.9); 
             overflow: hidden;
         }
 
-        /* Odalar */
+        /* Gerçekçi Parke Görünümlü Ana Koridorlar */
+        .corridor-horizontal {
+            position: absolute; left: 0; right: 0; top: 145px; height: 25px;
+            background: repeating-linear-gradient(45deg, #1e1b18, #1e1b18 10px, #292524 10px, #292524 20px);
+            border-top: 2px solid #44403c; border-bottom: 2px solid #44403c;
+        }
+        .corridor-vertical {
+            position: absolute; top: 0; bottom: 0; left: 690px; width: 30px;
+            background: repeating-linear-gradient(0deg, #1e1b18, #1e1b18 10px, #292524 10px, #292524 20px);
+            border-left: 2px solid #44403c; border-right: 2px solid #44403c;
+        }
+
+        /* Odalar (Kalın Duvarlı, İçerisi Dolu) */
         .office-room {
             position: absolute;
-            background: #1e293b;
-            border: 2px solid #475569;
+            background: #111827;
+            border: 4px solid #475569; /* Kalın Duvar */
             border-radius: 6px;
-            width: 200px;
-            height: 125px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
+            width: 205px;
+            height: 130px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.7);
         }
         .room-title {
             position: absolute; top: 3px; left: 5px; font-size: 7px; color: #38bdf8; font-weight: bold;
-            background: #0f172a; padding: 1px 4px; border-radius: 2px; border: 1px solid #334155;
+            background: #020617; padding: 1px 4px; border-radius: 2px; border: 1px solid #1e293b;
         }
-        .office-desk {
-            position: absolute; bottom: 10px; left: 50px; width: 100px; height: 30px;
-            background: #292524; border: 1px solid #57534e; border-radius: 4px;
+        
+        /* Oda İçi Detaylı Mobilyalar (Masa, PC, Koltuk, Dosya Dolabı) */
+        .desk {
+            position: absolute; bottom: 12px; left: 45px; width: 110px; height: 36px;
+            background: #1c1917; border: 2px solid #57534e; border-radius: 4px;
             display: flex; align-items: center; justify-content: center;
         }
-        .pc-screen {
-            width: 20px; height: 10px; background: #0284c7; border: 1px solid #38bdf8; border-radius: 2px;
-            box-shadow: 0 0 4px #38bdf8;
+        .monitor {
+            width: 26px; height: 14px; background: #0284c7; border: 1px solid #38bdf8; border-radius: 2px;
+            box-shadow: 0 0 6px #38bdf8;
+        }
+        .bookshelf {
+            position: absolute; top: 15px; right: 8px; width: 20px; height: 45px;
+            background: #451a03; border: 1px solid #78350f; border-radius: 2px;
         }
 
-        /* Sağ Taraf: Mutfak ve Zirve Toplantı Odası */
+        /* Sağ Taraf: Mutfak ve Zirve Odası (İçi Dolu) */
         .kitchen-zone {
-            position: absolute; left: 710px; top: 15px; width: 295px; height: 215px;
-            border: 2px dashed #f59e0b; background: rgba(120, 53, 15, 0.2); border-radius: 6px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #fde68a;
+            position: absolute; left: 735px; top: 15px; width: 290px; height: 220px;
+            border: 4px solid #d97706; background: rgba(120, 53, 15, 0.2); border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: #fde68a;
             font-weight: bold;
         }
         .boardroom-zone {
-            position: absolute; left: 710px; top: 240px; width: 295px; height: 215px;
-            border: 2px dashed #8b5cf6; background: rgba(109, 40, 217, 0.2); border-radius: 6px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #e9d5ff;
+            position: absolute; left: 735px; top: 255px; width: 290px; height: 220px;
+            border: 4px solid #8b5cf6; background: rgba(109, 40, 217, 0.2); border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: #e9d5ff;
             font-weight: bold;
         }
 
         /* Saksılar */
         .plant-pot {
-            position: absolute; width: 26px; height: 26px; background: #78350f; border: 2px solid #b45309;
-            border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 10;
+            position: absolute; width: 28px; height: 28px; background: #78350f; border: 2px solid #b45309;
+            border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 13px; z-index: 10;
         }
-        .plant-status { position: absolute; top: -11px; font-size: 5px; background: #000; color: #4ade80; padding: 1px 2px; border-radius: 2px; white-space: nowrap; border: 1px solid #4ade80; }
+        .plant-status { position: absolute; top: -12px; font-size: 6px; background: #000; color: #4ade80; padding: 1px 3px; border-radius: 3px; white-space: nowrap; border: 1px solid #4ade80; }
 
         /* Ayak İzleri */
         .footprint {
@@ -161,26 +176,26 @@ HTML_TEMPLATE = """
         }
         @keyframes fadeOut { 0% { opacity: 0.8; } 100% { opacity: 0; transform: scale(1.4); } }
 
-        /* Şık 2D Oyun Tarzı Ajan Sprite (Avatar) */
+        /* Ajan Kartları ve İkonlar */
         .agent { 
             position: absolute; width: 55px; height: 60px; cursor: pointer; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             transition: transform 0.2s; z-index: 40;
         }
         .agent-card {
-            width: 44px; height: 32px; background-color: #0f172a; border: 2px solid; border-radius: 5px;
+            width: 42px; height: 32px; background-color: #0f172a; border: 2px solid; border-radius: 5px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.8);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.9);
         }
         .agent-initials { font-size: 9px; font-weight: bold; line-height: 1; }
         .agent-badge { font-size: 5px; color: #94a3b8; margin-top: 1px; }
         .agent-name { font-size: 6px; font-weight: bold; background: rgba(15, 23, 42, 0.95); padding: 1px 3px; border-radius: 2px; margin-top: 1px; white-space: nowrap; border: 1px solid #334155; }
         .speech-bubble {
-            position: absolute; top: -16px; background: #f8fafc; color: #0f172a; font-size: 5px; font-weight: bold;
-            padding: 1px 4px; border-radius: 3px; white-space: nowrap; box-shadow: 0 0 5px rgba(255,255,255,0.5); pointer-events: none;
+            position: absolute; top: -18px; background: #f8fafc; color: #0f172a; font-size: 6px; font-weight: bold;
+            padding: 1px 5px; border-radius: 3px; white-space: nowrap; box-shadow: 0 0 6px rgba(255,255,255,0.5); pointer-events: none;
         }
 
-        .action-bar { margin: 10px auto; width: 1020px; display: flex; justify-content: space-between; gap: 10px; }
+        .action-bar { margin: 10px auto; width: 1040px; display: flex; justify-content: space-between; gap: 10px; }
         #command-panel {
             background: #0f172a; border: 2px solid #334155; padding: 8px; border-radius: 8px; display: flex; gap: 8px; align-items: center; flex-grow: 1;
         }
@@ -190,7 +205,7 @@ HTML_TEMPLATE = """
         .send-btn:hover { background: #0369a1; }
 
         #activity-terminal {
-            margin: 0 auto 15px auto; width: 1020px; background: #07090e; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden;
+            margin: 0 auto 15px auto; width: 1040px; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden;
         }
         .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 10px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; }
         .terminal-body { padding: 8px; height: 80px; overflow-y: auto; font-size: 10px; color: #4ade80; line-height: 1.3; }
@@ -206,7 +221,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // 4-FEATURED AGENTSPACE HQ</div>
+        <div style="font-weight: bold; color: #38bdf8;">🏢 E-TRADE PRO // DETAILED TYCOON HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 RAG HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 GÖREVLER</span>
@@ -215,34 +230,76 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
-    <!-- 2D Tycoon Ofis Haritası -->
+    <!-- Detaylı 2D Oyun Ofis Haritası -->
     <div id="office-floor">
-        <!-- 9 Oda -->
-        <div class="office-room" style="left: 15px; top: 15px;"><div class="room-title">1. MARCO (DESTEK)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
-        <div class="office-room" style="left: 225px; top: 15px;"><div class="room-title">2. TALİSCA (OPERASYON)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
-        <div class="office-room" style="left: 435px; top: 15px;"><div class="room-title">3. BROWN (YAZILIM)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
+        <!-- Gerçekçi Parke Koridorlar -->
+        <div class="corridor-horizontal"></div>
+        <div class="corridor-vertical"></div>
 
-        <div class="office-room" style="left: 15px; top: 160px;"><div class="room-title">4. KANTE (PAZARLAMA)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
-        <div class="office-room" style="left: 225px; top: 160px;"><div class="room-title">5. İRFAN (FİNANS)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
-        <div class="office-room" style="left: 435px; top: 160px;"><div class="room-title">6. İSMAİL (İK)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
+        <!-- Row 1: Marco, Talisca, Brown -->
+        <div class="office-room" style="left: 15px; top: 15px;">
+            <div class="room-title">1. MARCO (DESTEK)</div>
+            <div class="bookshelf"></div>
+            <div class="desk"><div class="monitor"></div></div>
+        </div>
+        <div class="office-room" style="left: 225px; top: 15px;">
+            <div class="room-title">2. TALİSCA (OPERASYON)</div>
+            <div class="bookshelf"></div>
+            <div class="desk"><div class="monitor"></div></div>
+        </div>
+        <div class="office-room" style="left: 435px; top: 15px;">
+            <div class="room-title">3. BROWN (YAZILIM)</div>
+            <div class="bookshelf"></div>
+            <div class="desk"><div class="monitor"></div></div>
+        </div>
 
-        <div class="office-room" style="left: 15px; top: 305px;"><div class="room-title">7. ALEX (HUKUK)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
-        <div class="office-room" style="left: 225px; top: 305px;"><div class="room-title">8. SKRİNAR (SİBER)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
-        <div class="office-room" style="left: 435px; top: 305px;"><div class="room-title">9. KEREM (BAŞARI)</div><div class="office-desk"><div class="pc-screen"></div></div></div>
+        <!-- Row 2: Kante, İrfan, İsmail -->
+        <div class="office-room" style="left: 15px; top: 180px;">
+            <div class="room-title">4. KANTE (PAZARLAMA)</div>
+            <div class="bookshelf"></div>
+            <div class="desk"><div class="monitor"></div></div>
+        </div>
+        <div class="office-room" style="left: 225px; top: 180px;">
+            <div class="room-title">5. İRFAN (FİNANS)</div>
+            <div class="bookshelf"></div>
+            <div class="desk"><div class="monitor"></div></div>
+        </div>
+        <div class="office-room" style="left: 435px; top: 180px;">
+            <div class="room-title">6. İSMAİL (İK)</div>
+            <div class="bookshelf"></div>
+            <div class="desk"><div class="monitor"></div></div>
+        </div>
 
-        <!-- Mutfak ve Toplantı Alanları -->
-        <div class="kitchen-zone">☕ MUTFAK & MOLA</div>
-        <div class="boardroom-zone">🤝 OTONOM ZİRVE ODASI</div>
+        <!-- Row 3: Alex, Skrinar, Kerem -->
+        <div class="office-room" style="left: 15px; top: 345px;">
+            <div class="room-title">7. ALEX (HUKUK)</div>
+            <div class="bookshelf"></div>
+            <div class="desk"><div class="monitor"></div></div>
+        </div>
+        <div class="office-room" style="left: 225px; top: 345px;">
+            <div class="room-title">8. SKRİNAR (SİBER)</div>
+            <div class="bookshelf"></div>
+            <div class="desk"><div class="monitor"></div></div>
+        </div>
+        <div class="office-room" style="left: 435px; top: 345px;">
+            <div class="room-title">9. KEREM (BAŞARI)</div>
+            <div class="bookshelf"></div>
+            <div class="desk"><div class="monitor"></div></div>
+        </div>
+
+        <!-- Sağ Taraf: Mutfak ve Zirve Odası -->
+        <div class="kitchen-zone">☕ MUTFAK & SEBİL ALANI</div>
+        <div class="boardroom-zone">🤝 OTONOM ZİRVE MASASI</div>
 
         <!-- Saksılar -->
-        <div class="plant-pot" style="left: 655px; top: 85px;" id="plant-1">
+        <div class="plant-pot" style="left: 700px; top: 110px;" id="plant-1">
             <span class="plant-status" id="plant-status-1">🌿 %100</span>🌱
         </div>
-        <div class="plant-pot" style="left: 655px; top: 330px;" id="plant-2">
+        <div class="plant-pot" style="left: 700px; top: 350px;" id="plant-2">
             <span class="plant-status" id="plant-status-2">🌿 %100</span>🌵
         </div>
 
-        <!-- 9 Ajan Varlığı (Sprites) -->
+        <!-- Ajan Varlıkları -->
         {% for name, data in employees.items() %}
         <div class="agent" id="agent-{{ name }}" style="left: {{ data.x }}px; top: {{ data.y }}px;" onclick="openAgentCard('{{ name }}', '{{ data.role }}')">
             <div class="speech-bubble" id="bubble-{{ name }}">{{ data.state }}</div>
@@ -263,7 +320,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Stratejik komut ver veya görev yaz..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Stratejik emir ver veya görev oluştur..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -271,11 +328,11 @@ HTML_TEMPLATE = """
     <!-- Terminal -->
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ 4-FEATURED TYCOON OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8;">● RAG & BOARDROOM & KANBAN & KITCHEN ACTIVE</span>
+            <span>⚡ DETAILED TYCOON OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8;">● PARQUET CORRIDORS & WALLS ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: 4 ana özellik (RAG, Zirve Odası, Görev Panosu, Mutfak) ve şık sprite arayüzü yüklendi.</div>
+            <div class="log-line">[SYSTEM]: Kalın duvarlı odalar, parke koridorlar ve iç mobilyalar başarıyla eklendi.</div>
         </div>
     </div>
 
@@ -306,7 +363,7 @@ HTML_TEMPLATE = """
             selectAgent(name);
             document.getElementById('modal-title').innerText = "👤 " + name;
             document.getElementById('modal-role').innerText = "Departman: " + role;
-            document.getElementById('modal-status').innerText = "Durum: Supabase RAG entegre ve görev başında.";
+            document.getElementById('modal-status').innerText = "Durum: Ofisinde aktif görevde.";
             document.getElementById('agent-modal').style.display = 'block';
         }
 
@@ -318,7 +375,6 @@ HTML_TEMPLATE = """
             if (event.key === 'Enter') sendDirectMessage();
         }
 
-        // Simülasyon Döngüsü & Akıcı Yürüyüş
         setInterval(() => {
             fetch('/api/simulation-tick')
             .then(res => res.json())
@@ -392,7 +448,7 @@ HTML_TEMPLATE = """
         }
 
         function triggerBoardroom() {
-            appendLog(`> [ZİRVE ODASI]: İrfan ve Brown otonom toplantıya katılıyor...`);
+            appendLog(`> [ZİRVE ODASI]: Otonom zirve toplantısı başlatıldı...`);
             fetch('/api/boardroom', {method: 'POST'}).then(res => res.json()).then(data => {
                 appendLog(`> [ORTAK ZİRVE KARARI]: "${data.decision}"`);
             });
@@ -406,7 +462,7 @@ HTML_TEMPLATE = """
 
         function triggerWatering() {
             fetch('/api/water-plants', {method: 'POST'}).then(res => res.json()).then(data => {
-                appendLog(`> [SULAMA]: Saksılar sulandı, bitki sağlığı %100 oldu.`);
+                appendLog(`> [SULAMA]: Saksılar sulandı, bitki sağlığı %100!`);
             });
         }
     </script>
@@ -445,8 +501,8 @@ def simulation_tick():
         if random.random() < 0.2:
             destinations = [
                 (data["home_x"], data["home_y"]),
-                (random.randint(720, 960), random.randint(30, 150)),  # Mutfak
-                (random.randint(720, 960), random.randint(260, 390)) # Zirve Odası
+                (random.randint(750, 980), random.randint(30, 150)),  # Mutfak
+                (random.randint(750, 980), random.randint(270, 400)) # Zirve Odası
             ]
             dest = random.choice(destinations)
             data["target_x"], data["target_y"] = dest
@@ -458,9 +514,9 @@ def simulation_tick():
         elif data["y"] > data["target_y"]: data["y"] -= min(12, data["y"] - data["target_y"])
 
         # Koordinat bazlı hatasız durum
-        if data["x"] >= 680 and data["y"] <= 220:
+        if data["x"] >= 720 and data["y"] <= 230:
             data["state"] = "☕ Molada"
-        elif data["x"] >= 680 and data["y"] > 220:
+        elif data["x"] >= 720 and data["y"] > 230:
             data["state"] = "🤝 Toplantıda"
         elif abs(data["x"] - data["home_x"]) < 15 and abs(data["y"] - data["home_y"]) < 15:
             data["state"] = "Masada"
@@ -484,7 +540,6 @@ def api_chat():
     if agent_name not in employees: agent_name = "İrfan"
     agent = employees[agent_name]
 
-    # Görev ekleme tetikleyicisi (Kanban)
     task_created = False
     task_title = ""
     if "görev" in user_message.lower() or "yap" in user_message.lower():
