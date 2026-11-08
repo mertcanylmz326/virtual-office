@@ -85,7 +85,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Web Servis Önizleme Aktif"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Canlı Link Üreticisi"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -170,7 +170,7 @@ HTML_TEMPLATE = """
             margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
         .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
-        .terminal-body { padding: 10px; height: 150px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
+        .terminal-body { padding: 10px; height: 160px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
         .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
 
         @media (max-width: 768px) {
@@ -185,7 +185,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // WEB SERVICE PREVIEW</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // KESİN LİNK GARANTİLİ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -197,7 +197,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 WEBSERVİS ÖNİZLEME AKTİF</span>
+        <span style="color: #fbbf24;">🚀 OTOMATİK LİNK YAKALAYICI AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -219,10 +219,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● DIRECT ROUTE PREVIEW ACTIVE</span>
+            <span style="color: #38bdf8; font-weight: bold;">● AUTO LINK INJECTOR ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown hazır. Üretilen siteler doğrudan `/preview/ID` web servis adresinde canlı olarak açılacak!</div>
+            <div class="log-line">[SYSTEM]: Brown hazır. İstek geldiği an site kurulacak ve tıklanabilir canlı link ekrana basılacak!</div>
         </div>
     </div>
 
@@ -534,7 +534,7 @@ def api_chat():
     reply = ""
     html_code = ""
 
-    # SADECE BROWN SİTE ÜRETİR VE VERİTABANINA KAYDEDEREK /preview/ID LİNKİ ÜRETİR
+    # KESİN ÇÖZÜM: Sadece Brown seçiliyken VE kelimelerden biri geçiyorsa kod üretilir
     if agent_name == "Brown" and any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
         try:
             code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, şık ve tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ham HTML kodunu döndür, asla markdown işaretleri (```html) veya açıklama metni ekleme."
@@ -544,6 +544,8 @@ def api_chat():
                 max_tokens=2500, temperature=0.3
             )
             raw_code = comp.choices[0].message.content.strip()
+            
+            # Markdown etiketlerini güvenli bir şekilde ayıkla
             if "```html" in raw_code:
                 html_code = raw_code.split("```html")[1].split("```")[0].strip()
             elif "```" in raw_code:
@@ -570,7 +572,7 @@ def api_chat():
 
     try:
         if agent_name == "Brown" and preview_url:
-            reply = "Patron, site kodlandı ve web servis önizleme sayfasına yüklendi!"
+            reply = "Patron, site kodlandı ve web servis üzerinde yayına alındı!"
         else:
             system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} departmanında çalışan {agent_name} adında bir uzmansın. Patronun sana yazdı: '{user_message}'. Kendi departmanına uygun, kısa ve net bir yanıt ver."
             completion = groq_client.chat.completions.create(
@@ -613,7 +615,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu web servis rota tabanlı önizleme sistemini onayladı."})
+    return jsonify({"decision": "Yönetim kurulu otomatik link yönlendiricisini onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
