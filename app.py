@@ -217,12 +217,12 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="activity-terminal">
-        <div.terminal-header>
+        <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● 4000 TOKEN SAFE GENERATOR</span>
+            <span style="color: #38bdf8; font-weight: bold;">● SMART HTML PARSER ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown hazır. İstek geldiğinde kod eksiksiz üretilecek ve canlı link ekrana basılacak!</div>
+            <div class="log-line">[SYSTEM]: Brown hazır. İstek geldiğinde kod temizlenecek ve canlı link ekrana basılacak!</div>
         </div>
     </div>
 
@@ -536,16 +536,24 @@ def api_chat():
 
     if agent_name == "Brown" and any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
         try:
-            # 4000 token vererek kodun yarıda kesilmesini engelliyoruz
-            code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, şık ve tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Asla yarıda kesme, <!DOCTYPE html> ile başlatıp </html> ile biten eksiksiz bir kod ver. Markdown işaretleri (```html) kullanma, sadece ham HTML ver."
+            code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, şık ve tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ve sadece saf HTML kodu döndür, asla sohbet etme, asla açıklama yazma."
             comp = groq_client.chat.completions.create(
                 model="qwen/qwen3.8-27b",
                 messages=[{"role": "user", "content": code_prompt}],
-                max_tokens=4000, temperature=0.3
+                max_tokens=4000, temperature=0.2
             )
             raw_code = comp.choices[0].message.content.strip()
             
-            if "```html" in raw_code:
+            if "<html" in raw_code.lower():
+                start_idx = raw_code.lower().find("<!doctype")
+                if start_idx == -1:
+                    start_idx = raw_code.lower().find("<html")
+                end_idx = raw_code.lower().rfind("</html>")
+                if start_idx != -1 and end_idx != -1:
+                    html_code = raw_code[start_idx:end_idx+7]
+                else:
+                    html_code = raw_code
+            elif "```html" in raw_code:
                 parts = raw_code.split("```html")
                 if len(parts) > 1:
                     html_code = parts[1].split("```")[0].strip()
@@ -560,9 +568,8 @@ def api_chat():
             else:
                 html_code = raw_code
                 
-            # Eğer model yine de eksik döndürürse sağlamlaştırma
             if "<html" not in html_code.lower():
-                html_code = f"<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Site</title></head><body style='background:#111;color:#fff;font-family:sans-serif;padding:40px;text-align:center;'><h1>{user_message}</h1><p>Site başarıyla yayına alındı!</p></body></html>"
+                html_code = f"<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Site</title></head><body style='background:#111;color:#fff;font-family:sans-serif;padding:40px;text-align:center;'><h1>{user_message}</h1><p>Site başarıyla yayınlandı!</p></body></html>"
                 
         except Exception as e:
             html_code = f"<!DOCTYPE html><html><body><h1>Hata: {e}</h1></body></html>"
@@ -584,7 +591,7 @@ def api_chat():
 
     try:
         if agent_name == "Brown" and preview_url:
-            reply = "Patron, site kesintisiz kodlandı ve web serviste yayına alındı!"
+            reply = "Patron, site kodlandı ve web serviste yayına alındı!"
         else:
             system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} departmanında çalışan {agent_name} adında bir uzmansın. Patronun sana yazdı: '{user_message}'. Kendi departmanına uygun, kısa ve net bir yanıt ver."
             completion = groq_client.chat.completions.create(
@@ -627,7 +634,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu 4000 token kesintisiz kod üretim altyapısını onayladı."})
+    return jsonify({"decision": "Yönetim kurulu akıllı HTML ayrıştırıcıyı onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
