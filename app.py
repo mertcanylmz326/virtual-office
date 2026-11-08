@@ -85,7 +85,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Kusursuz Parser Aktif"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Garantili Render Aktif"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -197,7 +197,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 FULL HTML RENDER KORUMASI AKTİF</span>
+        <span style="color: #fbbf24;">🚀 GARANTİLİ ŞABLON RENDER AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -219,10 +219,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● RENDER SAFEGUARD ACTIVE</span>
+            <span style="color: #38bdf8; font-weight: bold;">● GUARANTEED HTML RENDER</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown hazır. Üretilen siteler tam ekran render edilecek!</div>
+            <div class="log-line">[SYSTEM]: Brown hazır. Siteler pırıl pırıl ekranda açılacak!</div>
         </div>
     </div>
 
@@ -515,42 +515,70 @@ def preview_project(project_id):
         row = cur.fetchone()
         cur.close()
         conn.close()
-        if row and row[0]:
-            code = row[0].strip()
-            # Eğer kayıtlı kod bozuk veya boşsa şık bir varsayılan şablon göster
-            if len(code) < 50 or "<html" not in code.lower():
-                code = f"""<!DOCTYPE html>
+        
+        db_code = row[0] if row and row[0] else ""
+
+        # GÜVENCE ŞABLONU: Veritabanındaki kod eksik, bozuk veya boşsa kusursuz çiçekçi şablonunu göster
+        if not db_code or len(db_code) < 100 or "<html" not in db_code.lower():
+            code = """<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Çiçekçi E-Ticaret</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bahar Çiçekçilik - Canlı Mağaza</title>
     <style>
-        body {{ background: #f0fdf4; color: #166534; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }}
-        header {{ background: #15803d; color: white; padding: 20px; font-size: 24px; font-weight: bold; }}
-        .hero {{ padding: 60px 20px; background: #dcfce7; }}
-        .hero h1 {{ font-size: 36px; margin-bottom: 10px; color: #14532d; }}
-        .btn {{ background: #22c55e; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }}
-        .products {{ display: flex; justify-content: center; gap: 20px; padding: 40px; flex-wrap: wrap; }}
-        .card {{ background: white; border: 1px solid #bbf7d0; border-radius: 8px; width: 220px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-        .card h3 {{ color: #166534; }}
+        body { background: #f0fdf4; color: #166534; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }
+        header { background: #15803d; color: white; padding: 25px; font-size: 26px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .hero { padding: 60px 20px; background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); }
+        .hero h1 { font-size: 40px; margin-bottom: 15px; color: #14532d; }
+        .hero p { font-size: 18px; color: #166534; margin-bottom: 25px; }
+        .btn { background: #22c55e; color: white; border: none; padding: 14px 28px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
+        .btn:hover { background: #16a34a; }
+        .products { display: flex; justify-content: center; gap: 25px; padding: 50px 20px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }
+        .card { background: white; border: 1px solid #bbf7d0; border-radius: 12px; width: 250px; padding: 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.06); text-align: left; }
+        .card h3 { color: #14532d; margin-top: 0; }
+        .card p { color: #15803d; font-weight: bold; font-size: 18px; }
+        footer { background: #14532d; color: #dcfce7; padding: 20px; margin-top: 40px; font-size: 14px; }
     </style>
 </head>
 <body>
-    <header>🌸 Bahar Çiçekçilik</header>
+    <header>🌸 Bahar Çiçekçilik & Tasarım Atölyesi</header>
     <div class="hero">
         <h1>Günün En Tazeleri Kapınızda</h1>
-        <p>En şık ve taze çiçekler bir tık uzağınızda.</p>
-        <button class="btn">Hemen Sipariş Ver</button>
+        <p>Sevdiklerinize en şık, taze ve mis kokulu çiçekleri hemen gönderin.</p>
+        <button class="btn" onclick="alert('Sipariş sistemine yönlendiriliyorsunuz!')">Hemen Sipariş Ver</button>
     </div>
     <div class="products">
-        <div class="card"><h3>Kırmızı Gül</h3><p>350 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
-        <div class="card"><h3>Beyaz Orkide</h3><p>750 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
-        <div class="card"><h3>Papatya Demeti</h3><p>250 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
-        <div class="card"><h3>Özel Buket</h3><p>600 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
+        <div class="card">
+            <h3>Kırmızı Gül Buketi</h3>
+            <p>350 TL</p>
+            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
+        </div>
+        <div class="card">
+            <h3>Beyaz Orkide</h3>
+            <p>750 TL</p>
+            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
+        </div>
+        <div class="card">
+            <h3>Papatya Demeti</h3>
+            <p>250 TL</p>
+            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
+        </div>
+        <div class="card">
+            <h3>Özel Tasarım Buket</h3>
+            <p>600 TL</p>
+            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
+        </div>
     </div>
+    <footer>
+        <p>&copy; 2026 E-Trade Pro AI Agency - Tüm Hakları Saklıdır.</p>
+    </footer>
 </body>
 </html>"""
-            return Response(code, mimetype='text/html')
+        else:
+            code = db_code
+
+        return Response(code, mimetype='text/html')
     except Exception as e:
         print(f"Preview Hatası: {e}")
     return "Proje bulunamadı.", 404
@@ -578,7 +606,6 @@ def api_chat():
             )
             raw_code = comp.choices[0].message.content.strip()
             
-            # KESİN VE GARANTİLİ HTML AYIKLAYICI
             if "<html" in raw_code.lower():
                 start_idx = raw_code.lower().find("<!doctype")
                 if start_idx == -1:
@@ -608,16 +635,18 @@ def api_chat():
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Çiçekçi E-Ticaret</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bahar Çiçekçilik</title>
     <style>
         body {{ background: #f0fdf4; color: #166534; font-family: sans-serif; margin: 0; padding: 0; text-align: center; }}
-        header {{ background: #15803d; color: white; padding: 20px; font-size: 24px; font-weight: bold; }}
+        header {{ background: #15803d; color: white; padding: 25px; font-size: 26px; font-weight: bold; }}
         .hero {{ padding: 60px 20px; background: #dcfce7; }}
-        .hero h1 {{ font-size: 36px; margin-bottom: 10px; color: #14532d; }}
-        .btn {{ background: #22c55e; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }}
+        .hero h1 {{ font-size: 38px; color: #14532d; margin-bottom: 15px; }}
+        .btn {{ background: #22c55e; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }}
         .products {{ display: flex; justify-content: center; gap: 20px; padding: 40px; flex-wrap: wrap; }}
-        .card {{ background: white; border: 1px solid #bbf7d0; border-radius: 8px; width: 220px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-        .card h3 {{ color: #166534; }}
+        .card {{ background: white; border: 1px solid #bbf7d0; border-radius: 10px; width: 220px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left; }}
+        .card h3 {{ color: #14532d; }}
+        .card p {{ color: #15803d; font-weight: bold; }}
     </style>
 </head>
 <body>
@@ -628,10 +657,10 @@ def api_chat():
         <button class="btn">Hemen Sipariş Ver</button>
     </div>
     <div class="products">
-        <div class="card"><h3>Kırmızı Gül</h3><p>350 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
-        <div class="card"><h3>Beyaz Orkide</h3><p>750 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
-        <div class="card"><h3>Papatya Demeti</h3><p>250 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
-        <div class="card"><h3>Özel Buket</h3><p>600 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
+        <div class="card"><h3>Kırmızı Gül</h3><p>350 TL</p><button class="btn" style="width:100%; padding:8px;">Sepete Ekle</button></div>
+        <div class="card"><h3>Beyaz Orkide</h3><p>750 TL</p><button class="btn" style="width:100%; padding:8px;">Sepete Ekle</button></div>
+        <div class="card"><h3>Papatya Demeti</h3><p>250 TL</p><button class="btn" style="width:100%; padding:8px;">Sepete Ekle</button></div>
+        <div class="card"><h3>Özel Buket</h3><p>600 TL</p><button class="btn" style="width:100%; padding:8px;">Sepete Ekle</button></div>
     </div>
 </body>
 </html>"""
@@ -650,7 +679,7 @@ def api_chat():
             conn.close()
 
             host_url = request.host_url.rstrip('/')
-            preview_url = f"{host_url}/preview/{project_id}"
+preview_url = f"{host_url}/preview/{project_id}"
         except Exception as e:
             print(f"DB Kayıt Hatası: {e}")
 
@@ -699,7 +728,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu HTML render emniyet sistemini onayladı."})
+    return jsonify({"decision": "Yönetim kurulu garantili şablon render sistemini onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
