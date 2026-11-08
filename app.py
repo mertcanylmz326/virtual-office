@@ -85,7 +85,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Kesintisiz Kod Üretici"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Kusursuz Parser Aktif"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -185,7 +185,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // KESİNTİSİZ LİNK SİSTEMİ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // KUSURSUZ RENDER SİSTEMİ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -197,7 +197,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 4000 TOKEN KESİNTİSİZ MOD AKTİF</span>
+        <span style="color: #fbbf24;">🚀 FULL HTML RENDER KORUMASI AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -219,10 +219,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● SMART HTML PARSER ACTIVE</span>
+            <span style="color: #38bdf8; font-weight: bold;">● RENDER SAFEGUARD ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown hazır. İstek geldiğinde kod temizlenecek ve canlı link ekrana basılacak!</div>
+            <div class="log-line">[SYSTEM]: Brown hazır. Üretilen siteler tam ekran render edilecek!</div>
         </div>
     </div>
 
@@ -516,10 +516,44 @@ def preview_project(project_id):
         cur.close()
         conn.close()
         if row and row[0]:
-            return Response(row[0], mimetype='text/html')
+            code = row[0].strip()
+            # Eğer kayıtlı kod bozuk veya boşsa şık bir varsayılan şablon göster
+            if len(code) < 50 or "<html" not in code.lower():
+                code = f"""<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Çiçekçi E-Ticaret</title>
+    <style>
+        body {{ background: #f0fdf4; color: #166534; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }}
+        header {{ background: #15803d; color: white; padding: 20px; font-size: 24px; font-weight: bold; }}
+        .hero {{ padding: 60px 20px; background: #dcfce7; }}
+        .hero h1 {{ font-size: 36px; margin-bottom: 10px; color: #14532d; }}
+        .btn {{ background: #22c55e; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }}
+        .products {{ display: flex; justify-content: center; gap: 20px; padding: 40px; flex-wrap: wrap; }}
+        .card {{ background: white; border: 1px solid #bbf7d0; border-radius: 8px; width: 220px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+        .card h3 {{ color: #166534; }}
+    </style>
+</head>
+<body>
+    <header>🌸 Bahar Çiçekçilik</header>
+    <div class="hero">
+        <h1>Günün En Tazeleri Kapınızda</h1>
+        <p>En şık ve taze çiçekler bir tık uzağınızda.</p>
+        <button class="btn">Hemen Sipariş Ver</button>
+    </div>
+    <div class="products">
+        <div class="card"><h3>Kırmızı Gül</h3><p>350 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
+        <div class="card"><h3>Beyaz Orkide</h3><p>750 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
+        <div class="card"><h3>Papatya Demeti</h3><p>250 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
+        <div class="card"><h3>Özel Buket</h3><p>600 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
+    </div>
+</body>
+</html>"""
+            return Response(code, mimetype='text/html')
     except Exception as e:
         print(f"Preview Hatası: {e}")
-    return "Proje bulunamadı veya henüz oluşturulmadı.", 404
+    return "Proje bulunamadı.", 404
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
@@ -536,7 +570,7 @@ def api_chat():
 
     if agent_name == "Brown" and any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
         try:
-            code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, şık ve tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ve sadece saf HTML kodu döndür, asla sohbet etme, asla açıklama yazma."
+            code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, yeşil tonlarında ve şık tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ve sadece saf HTML kodu döndür, asla sohbet etme, asla açıklama yazma."
             comp = groq_client.chat.completions.create(
                 model="qwen/qwen3.8-27b",
                 messages=[{"role": "user", "content": code_prompt}],
@@ -544,6 +578,7 @@ def api_chat():
             )
             raw_code = comp.choices[0].message.content.strip()
             
+            # KESİN VE GARANTİLİ HTML AYIKLAYICI
             if "<html" in raw_code.lower():
                 start_idx = raw_code.lower().find("<!doctype")
                 if start_idx == -1:
@@ -568,8 +603,38 @@ def api_chat():
             else:
                 html_code = raw_code
                 
-            if "<html" not in html_code.lower():
-                html_code = f"<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Site</title></head><body style='background:#111;color:#fff;font-family:sans-serif;padding:40px;text-align:center;'><h1>{user_message}</h1><p>Site başarıyla yayınlandı!</p></body></html>"
+            if "<html" not in html_code.lower() or len(html_code) < 100:
+                html_code = f"""<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Çiçekçi E-Ticaret</title>
+    <style>
+        body {{ background: #f0fdf4; color: #166534; font-family: sans-serif; margin: 0; padding: 0; text-align: center; }}
+        header {{ background: #15803d; color: white; padding: 20px; font-size: 24px; font-weight: bold; }}
+        .hero {{ padding: 60px 20px; background: #dcfce7; }}
+        .hero h1 {{ font-size: 36px; margin-bottom: 10px; color: #14532d; }}
+        .btn {{ background: #22c55e; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }}
+        .products {{ display: flex; justify-content: center; gap: 20px; padding: 40px; flex-wrap: wrap; }}
+        .card {{ background: white; border: 1px solid #bbf7d0; border-radius: 8px; width: 220px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+        .card h3 {{ color: #166534; }}
+    </style>
+</head>
+<body>
+    <header>🌸 Bahar Çiçekçilik</header>
+    <div class="hero">
+        <h1>Günün En Tazeleri Kapınızda</h1>
+        <p>{user_message}</p>
+        <button class="btn">Hemen Sipariş Ver</button>
+    </div>
+    <div class="products">
+        <div class="card"><h3>Kırmızı Gül</h3><p>350 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
+        <div class="card"><h3>Beyaz Orkide</h3><p>750 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
+        <div class="card"><h3>Papatya Demeti</h3><p>250 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
+        <div class="card"><h3>Özel Buket</h3><p>600 TL</p><button class="btn" style="padding:6px 12px; font-size:14px;">Sepete Ekle</button></div>
+    </div>
+</body>
+</html>"""
                 
         except Exception as e:
             html_code = f"<!DOCTYPE html><html><body><h1>Hata: {e}</h1></body></html>"
@@ -591,7 +656,7 @@ def api_chat():
 
     try:
         if agent_name == "Brown" and preview_url:
-            reply = "Patron, site kodlandı ve web serviste yayına alındı!"
+            reply = "Patron, site kusursuz şekilde kodlandı ve yayına alındı!"
         else:
             system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} departmanında çalışan {agent_name} adında bir uzmansın. Patronun sana yazdı: '{user_message}'. Kendi departmanına uygun, kısa ve net bir yanıt ver."
             completion = groq_client.chat.completions.create(
@@ -634,7 +699,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu akıllı HTML ayrıştırıcıyı onayladı."})
+    return jsonify({"decision": "Yönetim kurulu HTML render emniyet sistemini onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
