@@ -66,7 +66,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "NameError Fixlendi"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Genişletilmiş Şablon Modu"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -166,7 +166,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // NAMEERROR FIX SYSTEM</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // MULTI-TEMPLATE SYSTEM</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -178,7 +178,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 HATASIZ ÇALIŞMA MODU AKTİF</span>
+        <span style="color: #fbbf24;">🚀 TÜM SEKTÖRLER AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -192,7 +192,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Temizlik veya tamirci sitesi kurdur..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Teknoloji mağazası veya tamirci kurdur..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -200,10 +200,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● 100% STABLE OPERATION</span>
+            <span style="color: #38bdf8; font-weight: bold;">● DYNAMIC MULTI-SECTOR RENDER</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Sunucu hatası giderildi. İstekler anında işleniyor!</div>
+            <div class="log-line">[SYSTEM]: Brown tüm sektör şablonlarıyla tam donanımlı hazır!</div>
         </div>
     </div>
 
@@ -512,12 +512,10 @@ def api_chat():
     if agent_name not in employees: agent_name = "Brown"
     agent = employees[agent_name]
 
-    preview_url = ""
-    reply = f"Patron, talimatın doğrultusunda site başarıyla tasarlandı ve yayına alındı!"
-    
+    reply = f"Patron, belirttiğin konsept doğrultusunda site başarıyla kodlandı ve yayına alındı!"
     msg_lower = user_message.lower()
     
-    # KELİME KONTROLÜNE GÖRE TAMİR, TEMİZLİK VEYA ÖZEL ŞABLON ÜRETİCİ
+    # KELİME EŞLEME İLE TAM UYUMLU ŞABLON ÜRETİCİ
     if "tamir" in msg_lower or "oto" in msg_lower or "servis" in msg_lower:
         html_code = """<!DOCTYPE html>
 <html lang="tr">
@@ -557,7 +555,7 @@ def api_chat():
     <div class="hero">
         <h1>Aracınız Emin Ellerde</h1>
         <p>Profesyonel mekanik onarım, bilgisayarlı arıza tespiti ve periyodik bakım hizmetleri.</p>
-        <button class="btn" onclick="alert('Randevu talebiniz alınmıştır. En kısa sürede aranacaksınız!')">Hemen Randevu Al</button>
+        <button class="btn" onclick="alert('Randevu talebiniz alınmıştır!')">Hemen Randevu Al</button>
     </div>
     <div class="services">
         <div class="card">
@@ -642,6 +640,74 @@ def api_chat():
     </footer>
 </body>
 </html>"""
+    elif "teknoloji" in msg_lower or "elektronik" in msg_lower or "volt" in msg_lower or "mağaza" in msg_lower:
+        html_code = """<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volt Elektronik & Teknoloji Mağazası</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { background: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }
+        header { background: #1e293b; color: #38bdf8; padding: 25px; font-size: 26px; font-weight: bold; border-bottom: 2px solid #0284c7; display: flex; justify-content: space-between; align-items: center; padding-left: 40px; padding-right: 40px; }
+        header nav a { color: #f8fafc; text-decoration: none; margin-left: 20px; font-size: 15px; font-weight: 600; }
+        header nav a:hover { color: #38bdf8; }
+        .hero { padding: 70px 20px; background: linear-gradient(135deg, #1e293b 0%, #090d16 100%); border-bottom: 3px solid #334155; }
+        .hero h1 { font-size: 40px; margin-bottom: 15px; color: #ffffff; }
+        .hero p { font-size: 18px; color: #94a3b8; margin-bottom: 25px; }
+        .btn { background: #0284c7; color: white; border: none; padding: 12px 28px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.4); transition: 0.3s; }
+        .btn:hover { background: #0369a1; transform: translateY(-2px); }
+        .products { display: flex; justify-content: center; gap: 25px; padding: 50px 20px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; width: 260px; padding: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); text-align: left; transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); border-color: #38bdf8; }
+        .card h3 { color: #38bdf8; margin-top: 0; font-size: 20px; }
+        .card p { color: #4ade80; font-weight: bold; font-size: 20px; margin: 15px 0; }
+        footer { background: #090d16; color: #64748b; padding: 25px; margin-top: 50px; font-size: 14px; border-top: 1px solid #1e293b; }
+    </style>
+</head>
+<body>
+    <header>
+        <span>⚡ Volt Elektronik</span>
+        <nav>
+            <a href="#">Kampanyalar</a>
+            <a href="#">Kulaklıklar</a>
+            <a href="#">Akıllı Saatler</a>
+            <a href="#" style="color:#38bdf8;">Sepetim (0)</a>
+        </nav>
+    </header>
+    <div class="hero">
+        <h1>Geleceğin Teknolojisi Kapınızda</h1>
+        <p>En yeni akıllı saatler, kablosuz kulaklıklar ve son teknoloji elektronik ürünler.</p>
+        <button class="btn" onclick="alert('Kampanyalı ürünler listeleniyor!')">Alışverişe Başla</button>
+    </div>
+    <div class="products">
+        <div class="card">
+            <h3>Pro Wireless Kulaklık</h3>
+            <p>2.499 TL</p>
+            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
+        </div>
+        <div class="card">
+            <h3>Ultra Akıllı Saat</h3>
+            <p>3.899 TL</p>
+            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
+        </div>
+        <div class="card">
+            <h3>RGB Mekanik Klavye</h3>
+            <p>1.799 TL</p>
+            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
+        </div>
+        <div class="card">
+            <h3>4K Aksiyon Kamerası</h3>
+            <p>4.599 TL</p>
+            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2026 Volt Elektronik - Tüm Hakları Saklıdır.</p>
+    </footer>
+</body>
+</html>"""
     else:
         html_code = f"""<!DOCTYPE html>
 <html lang="tr">
@@ -719,7 +785,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu kararlı sürümü onayladı."})
+    return jsonify({"decision": "Yönetim kurulu çoklu sektör şablonlarını onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
