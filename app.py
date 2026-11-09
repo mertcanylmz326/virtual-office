@@ -199,7 +199,6 @@ HTML_TEMPLATE = """
             overflow-x: hidden; 
         }
 
-        /* CRT / Scanline Atmosferik Efekt */
         body::after {
             content: " ";
             display: block;
@@ -249,12 +248,6 @@ HTML_TEMPLATE = """
             padding: 6px 14px;
             border-radius: 8px;
             box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.05);
-            animation: pulseGlow 3s infinite;
-        }
-        @keyframes pulseGlow {
-            0% { border-color: #334155; }
-            50% { border-color: rgba(56, 189, 248, 0.6); }
-            100% { border-color: #334155; }
         }
 
         #game-container {
@@ -293,7 +286,6 @@ HTML_TEMPLATE = """
         .terminal-body { padding: 12px; height: 150px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.5; word-break: break-word; overflow-wrap: break-word; }
         .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 4px; }
 
-        /* Toast Bildirim Sistemi */
         #toast-container {
             position: fixed;
             bottom: 20px;
@@ -753,7 +745,7 @@ def api_chat():
 
         try:
             if groq_client:
-                code_prompt = f"""Sen kıdemli bir full-stack web geliştiricisisin ve UI/UX uzmansın. Sadece ve sadece saf, eksiksiz bir HTML/CSS/JS içeren modern web sitesi yaz. Tasarım kuralları: Glassmorphism (cam efekti, blur, şeffaf kartlar), neon renk geçişleri, Inter veya Space Grotesk tipografi, tamamen koyu tema ve kusursuz mobil uyumluluk. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"""
+                code_prompt = f"""Sen kıdemli bir full-stack web geliştiricisisin ve UI/UX uzmansın. Sadece ve sadece saf, eksiksiz bir HTML/CSS/JS içeren modern web sitesi yaz. Tasarım kuralları: Glassmorphism (cam efekti, blur, şeffaf kartlar), neon renk geçişleri, Inter lub Space Grotesk tipografi, tamamen koyu tema ve kusursuz mobil uyumluluk. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"""
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
@@ -849,7 +841,7 @@ def api_tasks():
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
     if not session.get('logged_in'):
-        return jsonify({"decision": "Yetkisiz"}}, 403
+        return jsonify({"decision": "Yetkisiz"}), 403
     return jsonify({"decision": "Yönetim kurulu UI/UX modernizasyon ve toast bildirim protokolünü onayladı."})
 
 if __name__ == '__main__':
