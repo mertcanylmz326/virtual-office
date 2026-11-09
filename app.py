@@ -66,7 +66,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Genişletilmiş Şablon Modu"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Akıllı Dinamik Motor Devrede"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -166,7 +166,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // MULTI-TEMPLATE SYSTEM</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // SMART DYNAMIC RENDER</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -178,7 +178,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 TÜM SEKTÖRLER AKTİF</span>
+        <span style="color: #fbbf24;">🚀 AKILLI ŞABLON MOTORU AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -192,7 +192,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Teknoloji mağazası veya tamirci kurdur..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="İstediğin herhangi bir siteyi yaz..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -200,10 +200,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● DYNAMIC MULTI-SECTOR RENDER</span>
+            <span style="color: #38bdf8; font-weight: bold;">● UNLIMITED SECTOR RENDER</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown tüm sektör şablonlarıyla tam donanımlı hazır!</div>
+            <div class="log-line">[SYSTEM]: Brown artık her sektörü ve promptu anında kusursuz sitelere dönüştürüyor!</div>
         </div>
     </div>
 
@@ -512,233 +512,121 @@ def api_chat():
     if agent_name not in employees: agent_name = "Brown"
     agent = employees[agent_name]
 
-    reply = f"Patron, belirttiğin konsept doğrultusunda site başarıyla kodlandı ve yayına alındı!"
+    reply = f"Patron, verdiğin prompt doğrudan analiz edildi ve site şahane bir şekilde tasarlandı!"
     msg_lower = user_message.lower()
     
-    # KELİME EŞLEME İLE TAM UYUMLU ŞABLON ÜRETİCİ
+    # AKILLI DİNAMİK SEKTÖR ALGILAYICI & ŞABLON OLUŞTURUCU
     if "tamir" in msg_lower or "oto" in msg_lower or "servis" in msg_lower:
-        html_code = """<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usta Eller Oto Tamir & Servis</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { background: #111827; color: #f3f4f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }
-        header { background: #1f2937; color: #facc15; padding: 25px; font-size: 26px; font-weight: bold; border-bottom: 3px solid #facc15; box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: flex; justify-content: space-between; align-items: center; padding-left: 40px; padding-right: 40px; }
-        header nav a { color: #f3f4f6; text-decoration: none; margin-left: 20px; font-size: 15px; font-weight: 600; }
-        header nav a:hover { color: #facc15; }
-        .hero { padding: 80px 20px; background: linear-gradient(135deg, #1f2937 0%, #030712 100%); border-bottom: 3px solid #374151; }
-        .hero h1 { font-size: 42px; margin-bottom: 15px; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        .hero p { font-size: 18px; color: #9ca3af; margin-bottom: 30px; }
-        .btn { background: #facc15; color: #111827; border: none; padding: 14px 32px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4); transition: all 0.3s ease; }
-        .btn:hover { background: #eab308; transform: translateY(-2px); }
-        .services { display: flex; justify-content: center; gap: 25px; padding: 60px 20px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }
-        .card { background: #1f2937; border: 1px solid #374151; border-radius: 12px; width: 260px; padding: 25px; box-shadow: 0 8px 16px rgba(0,0,0,0.6); text-align: left; transition: transform 0.3s; }
-        .card:hover { transform: translateY(-5px); border-color: #facc15; }
-        .card h3 { color: #facc15; margin-top: 0; font-size: 20px; }
-        .card p { color: #d1d5db; font-size: 14px; line-height: 1.5; margin: 15px 0; }
-        footer { background: #030712; color: #9ca3af; padding: 30px; margin-top: 50px; font-size: 14px; border-top: 1px solid #1f2937; }
-    </style>
-</head>
-<body>
-    <header>
-        <span>🛠️ Usta Eller Oto Servis</span>
-        <nav>
-            <a href="#">Hizmetler</a>
-            <a href="#">Fiyatlar</a>
-            <a href="#">Hakkımızda</a>
-            <a href="#" style="color:#facc15;">İletişim</a>
-        </nav>
-    </header>
-    <div class="hero">
-        <h1>Aracınız Emin Ellerde</h1>
-        <p>Profesyonel mekanik onarım, bilgisayarlı arıza tespiti ve periyodik bakım hizmetleri.</p>
-        <button class="btn" onclick="alert('Randevu talebiniz alınmıştır!')">Hemen Randevu Al</button>
-    </div>
-    <div class="services">
-        <div class="card">
-            <h3>Motor Bakım & Onarım</h3>
-            <p>Uzman kadromuzla motor revizyonu, triger değişimi ve performans iyileştirme.</p>
-        </div>
-        <div class="card">
-            <h3>Bilgisayarlı Arıza Tespiti</h3>
-            <p>Son teknoloji OBD cihazlarıyla tüm elektronik arızaların nokta atışı tespiti.</p>
-        </div>
-        <div class="card">
-            <h3>Fren & Süspansiyon</h3>
-            <p>Güvenliğiniz için balata, disk değişimi ve amortisör bakım hizmetleri.</p>
-        </div>
-        <div class="card">
-            <h3>Periyodik Yağ Bakımı</h3>
-            <p>Orijinal filtre ve yağ değişimleriyle aracınızın ömrünü uzatın.</p>
-        </div>
-    </div>
-    <footer>
-        <p>&copy; 2026 Usta Eller Oto Tamir & Servis - Tüm Hakları Saklıdır.</p>
-    </footer>
-</body>
-</html>"""
+        title = "Usta Eller Oto Tamir & Servis"
+        theme_bg = "#111827"
+        accent = "#facc15"
+        hero_title = "Aracınız Emin Ellerde"
+        hero_desc = "Profesyonel mekanik onarım, bilgisayarlı arıza tespiti ve periyodik bakım."
+        cards = [
+            ("Motor Bakım & Onarım", "Uzman kadromuzla motor revizyonu ve performans."),
+            ("Bilgisayarlı Arıza Tespiti", "Son teknoloji OBD cihazlarıyla nokta atışı arıza tespiti."),
+            ("Fren & Süspansiyon", "Güvenliğiniz için disk ve balata değişim hizmetleri."),
+            ("Periyodik Yağ Bakımı", "Orijinal filtre ve yağ değişimleri.")
+        ]
     elif "temiz" in msg_lower or "hijyen" in msg_lower:
-        html_code = """<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temizix Profesyonel Temizlik</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { background: #f8fafc; color: #1e293b; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }
-        header { background: #0284c7; color: #ffffff; padding: 25px; font-size: 26px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; padding-left: 40px; padding-right: 40px; }
-        header nav a { color: #ffffff; text-decoration: none; margin-left: 20px; font-size: 15px; font-weight: 600; }
-        header nav a:hover { color: #bae6fd; }
-        .hero { padding: 80px 20px; background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-bottom: 3px solid #7dd3fc; }
-        .hero h1 { font-size: 42px; margin-bottom: 15px; color: #0369a1; }
-        .hero p { font-size: 18px; color: #0384c7; margin-bottom: 30px; font-weight: 500; }
-        .btn { background: #0284c7; color: white; border: none; padding: 14px 32px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3); transition: all 0.3s ease; }
-        .btn:hover { background: #0369a1; transform: translateY(-2px); }
-        .services { display: flex; justify-content: center; gap: 25px; padding: 60px 20px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }
-        .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; width: 260px; padding: 25px; box-shadow: 0 8px 16px rgba(0,0,0,0.05); text-align: left; transition: transform 0.3s; }
-        .card:hover { transform: translateY(-5px); border-color: #0284c7; }
-        .card h3 { color: #0284c7; margin-top: 0; font-size: 20px; }
-        .card p { color: #64748b; font-size: 14px; line-height: 1.5; margin: 15px 0; }
-        footer { background: #1e293b; color: #94a3b8; padding: 30px; margin-top: 50px; font-size: 14px; }
-    </style>
-</head>
-<body>
-    <header>
-        <span>✨ Temizix Profesyonel Temizlik</span>
-        <nav>
-            <a href="#">Hizmetler</a>
-            <a href="#">Fiyatlar</a>
-            <a href="#">Hakkımızda</a>
-            <a href="#" style="color:#bae6fd;">İletişim</a>
-        </nav>
-    </header>
-    <div class="hero">
-        <h1>Ev ve Ofisinizde Kusursuz Temizlik</h1>
-        <p>Uzman kadromuz ve hijyen garantili ürünlerimizle yaşam alanlarınız pırıl pırıl.</p>
-        <button class="btn" onclick="alert('Temizlik randevu talebiniz alındı!')">Hemen Teklif Al</button>
-    </div>
-    <div class="services">
-        <div class="card">
-            <h3>Ev Temizliği</h3>
-            <p>Detaylı köşe bucak ev temizliği ile evinizde mis gibi bir ferahlık sağlayın.</p>
-        </div>
-        <div class="card">
-            <h3>Ofis Temizliği</h3>
-            <p>Çalışma ortamınızı profesyonel ekibimizle tertemiz ve düzenli tutun.</p>
-        </div>
-        <div class="card">
-            <h3>Koltuk Yıkama</h3>
-            <p>Yerinde buharlı vakumlu koltuk ve yatak yıkama hizmeti ile lekelere son.</p>
-        </div>
-    </div>
-    <footer>
-        <p>&copy; 2026 Temizix Profesyonel Temizlik - Tüm Hakları Saklıdır.</p>
-    </footer>
-</body>
-</html>"""
+        title = "Temizix Profesyonel Temizlik"
+        theme_bg = "#f8fafc"
+        accent = "#0284c7"
+        hero_title = "Ev ve Ofisinizde Kusursuz Temizlik"
+        hero_desc = "Uzman kadromuzla yaşam alanlarınız pırıl pırıl."
+        cards = [
+            ("Ev Temizliği", "Köşe bucak detaylı ev temizliği hizmeti."),
+            ("Ofis Temizliği", "Çalışma ortamınızı tertemiz ve düzenli tutuyoruz."),
+            ("Koltuk Yıkama", "Yerinde buharlı vakumlu koltuk yıkama.")
+        ]
     elif "teknoloji" in msg_lower or "elektronik" in msg_lower or "volt" in msg_lower or "mağaza" in msg_lower:
-        html_code = """<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volt Elektronik & Teknoloji Mağazası</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { background: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }
-        header { background: #1e293b; color: #38bdf8; padding: 25px; font-size: 26px; font-weight: bold; border-bottom: 2px solid #0284c7; display: flex; justify-content: space-between; align-items: center; padding-left: 40px; padding-right: 40px; }
-        header nav a { color: #f8fafc; text-decoration: none; margin-left: 20px; font-size: 15px; font-weight: 600; }
-        header nav a:hover { color: #38bdf8; }
-        .hero { padding: 70px 20px; background: linear-gradient(135deg, #1e293b 0%, #090d16 100%); border-bottom: 3px solid #334155; }
-        .hero h1 { font-size: 40px; margin-bottom: 15px; color: #ffffff; }
-        .hero p { font-size: 18px; color: #94a3b8; margin-bottom: 25px; }
-        .btn { background: #0284c7; color: white; border: none; padding: 12px 28px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.4); transition: 0.3s; }
-        .btn:hover { background: #0369a1; transform: translateY(-2px); }
-        .products { display: flex; justify-content: center; gap: 25px; padding: 50px 20px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }
-        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; width: 260px; padding: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); text-align: left; transition: transform 0.3s; }
-        .card:hover { transform: translateY(-5px); border-color: #38bdf8; }
-        .card h3 { color: #38bdf8; margin-top: 0; font-size: 20px; }
-        .card p { color: #4ade80; font-weight: bold; font-size: 20px; margin: 15px 0; }
-        footer { background: #090d16; color: #64748b; padding: 25px; margin-top: 50px; font-size: 14px; border-top: 1px solid #1e293b; }
-    </style>
-</head>
-<body>
-    <header>
-        <span>⚡ Volt Elektronik</span>
-        <nav>
-            <a href="#">Kampanyalar</a>
-            <a href="#">Kulaklıklar</a>
-            <a href="#">Akıllı Saatler</a>
-            <a href="#" style="color:#38bdf8;">Sepetim (0)</a>
-        </nav>
-    </header>
-    <div class="hero">
-        <h1>Geleceğin Teknolojisi Kapınızda</h1>
-        <p>En yeni akıllı saatler, kablosuz kulaklıklar ve son teknoloji elektronik ürünler.</p>
-        <button class="btn" onclick="alert('Kampanyalı ürünler listeleniyor!')">Alışverişe Başla</button>
-    </div>
-    <div class="products">
-        <div class="card">
-            <h3>Pro Wireless Kulaklık</h3>
-            <p>2.499 TL</p>
-            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
-        </div>
-        <div class="card">
-            <h3>Ultra Akıllı Saat</h3>
-            <p>3.899 TL</p>
-            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
-        </div>
-        <div class="card">
-            <h3>RGB Mekanik Klavye</h3>
-            <p>1.799 TL</p>
-            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
-        </div>
-        <div class="card">
-            <h3>4K Aksiyon Kamerası</h3>
-            <p>4.599 TL</p>
-            <button class="btn" style="width:100%; padding:10px; font-size:14px;">Sepete Ekle</button>
-        </div>
-    </div>
-    <footer>
-        <p>&copy; 2026 Volt Elektronik - Tüm Hakları Saklıdır.</p>
-    </footer>
-</body>
-</html>"""
+        title = "Volt Elektronik Mağazası"
+        theme_bg = "#0f172a"
+        accent = "#38bdf8"
+        hero_title = "Geleceğin Teknolojisi Kapınızda"
+        hero_desc = "En yeni akıllı saatler ve elektronik ürünler."
+        cards = [
+            ("Pro Wireless Kulaklık", "2.499 TL"),
+            ("Ultra Akıllı Saat", "3.899 TL"),
+            ("RGB Mekanik Klavye", "1.799 TL"),
+            ("4K Aksiyon Kamerası", "4.599 TL")
+        ]
+    elif "fitness" in msg_lower or "spor" in msg_lower or "gym" in msg_lower or "demir" in msg_lower:
+        title = "Demir Gym & Fitness Club"
+        theme_bg = "#090d16"
+        accent = "#facc15"
+        hero_title = "Gücünü Keşfet, Sınırlarını Zorla"
+        hero_desc = "Profesyonel ekipmanlar ve uzman eğitmenler eşliğinde vücudunu dönüştür."
+        cards = [
+            ("Fitness & Vücut Geliştirme", "Son teknoloji ağırlık ve cardio ekipmanları."),
+            ("CrossFit & Fonksiyonel", "Dayanıklılık ve patlayıcı güç antrenmanları."),
+            ("Özel PT (Personal Trainer)", "Sana özel hazırlanan beslenme ve antrenman programı."),
+            ("Spinning & Grup Dersleri", "Yüksek tempolu ve eğlenceli grup seansları.")
+        ]
     else:
-        html_code = f"""<!DOCTYPE html>
+        # HERHANGİ BİR PROMPT YAZILDIĞINDA DOĞRUDAN ONA GÖRE ŞABLON ÜRETİR
+        title = user_message[:30] + "..." if len(user_message) > 30 else user_message
+        theme_bg = "#0f172a"
+        accent = "#38bdf8"
+        hero_title = "Özel Konsept Web Sitesi"
+        hero_desc = user_message
+        cards = [
+            ("Hizmet 1", "Profesyonel çözümler ve kaliteli yaklaşım."),
+            ("Hizmet 2", "İhtiyacınıza özel hızlı ve güvenilir servis."),
+            ("Hizmet 3", "Müşteri memnuniyeti odaklı kurumsal yapımız.")
+        ]
+
+    # Dinamik HTML Üretimi
+    cards_html = ""
+    for c_title, c_desc in cards:
+        cards_html += f"""
+        <div class="card" style="background: {'#1e293b' if theme_bg != '#f8fafc' else '#ffffff'}; border: 1px solid {'#334155' if theme_bg != '#f8fafc' else '#e2e8f0'}; border-radius: 12px; width: 260px; padding: 25px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); text-align: left;">
+            <h3 style="color: {accent}; margin-top: 0; font-size: 20px;">{c_title}</h3>
+            <p style="color: {'#cbd5e1' if theme_bg != '#f8fafc' else '#64748b'}; font-size: 14px; line-height: 1.5; margin: 15px 0;">{c_desc}</p>
+            <button class="btn" style="width:100%; padding:10px; font-size:14px; background:{accent}; color:{'#111827' if accent == '#facc15' else '#ffffff'}; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="alert('İşlem seçildi!')">İncele / Seç</button>
+        </div>"""
+
+    html_code = f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{user_message}</title>
+    <title>{title}</title>
     <style>
         * {{ box-sizing: border-box; }}
-        body {{ background: #0f172a; color: #f8fafc; font-family: sans-serif; margin: 0; padding: 0; text-align: center; }}
-        header {{ background: #1e293b; color: #38bdf8; padding: 25px; font-size: 26px; font-weight: bold; }}
-        .hero {{ padding: 80px 20px; background: #1e293b; }}
-        .hero h1 {{ font-size: 38px; color: #ffffff; margin-bottom: 15px; }}
-        .btn {{ background: #0284c7; color: white; border: none; padding: 14px 28px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }}
-        .content {{ max-width: 800px; margin: 40px auto; padding: 30px; background: #1e293b; border-radius: 12px; text-align: left; border: 1px solid #334155; }}
-        footer {{ background: #090d16; color: #64748b; padding: 20px; margin-top: 40px; }}
+        body {{ background: {theme_bg}; color: {'#f8fafc' if theme_bg != '#f8fafc' else '#1e293b'}; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }}
+        header {{ background: {'#1e293b' if theme_bg != '#f8fafc' else '#ffffff'}; color: {accent}; padding: 25px; font-size: 24px; font-weight: bold; border-bottom: 2px solid {accent}; display: flex; justify-content: space-between; align-items: center; padding-left: 40px; padding-right: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
+        header nav a {{ color: {'#f8fafc' if theme_bg != '#f8fafc' else '#1e293b'}; text-decoration: none; margin-left: 20px; font-size: 15px; font-weight: 600; }}
+        header nav a:hover {{ color: {accent}; }}
+        .hero {{ padding: 80px 20px; background: linear-gradient(135deg, {'#1e293b' if theme_bg != '#f8fafc' else '#e0f2fe'} 0%, {theme_bg} 100%); border-bottom: 3px solid {'#334155' if theme_bg != '#f8fafc' else '#7dd3fc'}; }}
+        .hero h1 {{ font-size: 40px; margin-bottom: 15px; color: {'#ffffff' if theme_bg != '#f8fafc' else '#0369a1'}; }}
+        .hero p {{ font-size: 18px; color: {'#94a3b8' if theme_bg != '#f8fafc' else '#0384c7'}; margin-bottom: 30px; font-weight: 500; max-width: 800px; margin-left: auto; margin-right: auto; }}
+        .btn {{ background: {accent}; color: {'#111827' if accent == '#facc15' else '#ffffff'}; border: none; padding: 14px 32px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.3s; }}
+        .btn:hover {{ opacity: 0.9; transform: translateY(-2px); }}
+        .cards-container {{ display: flex; justify-content: center; gap: 25px; padding: 60px 20px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }}
+        footer {{ background: {'#090d16' if theme_bg != '#f8fafc' else '#1e293b'}; color: {'#64748b' if theme_bg != '#f8fafc' else '#94a3b8'}; padding: 30px; margin-top: 50px; font-size: 14px; border-top: 1px solid {'#1e293b' if theme_bg != '#f8fafc' else '#e2e8f0'}; }}
     </style>
 </head>
 <body>
-    <header>🚀 {user_message}</header>
+    <header>
+        <span>⚡ {title}</span>
+        <nav>
+            <a href="#">Ana Sayfa</a>
+            <a href="#">Hizmetler</a>
+            <a href="#">Hakkımızda</a>
+            <a href="#" style="color:{accent};">İletişim</a>
+        </nav>
+    </header>
     <div class="hero">
-        <h1>Özel Proje Sayfası</h1>
-        <p>Talimatınız doğrultusunda özel olarak kodlandı ve yayına alındı.</p>
-        <button class="btn" onclick="alert('İşlem başarılı!')">İletişime Geç</button>
+        <h1>{hero_title}</h1>
+        <p>{hero_desc}</p>
+        <button class="btn" onclick="alert('Talebiniz başarıyla alınmıştır!')">Hemen Başvur / Randevu Al</button>
     </div>
-    <div class="content">
-        <h2>Talep Detayı</h2>
-        <p>{user_message}</p>
+    <div class="cards-container">
+        {cards_html}
     </div>
     <footer>
-        <p>&copy; 2026 E-Trade Pro AI Agency</p>
+        <p>&copy; 2026 {title} - Tüm Hakları Saklıdır. E-Trade Pro AI Agency</p>
     </footer>
 </body>
 </html>"""
@@ -785,7 +673,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu çoklu sektör şablonlarını onayladı."})
+    return jsonify({"decision": "Yönetim kurulu akıllı dinamik şablon motorunu onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
