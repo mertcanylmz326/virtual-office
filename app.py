@@ -69,16 +69,18 @@ def check_system_uptime():
     return "UptimeRobot API aktif."
 
 employees = {
-    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "color": "#3b82f6", "state": "Masada", "speech": "Destek aktif"},
-    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "color": "#ef4444", "state": "Masada", "speech": "Operasyon OK"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "color": "#10b981", "state": "Masada", "speech": "GPT-OSS 120B"},
-    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
-    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
-    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "color": "#f97316", "state": "Masada", "speech": "Sistem Sağlığı"},
-    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "color": "#14b8a6", "state": "Masada", "speech": "Sözleşme OK"},
-    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "color": "#64748b", "state": "Masada", "speech": "Firewall aktif"},
-    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "color": "#ec4899", "state": "Masada", "speech": "Hedefler tuttu"},
-    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "color": "#f43f5e", "state": "Kahve Hazırlıyor", "speech": "Taze kahve!"}
+    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
+    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "GPT-OSS 120B Aktif"},
+    
+    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
+    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
+    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 375, "room_y": 155, "color": "#f97316", "state": "Masada", "speech": "Sistem Sağlığı OK"},
+    
+    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "color": "#14b8a6", "state": "Masada", "speech": "Sözleşme aktif"},
+    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "color": "#64748b", "state": "Masada", "speech": "Firewall koruyor"},
+    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 375, "room_y": 295, "color": "#ec4899", "state": "Masada", "speech": "Hedefler tuttu"},
+    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 580, "room_y": 15, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "speech": "Taze kahve!"}
 }
 
 HTML_TEMPLATE = """
@@ -87,10 +89,10 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Cybernetic Lab HQ</title>
+    <title>E-Trade Pro - AI Agency HQ</title>
     <style>
         body { 
-            background-color: #02040a; 
+            background-color: #030712; 
             color: #f8fafc; 
             font-family: 'Courier New', Courier, monospace; 
             text-align: center; 
@@ -99,7 +101,7 @@ HTML_TEMPLATE = """
             overflow-x: hidden; 
         }
         #game-topbar {
-            background: #090d16;
+            background: #0f172a;
             border-bottom: 2px solid #38bdf8;
             padding: 10px 15px;
             display: flex;
@@ -110,17 +112,17 @@ HTML_TEMPLATE = """
             gap: 8px;
         }
         .top-btn { 
-            background: #1e1b4b; color: #38bdf8; border: 1px solid #4c1d95; padding: 6px 12px; 
+            background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; 
             border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px;
         }
-        .top-btn:hover { background: #38bdf8; color: #02040a; }
+        .top-btn:hover { background: #38bdf8; color: #030712; }
 
         #stats-bar {
-            background: #050811;
+            background: #090d16;
             padding: 8px 15px;
             display: flex;
             justify-content: space-around;
-            border-bottom: 1px solid #1e1b4b;
+            border-bottom: 1px solid #1e293b;
             font-size: 12px;
             font-weight: bold;
             flex-wrap: wrap;
@@ -130,31 +132,31 @@ HTML_TEMPLATE = """
         #game-container {
             position: relative;
             width: 1080px;
-            height: 520px;
+            height: 440px;
             max-width: 100%;
             margin: 10px auto;
             border: 3px solid #38bdf8;
-            border-radius: 12px;
-            box-shadow: 0 0 60px rgba(56, 189, 248, 0.35);
-            background: #02040a;
+            border-radius: 8px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.9);
+            background: #0b0f19;
             overflow: hidden;
         }
         canvas { display: block; width: 100%; height: 100%; }
 
         .action-bar { margin: 10px auto; width: 1080px; max-width: 100%; display: flex; justify-content: space-between; gap: 10px; padding: 0 10px; box-sizing: border-box; }
         #command-panel {
-            background: #090d16; border: 2px solid #4c1d95; padding: 8px; border-radius: 8px; display: flex; gap: 8px; align-items: center; flex-grow: 1; flex-wrap: wrap;
+            background: #0f172a; border: 2px solid #334155; padding: 8px; border-radius: 8px; display: flex; gap: 8px; align-items: center; flex-grow: 1; flex-wrap: wrap;
         }
-        select, input[type="text"] { background: #1e1b4b; color: #fff; border: 1px solid #6d28d9; padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 12px; }
+        select, input[type="text"] { background: #1e293b; color: #fff; border: 1px solid #475569; padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 12px; }
         input[type="text"] { flex-grow: 1; min-width: 200px; }
         .send-btn { background: #0284c7; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
         .send-btn:hover { background: #0369a1; }
 
         #activity-terminal {
-            margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #02040a; border: 2px solid #4c1d95; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
+            margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
-        .terminal-header { background: #090d16; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
-        .terminal-body { padding: 10px; height: 140px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
+        .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
+        .terminal-body { padding: 10px; height: 160px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
         .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
 
         @media (max-width: 768px) {
@@ -169,7 +171,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🪐 E-TRADE PRO // CYBERNETIC LAB HQ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // CLASSIC HQ (GPT-OSS 120B)</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -181,11 +183,11 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #c084fc;">🚀 3D CYBERNETIC LAB AKTİF</span>
+        <span style="color: #fbbf24;">🚀 KLASİK OFİS DÜZENİ AKTİF</span>
     </div>
 
     <div id="game-container">
-        <canvas id="officeCanvas" width="1080" height="520"></canvas>
+        <canvas id="officeCanvas" width="1080" height="440"></canvas>
     </div>
 
     <div class="action-bar">
@@ -202,11 +204,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ CYBERNETIC LAB OPERATIONS TERMINAL</span>
+            <span>⚡ OPERATIONS TERMINAL</span>
             <span style="color: #38bdf8; font-weight: bold;">● SYSTEM ONLINE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Cybernetic Lab izometrik konsept arayüzü başarıyla yüklendi.</div>
+            <div class="log-line">[SYSTEM]: Klasik ofis mimarisine başarıyla dönüldü. Sistem tıkır tıkır çalışıyor!</div>
         </div>
     </div>
 
@@ -216,11 +218,10 @@ HTML_TEMPLATE = """
         const terminalLogs = document.getElementById('terminal-logs');
 
         let agentsData = {};
-        let pulseAngle = 0;
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
-            let logDiv = document.createElement('div');
+            const logDiv = document.createElement('div');
             logDiv.className = 'log-line';
             logDiv.innerHTML = `[${time}] ${text}`;
             terminalLogs.prepend(logDiv);
@@ -233,118 +234,135 @@ HTML_TEMPLATE = """
 
         function drawOffice() {
             const w = 1080;
-            const h = 520;
+            const h = 440;
             ctx.clearRect(0, 0, w, h);
 
-            // 1. Üst Kısım: Biowall Kubbesi & Şehir Manzarası
-            let domeGrad = ctx.createLinearGradient(0, 0, 0, 150);
-            domeGrad.addColorStop(0, "#090d16");
-            domeGrad.addColorStop(1, "#1e1b4b");
-            ctx.fillStyle = domeGrad;
-            ctx.fillRect(0, 0, w, 150);
-
-            // Biowall Yeşil Bitki Dokusu (Yapay Doğa Duvarı)
-            ctx.fillStyle = "rgba(16, 185, 129, 0.25)";
-            ctx.fillRect(w/2 - 250, 30, 500, 70);
-            ctx.strokeStyle = "#34d399";
+            ctx.fillStyle = "#1e1b18";
+            ctx.fillRect(0, 0, w, h);
+            
+            ctx.strokeStyle = "#292524";
             ctx.lineWidth = 1;
-            ctx.strokeRect(w/2 - 250, 30, 500, 70);
-
-            ctx.fillStyle = "#34d399";
-            ctx.font = "bold 10px 'Courier New'";
-            ctx.textAlign = "center";
-            ctx.fillText("🌿 BIOWALL & CENTRAL DOME", w/2, 55);
-            ctx.fillStyle = "#94a3b8";
-            ctx.font = "9px 'Courier New'";
-            ctx.fillText("CYBERNETIC LAB // KASA: $22,500 | MÜŞTERİ: 6", w/2, 75);
-            ctx.textAlign = "left";
-
-            // 2. Alt Zemin Grid ve Sınırlar
-            ctx.fillStyle = "#02040a";
-            ctx.fillRect(0, 150, w, h - 150);
-
-            ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
-            ctx.lineWidth = 1;
-            for (let i = 0; i < w; i += 40) {
+            for (let i = 0; i < w; i += 30) {
                 ctx.beginPath();
-                ctx.moveTo(i, 150);
+                ctx.moveTo(i, 0);
                 ctx.lineTo(i, h);
                 ctx.stroke();
             }
 
-            // 3. Merkez Enerji Çekirdeği (Core Reactor)
-            pulseAngle += 0.03;
-            let centerX = w / 2;
-            let centerY = 330;
+            ctx.fillStyle = "#111827";
+            ctx.fillRect(0, 130, w, 35);
+            ctx.fillRect(0, 270, w, 35);
+            ctx.fillRect(530, 0, 35, h);
 
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 65, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(56, 189, 248, 0.15)";
-            ctx.fill();
+            const rooms = [
+                {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO", glow: "#3b82f6"},
+                {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444"},
+                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (DEV)", glow: "#10b981"},
+                {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b"},
+                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6"},
+                {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL (İK)", glow: "#f97316"},
+                {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX", glow: "#14b8a6"},
+                {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR", glow: "#64748b"},
+                {x: 375, y: 295, w: 160, h: 105, name: "9. KEREM", glow: "#ec4899"}
+            ];
+
+            rooms.forEach(r => {
+                ctx.fillStyle = "rgba(17, 24, 39, 0.85)";
+                ctx.fillRect(r.x, r.y, r.w, r.h);
+
+                ctx.strokeStyle = "rgba(56, 189, 248, 0.6)";
+                ctx.lineWidth = 3;
+                ctx.strokeRect(r.x, r.y, r.w, r.h);
+
+                ctx.strokeStyle = r.glow;
+                ctx.lineWidth = 1;
+                ctx.strokeRect(r.x + 3, r.y + 3, r.w - 6, r.h - 6);
+
+                ctx.fillStyle = "#38bdf8";
+                ctx.font = "bold 9px 'Courier New'";
+                ctx.fillText(r.name, r.x + 8, r.y + 14);
+
+                ctx.fillStyle = "#1e293b";
+                ctx.fillRect(r.x + 50, r.y + 55, 60, 24);
+                ctx.fillStyle = r.glow;
+                ctx.fillRect(r.x + 68, r.y + 60, 24, 12);
+
+                ctx.fillStyle = "#78350f";
+                ctx.fillRect(r.x + 15, r.y + 55, 16, 18);
+                ctx.fillStyle = "#4ade80";
+                ctx.font = "12px sans-serif";
+                ctx.fillText("🌿", r.x + 13, r.y + 50);
+
+                ctx.fillStyle = "#4ade80";
+                if (r.y < 130) ctx.fillRect(r.x + 65, r.y + r.h - 3, 30, 6);
+                else if (r.y > 250) ctx.fillRect(r.x + 65, r.y - 3, 30, 6);
+                else ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
+            });
+
+            ctx.fillStyle = "rgba(2, 132, 199, 0.25)";
+            ctx.fillRect(580, 135, 485, 30);
             ctx.strokeStyle = "#38bdf8";
             ctx.lineWidth = 2;
-            ctx.stroke();
+            ctx.strokeRect(580, 135, 485, 30);
+            ctx.fillStyle = "#38bdf8";
+            ctx.font = "bold 10px 'Courier New'";
+            ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 153);
 
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 35 + Math.sin(pulseAngle)*5, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(168, 85, 247, 0.4)";
-            ctx.fill();
-            ctx.strokeStyle = "#c084fc";
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            ctx.fillStyle = "rgba(120, 53, 15, 0.45)";
+            ctx.fillRect(580, 15, 485, 110);
+            ctx.strokeStyle = "#d97706";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(580, 15, 485, 110);
+            ctx.fillStyle = "#fde68a";
+            ctx.font = "bold 10px 'Courier New'";
+            ctx.fillText("☕ MUTFAK & KAHVE ALANI", 595, 30);
 
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 9px 'Courier New'";
-            ctx.textAlign = "center";
-            ctx.fillText("CORE", centerX, centerY - 2);
-            ctx.textAlign = "left";
+            ctx.fillStyle = "#451a03";
+            ctx.fillRect(720, 55, 100, 40);
+            ctx.fillStyle = "#1e293b";
+            ctx.fillRect(960, 30, 40, 50);
+            ctx.fillStyle = "#fbbf24";
+            ctx.fillRect(970, 40, 18, 12);
 
-            // 4. 10 Ajanın Çevresel Hexagon Podları (Görseldeki Gibi Dairesel Dağılım)
-            const employeeKeys = Object.keys(employees);
-            let radiusX = 380;
-            let radiusY = 120;
+            ctx.fillStyle = "rgba(109, 40, 217, 0.35)";
+            ctx.fillRect(580, 175, 485, 250);
+            ctx.strokeStyle = "#8b5cf6";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(580, 175, 485, 250);
+            ctx.fillStyle = "#e9d5ff";
+            ctx.font = "bold 10px 'Courier New'";
+            ctx.fillText("🤝 OTONOM PROJE ONAY ODASI", 600, 195);
 
-            let index = 0;
-            for (let name in employees) {
-                let angle = (index / 10) * (Math.PI * 2);
-                let x = centerX + Math.cos(angle) * radiusX - 60;
-                let y = centerY + Math.sin(angle) * radiusY - 30;
+            ctx.fillStyle = "#3b0764";
+            ctx.fillRect(740, 270, 160, 60);
 
-                // Enerji Köprüsü (Merkezden Pod'a Çizgi)
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.lineTo(x + 60, y + 30);
-                ctx.strokeStyle = employees[name].color;
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
+            for (let name in agentsData) {
+                let ag = agentsData[name];
+                ctx.fillStyle = ag.color;
+                ctx.fillRect(ag.x, ag.y, 24, 24);
+                ctx.strokeStyle = "#ffffff";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(ag.x, ag.y, 24, 24);
 
-                // Pod Kutusu
-                ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
-                ctx.fillRect(x, y, 120, 65);
-                ctx.strokeStyle = employees[name].color;
-                ctx.lineWidth = 2;
-                ctx.strokeRect(x, y, 120, 65);
+                ctx.fillStyle = "#38bdf8";
+                ctx.fillRect(ag.x + 11, ag.y - 4, 2, 4);
 
-                // Ajan Adı ve Rolü
-                ctx.fillStyle = employees[name].color;
-                ctx.font = "bold 9px 'Courier New'";
-                ctx.fillText(name, x + 8, y + 16);
-                
-                ctx.fillStyle = "#94a3b8";
-                ctx.font = "8px 'Courier New'";
-                ctx.fillText(employees[name].role, x + 8, y + 28);
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(ag.x + 5, ag.y + 7, 4, 4);
+                ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
 
-                // Canlı Durum / Konuşma
-                let ag = agentsData[name] || { speech: employees[name].state, color: employees[name].color };
-                ctx.fillStyle = "#f8fafc";
-                ctx.fillRect(x + 8, y + 38, 104, 18);
-                ctx.strokeStyle = employees[name].color;
-                ctx.strokeRect(x + 8, y + 38, 104, 18);
-                ctx.fillStyle = "#02040a";
+                ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 8px 'Courier New'";
-                ctx.fillText((ag.speech || "Aktif").substring(0, 18), x + 12, y + 50);
+                ctx.fillText(name + ` (${ag.title})`, ag.x - 6, ag.y + 38);
 
-                index++;
+                let bubbleText = ag.speech || ag.state;
+                ctx.fillStyle = "#f8fafc";
+                ctx.fillRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
+                ctx.strokeStyle = "#38bdf8";
+                ctx.strokeRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
+                ctx.fillStyle = "#0f172a";
+                ctx.font = "bold 9px 'Courier New'";
+                ctx.fillText(bubbleText, ag.x - 8, ag.y - 11);
             }
         }
 
@@ -359,7 +377,7 @@ HTML_TEMPLATE = """
                 agentsData = mapped;
                 drawOffice();
             });
-        }, 150);
+        }, 1500);
 
         function sendDirectMessage() {
             const agentName = document.getElementById('agent-select').value;
@@ -369,7 +387,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı inceliyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -444,10 +462,16 @@ def simulation_tick():
         company_state["active_clients"] = random.randint(3, 8)
 
     for name, data in employees.items():
+        if name == "Mutfak_Chef":
+            x, y, state, speech = 630, 60, "Kahve Hazırlıyor", "Kahveler hazır!"
+        else:
+            x, y = data["room_x"] + 45, data["room_y"] + 50
+            state, speech = "Masada Çalışıyor", f"{data['role']} Aktif"
+
         agent_list.append({
             "name": name, "role": data["role"], "level": data.get("level", 1),
-            "title": data.get("title", "Junior"), "x": 0, "y": 0, 
-            "state": "Aktif", "speech": f"{data['role']} Çalışıyor", "color": data["color"]
+            "title": data.get("title", "Junior"), "x": x, "y": y, 
+            "state": state, "speech": speech, "color": data["color"]
         })
 
     return jsonify({"agents": agent_list, "budget": company_state["budget"], "active_clients": company_state["active_clients"]})
@@ -502,7 +526,7 @@ def api_chat():
             reply = f"Patron, {agent['role']} departmanı olarak notumuzu aldık!"
 
     else:
-        reply = "Patron, GPT-OSS 120B motoru ve Cybernetic Lab dairesel üs mimarisiyle site üretildi!"
+        reply = "Patron, GPT-OSS 120B motoru ile site sıfırdan ve eksiksiz kodlandı!"
         try:
             if groq_client:
                 code_prompt = f"Sen kıdemli bir web geliştiricisisin. Sadece ve sadece saf, eksiksiz bir HTML/CSS web sitesi yaz. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"
@@ -536,25 +560,33 @@ def api_chat():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybernetic Lab Konsept</title>
+    <title>Özel Konsept Web Tasarımı</title>
     <style>
-        body {{ background: #02040a; color: #f8fafc; font-family: sans-serif; margin: 0; padding: 0; }}
-        header {{ background: #090d16; padding: 50px 20px; text-align: center; border-bottom: 3px solid #38bdf8; }}
-        h1 {{ color: #38bdf8; margin: 0; font-size: 30px; }}
-        .container {{ max-width: 900px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }}
-        .card {{ background: #050811; padding: 30px; border-radius: 10px; border: 1px solid #1e1b4b; }}
-        .card h3 {{ color: #4ade80; margin-top: 0; }}
+        body {{ background: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }}
+        header {{ background: linear-gradient(135deg, #1e293b, #0f172a); padding: 50px 20px; text-align: center; border-bottom: 3px solid #38bdf8; }}
+        h1 {{ color: #38bdf8; margin: 0; font-size: 32px; }}
+        .container {{ max-width: 1000px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }}
+        .card {{ background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; }}
+        .card h3 {{ color: #fbbf24; margin-top: 0; }}
+        .btn {{ display: inline-block; background: #0284c7; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px; }}
+        .btn:hover {{ background: #0369a1; }}
     </style>
 </head>
 <body>
     <header>
-        <h1>Cybernetic Lab Mimari Tasarım</h1>
-        <p style="color: #94a3b8; margin-top: 10px;">Merkezi çekirdek ve dairesel pod entegrasyonu</p>
+        <h1>Kurumsal Web Çözümleri</h1>
+        <p style="color: #94a3b8; margin-top: 10px;">Sektörel standartlara uygun profesyonel konsept tasarım</p>
     </header>
     <div class="container">
         <div class="card">
-            <h3>Sistem Aktif</h3>
-            <p>Talebiniz doğrultusunda fütüristik lab altyapısıyla hazırlandı.</p>
+            <h3>Hızlı Başlangıç</h3>
+            <p>İstediğiniz konsept ve özellikler doğrultusunda tam uyumlu altyapı hazırlandı.</p>
+            <a href="#" class="btn">Detayları İncele</a>
+        </div>
+        <div class="card">
+            <h3>Özel Tasarım</h3>
+            <p>Modern arayüz bileşenleri ve şık renk paletiyle kullanıcı deneyimi en üst düzeyde.</p>
+            <a href="#" class="btn">İletişime Geç</a>
         </div>
     </div>
 </body>
@@ -602,7 +634,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu Cybernetic Lab arayüz tasarımını onayladı."})
+    return jsonify({"decision": "Yönetim kurulu klasik ofis tasarımına dönüşü onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
