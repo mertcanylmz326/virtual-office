@@ -88,17 +88,21 @@ def check_system_uptime():
         print(f"UptimeRobot API Hatası: {e}")
     return "UptimeRobot API aktif."
 
+# 9 Çalışma Odası (Sol Sütunlar) + Sağ Taraf Özel Odalar için Kesin Koordinatlar
 employees_meta = {
     "Marco": {"room_x": 15, "room_y": 15, "color": "#3b82f6"},
-    "Talisca": {"room_x": 195, "room_y": 15, "color": "#ef4444"},
-    "Brown": {"room_x": 375, "room_y": 15, "color": "#10b981"},
-    "Kante": {"room_x": 15, "room_y": 155, "color": "#f59e0b"},
-    "İrfan": {"room_x": 195, "room_y": 155, "color": "#8b5cf6"},
-    "İsmail": {"room_x": 375, "room_y": 155, "color": "#f97316"},
-    "Alex": {"room_x": 15, "room_y": 295, "color": "#14b8a6"},
-    "Skrinar": {"room_x": 195, "room_y": 295, "color": "#64748b"},
-    "Kerem": {"room_x": 375, "room_y": 295, "color": "#ec4899"},
-    "Mutfak_Chef": {"room_x": 580, "room_y": 15, "color": "#f43f5e"}
+    "Talisca": {"room_x": 185, "room_y": 15, "color": "#ef4444"},
+    "Brown": {"room_x": 355, "room_y": 15, "color": "#10b981"},
+    
+    "Kante": {"room_x": 15, "room_y": 135, "color": "#f59e0b"},
+    "İrfan": {"room_x": 185, "room_y": 135, "color": "#8b5cf6"},
+    "İsmail": {"room_x": 355, "room_y": 135, "color": "#f97316"},
+    
+    "Alex": {"room_x": 15, "room_y": 255, "color": "#14b8a6"},
+    "Skrinar": {"room_x": 185, "room_y": 255, "color": "#64748b"},
+    "Kerem": {"room_x": 355, "room_y": 255, "color": "#ec4899"},
+    
+    "Mutfak_Chef": {"room_x": 540, "room_y": 15, "color": "#f43f5e"}
 }
 
 HTML_TEMPLATE = """
@@ -107,7 +111,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Living AI Agency HQ</title>
+    <title>E-Trade Pro - Clean Living HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -150,7 +154,7 @@ HTML_TEMPLATE = """
         #game-container {
             position: relative;
             width: 1080px;
-            height: 440px;
+            height: 380px;
             max-width: 100%;
             margin: 10px auto;
             border: 3px solid #38bdf8;
@@ -174,7 +178,7 @@ HTML_TEMPLATE = """
             margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
         .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
-        .terminal-body { padding: 10px; height: 140px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; font-family: monospace; }
+        .terminal-body { padding: 10px; height: 120px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; font-family: monospace; }
         .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
 
         @media (max-width: 768px) {
@@ -189,7 +193,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // LİVİNG HQ (OTONOM SİMÜLASYON)</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // CLEAN LIVING HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -201,11 +205,11 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 İHTİYAÇ VE MOLA SİSTEMİ AKTİF</span>
+        <span style="color: #fbbf24;">⚡ DÜZENLİ ŞARJ BARS SİSTEMİ AKTİF</span>
     </div>
 
     <div id="game-container">
-        <canvas id="officeCanvas" width="1080" height="440"></canvas>
+        <canvas id="officeCanvas" width="1080" height="380"></canvas>
     </div>
 
     <div class="action-bar">
@@ -222,11 +226,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ SİMÜLASYON OPERASYON TERMİNALİ</span>
-            <span style="color: #38bdf8; font-weight: bold;">● DB PERSISTENT</span>
+            <span>⚡ SİSTEM OPERASYON TERMİNALİ</span>
+            <span style="color: #38bdf8; font-weight: bold;">● CLEAN UI</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SİSTEM]: Odalar, gerçekçi koridorlar, saksılar ve otonom barlar aktif!</div>
+            <div class="log-line">[SİSTEM]: Odalar ve şarj göstergeli üst barlar kusursuz düzene oturtuldu!</div>
         </div>
     </div>
 
@@ -252,7 +256,7 @@ HTML_TEMPLATE = """
 
         function drawOffice() {
             const w = 1080;
-            const h = 440;
+            const h = 380;
             ctx.clearRect(0, 0, w, h);
 
             // Zemin Tasarımı
@@ -265,86 +269,90 @@ HTML_TEMPLATE = """
                 ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
             }
 
-            // Gerçekçi Koridor Ağları (Yatay & Dikey)
+            // Dikey Koridor Ayırıcıları
             ctx.fillStyle = "#111827";
-            ctx.fillRect(0, 130, w, 35);
-            ctx.fillRect(0, 270, w, 35);
-            ctx.fillRect(530, 0, 35, h);
+            ctx.fillRect(525, 0, 15, h);
 
-            // Odaları ve Üzerindeki Barları Çiz
+            // Sol Taraf: 9 Ajan Odası (Hiçbiri üst üste binmez, net matris)
             agentsData.forEach(ag => {
+                if (ag.name === "Mutfak_Chef") return; // Mutfak sağda özel çizilecek
                 let rx = ag.room_x;
                 let ry = ag.room_y;
-                let rw = 160;
-                let rh = 105;
+                let rw = 165;
+                let rh = 110;
 
-                // Oda Dış Çerçevesi
-                ctx.fillStyle = "rgba(17, 24, 39, 0.9)";
+                // Oda Dış Kutusu
+                ctx.fillStyle = "rgba(17, 24, 39, 0.95)";
                 ctx.fillRect(rx, ry, rw, rh);
                 ctx.strokeStyle = ag.color;
                 ctx.lineWidth = 2;
                 ctx.strokeRect(rx, ry, rw, rh);
 
-                // Oda Başlığı
+                // Oda Başlığı & Saksı
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 9px 'Courier New'";
-                ctx.fillText(`${ag.name} (${ag.role})`, rx + 8, ry + 12);
+                ctx.fillText(`${ag.name} (${ag.role})`, rx + 6, ry + 12);
 
-                // Saksı & Sağlık
-                ctx.fillStyle = "#78350f";
-                ctx.fillRect(rx + 10, ry + 22, 14, 16);
-                ctx.fillStyle = "#4ade80"; ctx.font = "10px sans-serif";
-                ctx.fillText("🌿", rx + 8, ry + 34);
-                ctx.fillStyle = "#4ade80"; ctx.font = "8px 'Courier New'";
-                ctx.fillText(`${ag.plant_health}%`, rx + 26, ry + 32);
+                ctx.fillStyle = "#4ade80"; ctx.font = "9px sans-serif";
+                ctx.fillText("🌿", rx + 6, ry + 28);
+                ctx.fillStyle = "#94a3b8"; ctx.font = "8px 'Courier New'";
+                ctx.fillText(`${ag.plant_health}%`, rx + 22, ry + 27);
 
-                // AÇLIK, SUSUZLUK, KAFEİN, ENERJİ Barlarları Odasının Üstünde/İçinde
+                // KÜÇÜK ŞARJ İŞARETLİ ÜST BARLAR (Açlık, Susuzluk, Kafein, Enerji)
                 let bars = [
-                    {label: "Açlık", val: ag.hunger, y: 44, col: "#f59e0b", thresh: 50},
-                    {label: "Susuz", val: ag.thirst, y: 56, col: "#38bdf8", thresh: 65},
-                    {label: "Kafein", val: ag.caffeine, y: 68, col: "#ec4899", thresh: 55},
-                    {label: "Enerji", val: ag.energy, y: 80, col: "#10b981", thresh: 30}
+                    {label: "Aç", val: ag.hunger, y: 38, col: "#f59e0b", thresh: 50},
+                    {label: "Su", val: ag.thirst, y: 50, col: "#38bdf8", thresh: 65},
+                    {label: "Kafein", val: ag.caffeine, y: 62, col: "#ec4899", thresh: 55},
+                    {label: "Enerji", val: ag.energy, y: 74, col: "#10b981", thresh: 30}
                 ];
 
                 bars.forEach(b => {
-                    ctx.fillStyle = "#1e293b"; ctx.fillRect(rx + 50, ry + b.y, 65, 8);
+                    // Şarj Simgesi ⚡
+                    ctx.fillStyle = "#fbbf24"; ctx.font = "8px sans-serif";
+                    ctx.fillText("⚡", rx + 6, ry + b.y + 7);
+
+                    // Bar Arka Planı
+                    ctx.fillStyle = "#1e293b"; ctx.fillRect(rx + 20, ry + b.y, 85, 8);
+                    // Doluluk Oranı
                     ctx.fillStyle = b.val < b.thresh ? "#ef4444" : b.col; 
-                    ctx.fillRect(rx + 50, ry + b.y, (b.val / 100) * 65, 8);
+                    ctx.fillRect(rx + 20, ry + b.y, (b.val / 100) * 85, 8);
+                    
+                    // Yüzde Yazısı
                     ctx.fillStyle = "#fff"; ctx.font = "7px 'Courier New'";
-                    ctx.fillText(`${b.label}:${b.val}%`, rx + 118, ry + b.y + 7);
+                    ctx.fillText(`${b.val}%`, rx + 110, ry + b.y + 7);
                 });
 
-                // Ajan Durum Kutusu / Konuşma
+                // Ajan Durum / Konuşma Balonu (En altta tertemiz)
                 ctx.fillStyle = ag.color;
-                ctx.fillRect(rx + 8, ry + 91, 144, 12);
+                ctx.fillRect(rx + 6, ry + 88, 153, 15);
                 ctx.fillStyle = "#030712"; ctx.font = "bold 7px 'Courier New'";
-                ctx.fillText(ag.speech.substring(0, 26), rx + 10, ry + 99);
+                ctx.fillText(ag.speech.substring(0, 28), rx + 9, ry + 98);
             });
 
             // Sağ Taraf Özel Odalar (Mutfak, CEO, Onay Odası)
-            ctx.fillStyle = "rgba(120, 53, 15, 0.45)";
-            ctx.fillRect(580, 15, 485, 110);
-            ctx.strokeStyle = "#d97706"; ctx.lineWidth = 2; ctx.strokeRect(580, 15, 485, 110);
+            ctx.fillStyle = "rgba(120, 53, 15, 0.4)";
+            ctx.fillRect(555, 15, 510, 110);
+            ctx.strokeStyle = "#d97706"; ctx.lineWidth = 2; ctx.strokeRect(555, 15, 510, 110);
             ctx.fillStyle = "#fde68a"; ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("☕ MUTFAK & KAHVE İSTASYONU (Mola Alanı)", 595, 30);
+            ctx.fillText("☕ MUTFAK & KAHVE İSTASYONU (Mola Alanı)", 575, 32);
 
             ctx.fillStyle = "rgba(2, 132, 199, 0.25)";
-            ctx.fillRect(580, 135, 485, 30);
-            ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(580, 135, 485, 30);
-            ctx.fillStyle = "#38bdf8"; ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 153);
+            ctx.fillRect(555, 135, 510, 110);
+            ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(555, 135, 510, 110);
+            ctx.fillStyle = "#38bdf8"; ctx.fillText("👑 CEO KONTROL MERKEZİ", 575, 155);
 
             ctx.fillStyle = "rgba(109, 40, 217, 0.35)";
-            ctx.fillRect(580, 175, 485, 250);
-            ctx.strokeStyle = "#8b5cf6"; ctx.strokeRect(580, 175, 485, 250);
-            ctx.fillStyle = "#e9d5ff"; ctx.fillText("🤝 OTONOM PROJE ONAY ODASI & SUNUCU LABI", 600, 195);
+            ctx.fillRect(555, 255, 510, 110);
+            ctx.strokeStyle = "#8b5cf6"; ctx.strokeRect(555, 255, 510, 110);
+            ctx.fillStyle = "#e9d5ff"; ctx.fillText("🤝 OTONOM PROJE ONAY ODASI & SUNUCU LABI", 575, 275);
 
-            // Sunucu Kabinleri Görseli
-            ctx.fillStyle = "#1e1b4b"; ctx.fillRect(600, 220, 70, 180);
-            ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(600, 220, 70, 180);
-            for(let sy=230; sy<390; sy+=25) {
-                ctx.fillStyle = "#38bdf8"; ctx.fillRect(610, sy, 10, 8);
-                ctx.fillStyle = "#4ade80"; ctx.fillRect(630, sy, 8, 8);
-                ctx.fillStyle = "#ef4444"; ctx.fillRect(650, sy, 6, 6);
+            // Sunucu Kabinleri Görseli (Sağ altta şık görünüm)
+            ctx.fillStyle = "#1e1b4b"; ctx.fillRect(575, 290, 80, 65);
+            ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(575, 290, 80, 65);
+            for(let sy=300; sy<345; sy+=15) {
+                ctx.fillStyle = "#38bdf8"; ctx.fillRect(585, sy, 10, 6);
+                ctx.fillStyle = "#4ade80"; ctx.fillRect(605, sy, 8, 6);
+                ctx.fillStyle = "#ef4444"; ctx.fillRect(625, sy, 6, 6);
             }
         }
 
@@ -367,7 +375,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} odasına koşuyor ve talimatı işliyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} odasına koştu, talimat işleniyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -443,7 +451,6 @@ def simulation_tick():
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
         
-        # Otonom ihtiyaç mekanizması (Açlık<%50, Susuzluk<%65, Kafein<%55, Yorgunluk/Enerji<%30)
         for name in employees_meta:
             h_delta = random.randint(-4, 2)
             t_delta = random.randint(-5, 2)
@@ -599,7 +606,7 @@ def api_uptime():
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
-    return jsonify({"summary": "Supabase veritabanı ve otonom ihtiyaç simülasyonu aktif."})
+    return jsonify({"summary": "Supabase veritabanı ve şarj barlı otonom simülasyon aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
@@ -617,7 +624,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu canlı otonom ofis simülasyonunu onayladı."})
+    return jsonify({"decision": "Yönetim kurulu şarj göstergeli temiz ofis tasarımını onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
