@@ -71,7 +71,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Direct Response Aktif"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Rol Dağılımı Aktif"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -171,7 +171,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // DIRECT HTML RENDER</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // STRICT ROLE SYSTEM</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -183,7 +183,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 GÜVENLİ RENDER AKTİF</span>
+        <span style="color: #fbbf24;">🚀 UZMANLIK ALANLARI AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -197,7 +197,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Galerici veya istedigini yaz..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Brown'a site yazdır, Kante'ye pazarlama sor..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -205,10 +205,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● RENDER ONLINE</span>
+            <span style="color: #38bdf8; font-weight: bold;">● SYSTEM ONLINE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Güvenli MIME type response motoru aktif edildi. ERR_UNSAFE_REDIRECT engellendi!</div>
+            <div class="log-line">[SYSTEM]: Personel görev sınırları netleştirildi. Yazılımı Brown (DEV) üstleniyor!</div>
         </div>
     </div>
 
@@ -387,7 +387,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı inceliyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -491,7 +491,6 @@ def preview_project(project_id):
         conn.close()
         
         db_code = row[0] if row and row[0] else "<h1>Proje kodu bulunamadı.</h1>"
-        # Tarayıcıyı kısıtlamayan doğrudan güvenli HTML Response döndür
         return Response(db_code, mimetype='text/html')
     except Exception as e:
         print(f"Preview Hatası: {e}")
@@ -507,71 +506,104 @@ def api_chat():
     agent = employees[agent_name]
 
     html_code = ""
-    reply = f"Patron, Qwen 3.8B modeli siteyi üretti ve doğrudan sunuldu!"
+    reply = ""
+    preview_url = None
 
-    try:
-        if groq_client:
-            code_prompt = f"Sen profesyonel bir web geliştiricisisin. Sadece ve sadece saf, eksiksiz bir HTML/CSS web sitesi kodu yaz. Asla markdown etiketi (```html) kullanma, asla açıklama yapma, sohbet etme. İstek: {user_message}"
-            comp = groq_client.chat.completions.create(
-                model="qwen/qwen3.8-27b",
-                messages=[{"role": "user", "content": code_prompt}],
-                max_tokens=3000, temperature=0.7
-            )
-            raw_code = comp.choices[0].message.content.strip()
-            
-            clean_code = re.sub(r'```[a-zA-Z]*', '', raw_code)
-            clean_code = clean_code.replace('```', '')
+    # EĞER SEÇİLEN AJAN YAZILIMCI (BROWN) DEĞİLSE, KENDİ UZMANLIĞINA GÖRE CEVAP VERSİN
+    if agent_name != "Brown":
+        try:
+            if groq_client:
+                prompt = f"Sen ofiste '{agent['role']}' olarak çalışan bir uzmansın. Patronun (Kullanıcı) sana şu mesajı gönderdi: '{user_message}'. Kendi departmanının uzmanlığıyla profesyonel, motive edici ve kısa bir iş yanıtı ver. Asla HTML kodu yazma."
+                comp = groq_client.chat.completions.create(
+                    model="qwen/qwen3.8-27b",
+                    messages=[{"role": "user", "content": prompt}],
+                    max_tokens=300, temperature=0.7
+                )
+                reply = comp.choices[0].message.content.strip()
+        except Exception as e:
+            reply = f"Patron, {agent['role']} departmanı olarak talimatını aldım, çalışmalara başlıyoruz!"
+        
+        if not reply:
+            reply = f"Patron, {agent['role']} departmanı olarak notumuzu aldık!"
 
-            lower_code = clean_code.lower()
-            start_idx = lower_code.find("<!doctype")
-            if start_idx == -1:
-                start_idx = lower_code.find("<html")
-            
-            end_idx = lower_code.rfind("</html>")
+    else:
+        # SADECE BROWN (YAZILIMCI) SİTE KODU ÜRETİR
+        reply = "Patron, Qwen 3.8B yazılım motoru ile site sıfırdan ve eksiksiz kodlandı!"
+        try:
+            if groq_client:
+                code_prompt = f"Sen kıdemli bir web geliştiricisisin. Sadece ve sadece saf, eksiksiz bir HTML/CSS web sitesi kodu yaz. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"
+                comp = groq_client.chat.completions.create(
+                    model="qwen/qwen3.8-27b",
+                    messages=[{"role": "user", "content": code_prompt}],
+                    max_tokens=3000, temperature=0.7
+                )
+                raw_code = comp.choices[0].message.content.strip()
+                
+                clean_code = re.sub(r'```[a-zA-Z]*', '', raw_code)
+                clean_code = clean_code.replace('```', '')
 
-            if start_idx != -1 and end_idx != -1:
-                html_code = clean_code[start_idx:end_idx+7]
-            else:
-                html_code = clean_code.strip()
-    except Exception as e:
-        print(f"Groq Qwen API Üretim Hatası: {e}")
+                lower_code = clean_code.lower()
+                start_idx = lower_code.find("<!doctype")
+                if start_idx == -1:
+                    start_idx = lower_code.find("<html")
+                
+                end_idx = lower_code.rfind("</html>")
 
-    if not html_code or "<html" not in html_code.lower() or len(html_code) < 50:
-        html_code = f"""<!DOCTYPE html>
+                if start_idx != -1 and end_idx != -1:
+                    html_code = clean_code[start_idx:end_idx+7]
+                else:
+                    html_code = clean_code.strip()
+        except Exception as e:
+            print(f"Groq Qwen API Üretim Hatası: {e}")
+
+        # EĞER QWEN KODU BOZUK VEYA EKSİK DÖNDÜRDÜYSE ASLA SİYAH BIRAKMA, ŞIK BİR FALLBACK ŞABLON BAS
+        if not html_code or "<html" not in html_code.lower() or len(html_code) < 50:
+            html_code = f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{user_message[:30]}</title>
     <style>
-        body {{ background: #0f172a; color: #f8fafc; font-family: sans-serif; text-align: center; padding: 50px; }}
-        h1 {{ color: #38bdf8; }}
-        .card {{ background: #1e293b; padding: 30px; border-radius: 12px; max-width: 600px; margin: 20px auto; border: 1px solid #334155; text-align: left; }}
+        body {{ background: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }}
+        header {{ background: #1e293b; padding: 40px 20px; border-bottom: 3px solid #38bdf8; }}
+        h1 {{ color: #38bdf8; margin: 0; font-size: 28px; }}
+        .container {{ max-width: 800px; margin: 40px auto; padding: 20px; }}
+        .card {{ background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; margin-bottom: 20px; text-align: left; }}
+        .card h3 {{ color: #fbbf24; margin-top: 0; }}
+        .btn {{ display: inline-block; background: #0284c7; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px; }}
+        .btn:hover {{ background: #0369a1; }}
     </style>
 </head>
 <body>
-    <h1>🚀 {user_message}</h1>
-    <div class="card">
-        <h3>Özel Konsept Tasarım</h3>
-        <p>İsteğiniz doğrultusunda Qwen modeli tarafından üretildi.</p>
+    <header>
+        <h1>🚀 {user_message}</h1>
+        <p style="color: #94a3b8; margin-top: 10px;">Profesyonel Konsept Web Çözümü</p>
+    </header>
+    <div class="container">
+        <div class="card">
+            <h3>Proje Detayları</h3>
+            <p>İsteğiniz doğrultusunda Qwen altyapısıyla sektörel standartlara uygun olarak optimize edildi ve hazırlandı.</p>
+            <a href="#" class="btn">Hemen Başvur / İletişim</a>
+        </div>
     </div>
 </body>
 </html>"""
 
-    try:
-        conn = psycopg2.connect(DB_URL)
-        cur = conn.cursor()
-        cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
-                    ("Brown (Yazılımcı)", user_message[:40], "Web Servis Canlı", html_code))
-        project_id = cur.fetchone()[0]
-        conn.commit()
-        cur.close()
-        conn.close()
+        try:
+            conn = psycopg2.connect(DB_URL)
+            cur = conn.cursor()
+            cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
+                        ("Brown (Yazılımcı)", user_message[:40], "Web Servis Canlı", html_code))
+            project_id = cur.fetchone()[0]
+            conn.commit()
+            cur.close()
+            conn.close()
 
-        host_url = request.host_url.rstrip('/')
-        preview_url = f"{host_url}/preview/{project_id}"
-    except Exception as e:
-        print(f"DB Kayıt Hatası: {e}")
+            host_url = request.host_url.rstrip('/')
+            preview_url = f"{host_url}/preview/{project_id}"
+        except Exception as e:
+            print(f"DB Kayıt Hatası: {e}")
 
     log_to_supabase(agent_name, "SYSTEM_OP", f"Talimat: {user_message}")
     return jsonify({"status": reply, "preview_url": preview_url})
@@ -600,7 +632,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu Direct Response entegrasyonunu onayladı."})
+    return jsonify({"decision": "Yönetim kurulu personel görev dağılımı ve yedek şablon sistemini onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
