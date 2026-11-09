@@ -85,7 +85,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Parlak Render Aktif"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Token Optimizasyonu Aktif"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -185,7 +185,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // BRIGHT PREVIEW SİSTEMİ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // RATE-LIMIT SAFE SYSTEM</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -197,7 +197,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 PARLAK RENDER AKTİF</span>
+        <span style="color: #fbbf24;">🚀 TOKEN KORUMASI AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -219,10 +219,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● BRIGHT THEME RENDER</span>
+            <span style="color: #38bdf8; font-weight: bold;">● API RATE LIMIT OPTIMIZED</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Önizleme sayfaları artık pırıl pırıl parlak tema ile açılıyor!</div>
+            <div class="log-line">[SYSTEM]: Brown token sınırına takılmayacak şekilde optimize edildi!</div>
         </div>
     </div>
 
@@ -518,7 +518,6 @@ def preview_project(project_id):
         
         db_code = row[0] if row and row[0] else ""
 
-        # GÜVENCE ŞABLONU: Yüksek kontrastlı, pırıl pırıl parlak beyaz/zümrüt yeşili şık çiçekçi dükkanı
         if not db_code or len(db_code) < 100 or "<html" not in db_code.lower():
             code = """<!DOCTYPE html>
 <html lang="tr">
@@ -528,71 +527,19 @@ def preview_project(project_id):
     <title>🌿 Bahar Çiçekçilik & Tasarım Atölyesi</title>
     <style>
         * { box-sizing: border-box; }
-        body { 
-            background: #ffffff; 
-            color: #1f2937; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            text-align: center; 
-        }
-        header { 
-            background: #047857; 
-            color: #ffffff; 
-            padding: 25px; 
-            font-size: 26px; 
-            font-weight: bold; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-        }
-        .hero { 
-            padding: 70px 20px; 
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); 
-            border-bottom: 3px solid #10b981;
-        }
+        body { background: #ffffff; color: #1f2937; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }
+        header { background: #047857; color: #ffffff; padding: 25px; font-size: 26px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .hero { padding: 70px 20px; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-bottom: 3px solid #10b981; }
         .hero h1 { font-size: 38px; margin-bottom: 15px; color: #064e3b; }
         .hero p { font-size: 18px; color: #047857; margin-bottom: 25px; font-weight: 500; }
-        .btn { 
-            background: #10b981; 
-            color: #ffffff; 
-            border: none; 
-            padding: 14px 32px; 
-            font-size: 16px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
-            transition: all 0.3s ease; 
-        }
+        .btn { background: #10b981; color: #ffffff; border: none; padding: 14px 32px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); transition: all 0.3s ease; }
         .btn:hover { background: #059669; transform: translateY(-2px); }
-        .products { 
-            display: flex; 
-            justify-content: center; 
-            gap: 25px; 
-            padding: 50px 20px; 
-            flex-wrap: wrap; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-        }
-        .card { 
-            background: #f9fafb; 
-            border: 1px solid #e5e7eb; 
-            border-radius: 12px; 
-            width: 260px; 
-            padding: 20px; 
-            box-shadow: 0 8px 16px rgba(0,0,0,0.05); 
-            text-align: left; 
-            transition: transform 0.3s;
-        }
+        .products { display: flex; justify-content: center; gap: 25px; padding: 50px 20px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }
+        .card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; width: 260px; padding: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.05); text-align: left; transition: transform 0.3s; }
         .card:hover { transform: translateY(-5px); border-color: #10b981; box-shadow: 0 12px 20px rgba(0,0,0,0.1); }
         .card h3 { color: #064e3b; margin-top: 0; font-size: 20px; }
         .card p { color: #059669; font-weight: bold; font-size: 20px; margin: 15px 0; }
-        footer { 
-            background: #1f2937; 
-            color: #9ca3af; 
-            padding: 25px; 
-            margin-top: 50px; 
-            font-size: 14px; 
-        }
+        footer { background: #1f2937; color: #9ca3af; padding: 25px; margin-top: 50px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -654,9 +601,9 @@ def api_chat():
         try:
             code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, parlak beyaz/yeşil temalı ve şık tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ve sadece saf HTML kodu döndür, asla sohbet etme, asla açıklama yazma."
             comp = groq_client.chat.completions.create(
-                model="qwen/qwen3.8-27b",
+                model="llama-3.3-70b-versatile",
                 messages=[{"role": "user", "content": code_prompt}],
-                max_tokens=4000, temperature=0.2
+                max_tokens=900, temperature=0.2
             )
             raw_code = comp.choices[0].message.content.strip()
             
@@ -743,7 +690,7 @@ def api_chat():
         else:
             system_prompt = f"Sen E-Trade Pro ajansında {agent['role']} departmanında çalışan {agent_name} adında bir uzmansın. Patronun sana yazdı: '{user_message}'. Kendi departmanına uygun, kısa ve net bir yanıt ver."
             completion = groq_client.chat.completions.create(
-                model="qwen/qwen3.8-27b",
+                model="llama-3.3-70b-versatile",
                 messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
                 max_tokens=200, temperature=0.7
             )
@@ -782,7 +729,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu parlak beyaz temayı onayladı."})
+    return jsonify({"decision": "Yönetim kurulu token optimizasyonunu onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
