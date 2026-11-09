@@ -85,7 +85,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Hatadan Arındırıldı"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Görsel Render Aktif"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -185,7 +185,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // STABILİZE SİSTEM</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // CANLI PREVIEW SİSTEMİ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -197,7 +197,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 HATASIZ ÇALIŞMA MODU AKTİF</span>
+        <span style="color: #fbbf24;">🚀 GÖRSEL RENDER AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -219,10 +219,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● SYNTAX ERROR FIXED</span>
+            <span style="color: #38bdf8; font-weight: bold;">● HIGH CONTRAST RENDER</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown hazır. İstekler anında canlı linke dönüşecek!</div>
+            <div class="log-line">[SYSTEM]: Önizleme sayfaları artık yüksek kontrastlı canlı şablonla açılıyor!</div>
         </div>
     </div>
 
@@ -518,26 +518,83 @@ def preview_project(project_id):
         
         db_code = row[0] if row and row[0] else ""
 
+        # GÜVENCE ŞABLONU: Yüksek kontrastlı, koyu/modern zümrüt yeşili temalı şık çiçekçi dükkanı
         if not db_code or len(db_code) < 100 or "<html" not in db_code.lower():
             code = """<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bahar Çiçekçilik - Canlı Mağaza</title>
+    <title>🌿 Bahar Çiçekçilik & Tasarım Atölyesi</title>
     <style>
-        body { background: #f0fdf4; color: #166534; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }
-        header { background: #15803d; color: white; padding: 25px; font-size: 26px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .hero { padding: 60px 20px; background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); }
-        .hero h1 { font-size: 40px; margin-bottom: 15px; color: #14532d; }
-        .hero p { font-size: 18px; color: #166534; margin-bottom: 25px; }
-        .btn { background: #22c55e; color: white; border: none; padding: 14px 28px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
-        .btn:hover { background: #16a34a; }
-        .products { display: flex; justify-content: center; gap: 25px; padding: 50px 20px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }
-        .card { background: white; border: 1px solid #bbf7d0; border-radius: 12px; width: 250px; padding: 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.06); text-align: left; }
-        .card h3 { color: #14532d; margin-top: 0; }
-        .card p { color: #15803d; font-weight: bold; font-size: 18px; }
-        footer { background: #14532d; color: #dcfce7; padding: 20px; margin-top: 40px; font-size: 14px; }
+        * { box-sizing: border-box; }
+        body { 
+            background: #064e3b; 
+            color: #ecfdf5; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            text-align: center; 
+        }
+        header { 
+            background: #022c22; 
+            color: #34d399; 
+            padding: 25px; 
+            font-size: 26px; 
+            font-weight: bold; 
+            border-bottom: 2px solid #059669;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+        }
+        .hero { 
+            padding: 70px 20px; 
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%); 
+            border-bottom: 3px solid #10b981;
+        }
+        .hero h1 { font-size: 38px; margin-bottom: 15px; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .hero p { font-size: 18px; color: #a7f3d0; margin-bottom: 25px; }
+        .btn { 
+            background: #10b981; 
+            color: #ffffff; 
+            border: none; 
+            padding: 14px 32px; 
+            font-size: 16px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s ease; 
+        }
+        .btn:hover { background: #059669; transform: translateY(-2px); }
+        .products { 
+            display: flex; 
+            justify-content: center; 
+            gap: 25px; 
+            padding: 50px 20px; 
+            flex-wrap: wrap; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
+        .card { 
+            background: #022c22; 
+            border: 1px solid #059669; 
+            border-radius: 12px; 
+            width: 260px; 
+            padding: 20px; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4); 
+            text-align: left; 
+            transition: transform 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); border-color: #34d399; }
+        .card h3 { color: #34d399; margin-top: 0; font-size: 20px; }
+        .card p { color: #a7f3d0; font-weight: bold; font-size: 20px; margin: 15px 0; }
+        footer { 
+            background: #022c22; 
+            color: #6ee7b7; 
+            padding: 25px; 
+            margin-top: 50px; 
+            font-size: 14px; 
+            border-top: 1px solid #059669; 
+        }
     </style>
 </head>
 <body>
@@ -545,7 +602,7 @@ def preview_project(project_id):
     <div class="hero">
         <h1>Günün En Tazeleri Kapınızda</h1>
         <p>Sevdiklerinize en şık, taze ve mis kokulu çiçekleri hemen gönderin.</p>
-        <button class="btn" onclick="alert('Sipariş sistemine yönlendiriliyorsunuz!')">Hemen Sipariş Ver</button>
+        <button class="btn" onclick="alert('Sipariş sepetine eklendi!')">Hemen Sipariş Ver</button>
     </div>
     <div class="products">
         <div class="card">
@@ -597,7 +654,7 @@ def api_chat():
 
     if agent_name == "Brown" and any(k in user_message.lower() for k in ["site", "kur", "yap", "kod", "çiçekçi", "tasarla", "oluştur", "web"]):
         try:
-            code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, yeşil tonlarında ve şık tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ve sadece saf HTML kodu döndür, asla sohbet etme, asla açıklama yazma."
+            code_prompt = f"Sen kıdemli bir yazılım uzmanısın. Kullanıcının şu isteği için eksiksiz, modern, zümrüt yeşili tonlarında, koyu arka planlı ve şık tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ve sadece saf HTML kodu döndür, asla sohbet etme, asla açıklama yazma."
             comp = groq_client.chat.completions.create(
                 model="qwen/qwen3.8-27b",
                 messages=[{"role": "user", "content": code_prompt}],
@@ -630,29 +687,29 @@ def api_chat():
                 html_code = raw_code
                 
             if "<html" not in html_code.lower() or len(html_code) < 100:
-                html_code = f"""<!DOCTYPE html>
+                html_code = """<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bahar Çiçekçilik</title>
+    <title>🌿 Bahar Çiçekçilik</title>
     <style>
-        body {{ background: #f0fdf4; color: #166534; font-family: sans-serif; margin: 0; padding: 0; text-align: center; }}
-        header {{ background: #15803d; color: white; padding: 25px; font-size: 26px; font-weight: bold; }}
-        .hero {{ padding: 60px 20px; background: #dcfce7; }}
-        .hero h1 {{ font-size: 38px; color: #14532d; margin-bottom: 15px; }}
-        .btn {{ background: #22c55e; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }}
-        .products {{ display: flex; justify-content: center; gap: 20px; padding: 40px; flex-wrap: wrap; }}
-        .card {{ background: white; border: 1px solid #bbf7d0; border-radius: 10px; width: 220px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left; }}
-        .card h3 {{ color: #14532d; }}
-        .card p {{ color: #15803d; font-weight: bold; }}
+        body { background: #064e3b; color: #ecfdf5; font-family: sans-serif; margin: 0; padding: 0; text-align: center; }
+        header { background: #022c22; color: #34d399; padding: 25px; font-size: 26px; font-weight: bold; }
+        .hero { padding: 60px 20px; background: #065f46; }
+        .hero h1 { font-size: 38px; color: #ffffff; margin-bottom: 15px; }
+        .btn { background: #10b981; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .products { display: flex; justify-content: center; gap: 20px; padding: 40px; flex-wrap: wrap; }
+        .card { background: #022c22; border: 1px solid #059669; border-radius: 10px; width: 220px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); text-align: left; }
+        .card h3 { color: #34d399; }
+        .card p { color: #10b981; font-weight: bold; }
     </style>
 </head>
 <body>
     <header>🌸 Bahar Çiçekçilik</header>
     <div class="hero">
         <h1>Günün En Tazeleri Kapınızda</h1>
-        <p>{user_message}</p>
+        <p>En şık çiçekler bir tık uzağınızda.</p>
         <button class="btn">Hemen Sipariş Ver</button>
     </div>
     <div class="products">
@@ -665,7 +722,7 @@ def api_chat():
 </html>"""
                 
         except Exception as e:
-            html_code = f"<!DOCTYPE html><html><body><h1>Hata: {e}</h1></body></html>"
+            html_code = f"<!DOCTYPE html><html><body style='background:#064e3b;color:white;text-align:center;padding:50px;'><h1>Hata Oluştu: {e}</h1></body></html>"
 
         try:
             conn = psycopg2.connect(DB_URL)
@@ -727,7 +784,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu kararlı sistem yapısını onayladı."})
+    return jsonify({"decision": "Yönetim kurulu yüksek kontrastlı yeşil temayı onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
