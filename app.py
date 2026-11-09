@@ -185,45 +185,76 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - AI Agency HQ</title>
+    <title>E-Trade Pro - Cyberpunk Agency HQ</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
         body { 
             background-color: #030712; 
             color: #f8fafc; 
-            font-family: 'Courier New', Courier, monospace; 
+            font-family: 'JetBrains Mono', monospace; 
             text-align: center; 
             margin: 0; 
             padding: 0; 
             overflow-x: hidden; 
         }
+
+        /* CRT / Scanline Atmosferik Efekt */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 99999;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+        }
+
         #game-topbar {
-            background: #0f172a;
+            background: rgba(15, 23, 42, 0.9);
             border-bottom: 2px solid #38bdf8;
-            padding: 10px 15px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
+            font-size: 13px;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.15);
         }
         .top-btn { 
-            background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; 
-            border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px;
-            text-decoration: none;
+            background: rgba(30, 41, 59, 0.8); color: #38bdf8; border: 1px solid #334155; padding: 7px 14px; 
+            border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px;
+            text-decoration: none; transition: 0.3s;
+            font-family: 'Space Grotesk', sans-serif;
         }
-        .top-btn:hover { background: #38bdf8; color: #030712; }
+        .top-btn:hover { background: #38bdf8; color: #030712; box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); }
 
         #stats-bar {
-            background: #090d16;
-            padding: 8px 15px;
+            background: rgba(9, 13, 22, 0.95);
+            padding: 10px 20px;
             display: flex;
             justify-content: space-around;
             border-bottom: 1px solid #1e293b;
             font-size: 12px;
             font-weight: bold;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
+        }
+        .stat-badge {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #334155;
+            padding: 6px 14px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.05);
+            animation: pulseGlow 3s infinite;
+        }
+        @keyframes pulseGlow {
+            0% { border-color: #334155; }
+            50% { border-color: rgba(56, 189, 248, 0.6); }
+            100% { border-color: #334155; }
         }
 
         #game-container {
@@ -231,34 +262,64 @@ HTML_TEMPLATE = """
             width: 1080px;
             height: 440px;
             max-width: 100%;
-            margin: 10px auto;
+            margin: 15px auto;
             border: 3px solid #38bdf8;
-            border-radius: 8px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.9);
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3), inset 0 0 20px rgba(56, 189, 248, 0.1);
             background: #0b0f19;
             overflow: hidden;
+            backdrop-filter: blur(8px);
         }
         canvas { display: block; width: 100%; height: 100%; }
 
-        .action-bar { margin: 10px auto; width: 1080px; max-width: 100%; display: flex; justify-content: space-between; gap: 10px; padding: 0 10px; box-sizing: border-box; }
+        .action-bar { margin: 12px auto; width: 1080px; max-width: 100%; display: flex; justify-content: space-between; gap: 12px; padding: 0 10px; box-sizing: border-box; }
         #command-panel {
-            background: #0f172a; border: 2px solid #334155; padding: 8px; border-radius: 8px; display: flex; gap: 8px; align-items: center; flex-grow: 1; flex-wrap: wrap;
+            background: rgba(15, 23, 42, 0.85); border: 2px solid #334155; padding: 10px; border-radius: 10px; display: flex; gap: 10px; align-items: center; flex-grow: 1; flex-wrap: wrap;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-        select, input[type="text"] { background: #1e293b; color: #fff; border: 1px solid #475569; padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 12px; }
-        input[type="text"] { flex-grow: 1; min-width: 200px; }
-        .send-btn { background: #0284c7; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
-        .send-btn:hover { background: #0369a1; }
+        select, input[type="text"] { background: #1e293b; color: #fff; border: 1px solid #475569; padding: 10px 14px; border-radius: 8px; font-family: monospace; font-size: 13px; outline: none; transition: 0.3s; }
+        input[type="text"] { flex-grow: 1; min-width: 220px; }
+        input[type="text"]:focus, select:focus { border-color: #38bdf8; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
+        .send-btn { background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.3s; font-family: 'Space Grotesk', sans-serif; box-shadow: 0 0 15px rgba(2, 132, 199, 0.4); }
+        .send-btn:hover { background: linear-gradient(135deg, #0369a1, #0284c7); box-shadow: 0 0 20px rgba(56, 189, 248, 0.8); }
 
         #activity-terminal {
-            margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
+            margin: 0 auto 20px auto; width: 1080px; max-width: 100%; background: rgba(3, 7, 18, 0.9); border: 2px solid #334155; border-radius: 10px; text-align: left; overflow: hidden; box-sizing: border-box;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
         }
-        .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
-        .terminal-body { padding: 10px; height: 160px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
-        .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
+        .terminal-header { background: rgba(15, 23, 42, 0.95); padding: 8px 15px; font-size: 12px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px solid #1e293b; }
+        .terminal-body { padding: 12px; height: 150px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.5; word-break: break-word; overflow-wrap: break-word; }
+        .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 4px; }
+
+        /* Toast Bildirim Sistemi */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid #38bdf8;
+            color: #f8fafc;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 12px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 3.7s;
+            max-width: 320px;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
         @media (max-width: 768px) {
             #game-topbar { flex-direction: column; align-items: stretch; text-align: center; }
-            #game-topbar > div { display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+            #game-topbar > div { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
             .action-bar { padding: 0 5px; }
             #command-panel { flex-direction: column; align-items: stretch; }
             input[type="text"], select, .send-btn { width: 100%; box-sizing: border-box; }
@@ -267,21 +328,23 @@ HTML_TEMPLATE = """
 </head>
 <body>
 
+    <div id="toast-container"></div>
+
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // HQ (GPT-OSS 120B)</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // CYBER HQ (GPT-OSS 120B)</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
             <span class="top-btn" onclick="checkUptime()">🛡️ SİSTEM SAĞLIĞI</span>
             <span class="top-btn" onclick="triggerBoardroom()">🤝 ZİRVE</span>
-            <a href="/logout" class="top-btn" style="background: #ef4444; color: #fff; border-color: #dc2626;">🚪 ÇIKIŞ</a>
+            <a href="/logout" class="top-btn" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: #dc2626;">🚪 ÇIKIŞ</a>
         </div>
     </div>
 
     <div id="stats-bar">
-        <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
-        <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 GÜVENLİ KORUMALI OFİS AKTİF</span>
+        <span class="stat-badge" style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
+        <span class="stat-badge" style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
+        <span class="stat-badge" style="color: #fbbf24;">🚀 CYBERPUNK GLASSMORPHISM AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -295,7 +358,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Brown'a istediğin projeyi yazdır (Örn: CrossFit salonu)..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Brown'a kurumsal site veya projeyi yazdır..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -303,10 +366,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● SYSTEM SECURED</span>
+            <span style="color: #38bdf8; font-weight: bold;">● ULTRA OPTIMIZED & SECURED</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown dinamik yanıt sistemi aktif!</div>
+            <div class="log-line">[SYSTEM]: Glassmorphism ve neon arayüz katmanları yüklendi!</div>
         </div>
     </div>
 
@@ -316,6 +379,15 @@ HTML_TEMPLATE = """
         const terminalLogs = document.getElementById('terminal-logs');
 
         let agentsData = {};
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `🚀 ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 4000);
+        }
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
@@ -335,10 +407,10 @@ HTML_TEMPLATE = """
             const h = 440;
             ctx.clearRect(0, 0, w, h);
 
-            ctx.fillStyle = "#1e1b18";
+            ctx.fillStyle = "#090d16";
             ctx.fillRect(0, 0, w, h);
             
-            ctx.strokeStyle = "#292524";
+            ctx.strokeStyle = "#1e293b";
             ctx.lineWidth = 1;
             for (let i = 0; i < w; i += 30) {
                 ctx.beginPath();
@@ -347,7 +419,7 @@ HTML_TEMPLATE = """
                 ctx.stroke();
             }
 
-            ctx.fillStyle = "#111827";
+            ctx.fillStyle = "#0f172a";
             ctx.fillRect(0, 130, w, 35);
             ctx.fillRect(0, 270, w, 35);
             ctx.fillRect(530, 0, 35, h);
@@ -365,11 +437,11 @@ HTML_TEMPLATE = """
             ];
 
             rooms.forEach(r => {
-                ctx.fillStyle = "rgba(17, 24, 39, 0.85)";
+                ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
                 ctx.fillRect(r.x, r.y, r.w, r.h);
 
-                ctx.strokeStyle = "rgba(56, 189, 248, 0.6)";
-                ctx.lineWidth = 3;
+                ctx.strokeStyle = "rgba(56, 189, 248, 0.5)";
+                ctx.lineWidth = 2;
                 ctx.strokeRect(r.x, r.y, r.w, r.h);
 
                 ctx.strokeStyle = r.glow;
@@ -377,7 +449,7 @@ HTML_TEMPLATE = """
                 ctx.strokeRect(r.x + 3, r.y + 3, r.w - 6, r.h - 6);
 
                 ctx.fillStyle = "#38bdf8";
-                ctx.font = "bold 9px 'Courier New'";
+                ctx.font = "bold 9px 'JetBrains Mono'";
                 ctx.fillText(r.name, r.x + 8, r.y + 14);
 
                 ctx.fillStyle = "#1e293b";
@@ -397,31 +469,31 @@ HTML_TEMPLATE = """
                 else ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
             });
 
-            ctx.fillStyle = "rgba(2, 132, 199, 0.25)";
+            ctx.fillStyle = "rgba(2, 132, 199, 0.2)";
             ctx.fillRect(580, 135, 485, 30);
             ctx.strokeStyle = "#38bdf8";
             ctx.lineWidth = 2;
             ctx.strokeRect(580, 135, 485, 30);
             ctx.fillStyle = "#38bdf8";
-            ctx.font = "bold 10px 'Courier New'";
+            ctx.font = "bold 10px 'JetBrains Mono'";
             ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 153);
 
-            ctx.fillStyle = "rgba(120, 53, 15, 0.45)";
+            ctx.fillStyle = "rgba(120, 53, 15, 0.35)";
             ctx.fillRect(580, 15, 485, 110);
             ctx.strokeStyle = "#d97706";
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 2;
             ctx.strokeRect(580, 15, 485, 110);
             ctx.fillStyle = "#fde68a";
-            ctx.font = "bold 10px 'Courier New'";
+            ctx.font = "bold 10px 'JetBrains Mono'";
             ctx.fillText("☕ MUTFAK & KAHVE ALANI", 595, 30);
 
-            ctx.fillStyle = "rgba(109, 40, 217, 0.35)";
+            ctx.fillStyle = "rgba(109, 40, 217, 0.3)";
             ctx.fillRect(580, 175, 485, 250);
             ctx.strokeStyle = "#8b5cf6";
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 3;
             ctx.strokeRect(580, 175, 485, 250);
             ctx.fillStyle = "#e9d5ff";
-            ctx.font = "bold 10px 'Courier New'";
+            ctx.font = "bold 10px 'JetBrains Mono'";
             ctx.fillText("🤝 OTONOM PROJE ONAY ODASI", 600, 195);
 
             for (let name in agentsData) {
@@ -440,16 +512,16 @@ HTML_TEMPLATE = """
                 ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
 
                 ctx.fillStyle = "#38bdf8";
-                ctx.font = "bold 8px 'Courier New'";
+                ctx.font = "bold 8px 'JetBrains Mono'";
                 ctx.fillText(name + ` (${ag.title})`, ag.x - 6, ag.y + 38);
 
                 let bubbleText = ag.speech || ag.state;
-                ctx.fillStyle = "#f8fafc";
+                ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
                 ctx.fillRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
                 ctx.strokeStyle = "#38bdf8";
                 ctx.strokeRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
-                ctx.fillStyle = "#0f172a";
-                ctx.font = "bold 9px 'Courier New'";
+                ctx.fillStyle = "#38bdf8";
+                ctx.font = "bold 9px 'JetBrains Mono'";
                 ctx.fillText(bubbleText, ag.x - 8, ag.y - 11);
             }
         }
@@ -476,6 +548,7 @@ HTML_TEMPLATE = """
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
             appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor...`);
+            showToast(`${agentName} projeyi kodlamaya başladı!`);
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 120000);
@@ -494,15 +567,18 @@ HTML_TEMPLATE = """
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
                 if(data.preview_url) {
                     appendLog(`> 🚀 <b style="color: #38bdf8; font-size: 14px;">CANLI PROJE LİNKİ (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Sayfa 🌐</a>`);
+                    showToast("Proje başarıyla tamamlandı ve yayına alındı!");
                 }
             })
             .catch(err => {
                 appendLog(`> [HATA]: İstek zaman aşımına uğradı.`);
+                showToast("Hata: Proje üretimi zaman aşımına uğradı.");
             });
         }
 
         function loadMemory() {
             appendLog(`> [HAFIZA]: Supabase taranıyor...`);
+            showToast("Hafıza tabanları taranıyor...");
             fetch('/api/memory').then(res => res.json()).then(data => {
                 appendLog(`> [HAFIZA ÖZETİ]: ${data.summary}`);
             });
@@ -524,6 +600,7 @@ HTML_TEMPLATE = """
 
         function triggerBoardroom() {
             appendLog(`> [ZİRVE]: Yönetim kurulu toplandı...`);
+            showToast("Yönetim kurulu zirvesi toplandı!");
             fetch('/api/boardroom', {method: 'POST'}).then(res => res.json()).then(data => {
                 appendLog(`> [KARAR]: "${data.decision}"`);
             });
@@ -659,10 +736,9 @@ def api_chat():
             reply = f"Patron, {agent['role']} departmanı olarak notumuzu aldık!"
 
     else:
-        # ARTIK SABİT METİN YOK! Groq modeli kullanıcının verdiği isteği özetleyerek dinamik yanıt veriyor.
         try:
             if groq_client:
-                summary_prompt = f"Kullanıcı şu projeyi istedi: '{user_message}'. Bu projeye karşılık kısa, havalı ve profesyonel bir yazılımcı onay yanıtı ver (Örn: 'Patron, istediğin [proje adı] GPT-OSS 120B ile başarıyla kodlandı!')."
+                summary_prompt = f"Kullanıcı şu projeyi istedi: '{user_message}'. Bu projeye karşılık kısa, havalı ve profesyonel bir yazılımcı onay yanıtı ver (Örn: 'Patron, istediğin [proje adı] GPT-OSS 120B ile cam efektli ve modern UI standartlarında kodlandı!')."
                 comp_rep = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": summary_prompt}],
@@ -677,7 +753,7 @@ def api_chat():
 
         try:
             if groq_client:
-                code_prompt = f"""Sen kıdemli bir full-stack web geliştiricisisin. Sadece ve sadece saf, eksiksiz bir HTML/CSS/JS içeren modern web sitesi yaz. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"""
+                code_prompt = f"""Sen kıdemli bir full-stack web geliştiricisisin ve UI/UX uzmansın. Sadece ve sadece saf, eksiksiz bir HTML/CSS/JS içeren modern web sitesi yaz. Tasarım kuralları: Glassmorphism (cam efekti, blur, şeffaf kartlar), neon renk geçişleri, Inter veya Space Grotesk tipografi, tamamen koyu tema ve kusursuz mobil uyumluluk. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"""
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
@@ -708,17 +784,17 @@ def api_chat():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Özel Konsept Tasarım</title>
+    <title>Modern UI Proje</title>
     <style>
-        body {{ background: #0f172a; color: #f8fafc; font-family: system-ui, sans-serif; margin: 0; padding: 0; text-align: center; }}
-        header {{ background: #1e293b; padding: 60px 20px; border-bottom: 3px solid #38bdf8; }}
+        body {{ background: #030712; color: #f8fafc; font-family: system-ui, sans-serif; margin: 0; padding: 0; text-align: center; }}
+        header {{ background: linear-gradient(135deg, #1e293b, #0f172a); padding: 60px 20px; border-bottom: 3px solid #38bdf8; }}
         h1 {{ color: #38bdf8; font-size: 36px; margin: 0; }}
         p {{ color: #94a3b8; font-size: 16px; margin-top: 15px; }}
     </style>
 </head>
 <body>
     <header>
-        <h1>Özel Konsept Proje</h1>
+        <h1>Modern UI Proje</h1>
         <p>{user_message}</p>
     </header>
 </body>
@@ -773,8 +849,8 @@ def api_tasks():
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
     if not session.get('logged_in'):
-        return jsonify({"decision": "Yetkisiz"}), 403
-    return jsonify({"decision": "Yönetim kurulu dinamik yanıt motorunu onayladı."})
+        return jsonify({"decision": "Yetkisiz"}}, 403
+    return jsonify({"decision": "Yönetim kurulu UI/UX modernizasyon ve toast bildirim protokolünü onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
