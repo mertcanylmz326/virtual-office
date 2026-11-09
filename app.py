@@ -371,7 +371,7 @@ HTML_TEMPLATE = """
         const terminalLogs = document.getElementById('terminal-logs');
 
         let agentsData = {};
-        let footprintList = []; // Ayak izleri havuzu
+        let footprintList = [];
 
         function showToast(message) {
             const container = document.getElementById('toast-container');
@@ -400,7 +400,6 @@ HTML_TEMPLATE = """
             const h = 440;
             ctx.clearRect(0, 0, w, h);
 
-            // Zemin deseni
             ctx.fillStyle = "#090d16";
             ctx.fillRect(0, 0, w, h);
             
@@ -413,23 +412,21 @@ HTML_TEMPLATE = """
                 ctx.stroke();
             }
 
-            // Koridorlar
             ctx.fillStyle = "#111827";
             ctx.fillRect(0, 130, w, 35);
             ctx.fillRect(0, 270, w, 35);
             ctx.fillRect(530, 0, 35, h);
 
-            // Odalar ve Açılır/Kapanır Kapı Simülasyonları
             const rooms = [
-                {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO", glow: "#3b82f6", doorX: 95, doorY: 120, doorOpen: true},
-                {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444", doorX: 275, doorY: 120, doorOpen: false},
-                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (DEV)", glow: "#10b981", doorX: 455, doorY: 120, doorOpen: true},
-                {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b", doorX: 95, doorY: 155, doorOpen: false},
-                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6", doorX: 275, doorY: 155, doorOpen: true},
-                {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL (İK)", glow: "#f97316", doorX: 455, doorY: 155, doorOpen: false},
-                {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX", glow: "#14b8a6", doorX: 95, doorY: 295, doorOpen: true},
-                {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR", glow: "#64748b", doorX: 275, doorY: 295, doorOpen: false},
-                {x: 375, y: 295, w: 160, h: 105, name: "9. KEREM", glow: "#ec4899", doorX: 455, doorY: 295, doorOpen: true}
+                {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO", glow: "#3b82f6"},
+                {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444"},
+                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (DEV)", glow: "#10b981"},
+                {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b"},
+                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6"},
+                {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL (İK)", glow: "#f97316"},
+                {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX", glow: "#14b8a6"},
+                {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR", glow: "#64748b"},
+                {x: 375, y: 295, w: 160, h: 105, name: "9. KEREM", glow: "#ec4899"}
             ];
 
             rooms.forEach(r => {
@@ -448,31 +445,23 @@ HTML_TEMPLATE = """
                 ctx.font = "bold 9px 'JetBrains Mono'";
                 ctx.fillText(r.name, r.x + 8, r.y + 14);
 
-                // Çalışma masası ve sandalye
                 ctx.fillStyle = "#1e293b";
                 ctx.fillRect(r.x + 50, r.y + 55, 60, 24);
                 ctx.fillStyle = r.glow;
                 ctx.fillRect(r.x + 68, r.y + 60, 24, 12);
 
-                // Saksı
                 ctx.fillStyle = "#78350f";
                 ctx.fillRect(r.x + 15, r.y + 55, 16, 18);
                 ctx.fillStyle = "#4ade80";
                 ctx.font = "12px sans-serif";
                 ctx.fillText("🌿", r.x + 13, r.y + 50);
 
-                // Akıllı Kapı Çizimi (Açık/Kapalı Durum)
-                ctx.fillStyle = r.doorOpen ? "#4ade80" : "#ef4444";
-                if (r.y < 130) {
-                    ctx.fillRect(r.x + 65, r.y + r.h - 3, 30, 6);
-                } else if (r.y > 250) {
-                    ctx.fillRect(r.x + 65, r.y - 3, 30, 6);
-                } else {
-                    ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
-                }
+                ctx.fillStyle = "#4ade80";
+                if (r.y < 130) ctx.fillRect(r.x + 65, r.y + r.h - 3, 30, 6);
+                else if (r.y > 250) ctx.fillRect(r.x + 65, r.y - 3, 30, 6);
+                else ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
             });
 
-            // CEO Kontrol Merkezi
             ctx.fillStyle = "rgba(2, 132, 199, 0.2)";
             ctx.fillRect(580, 135, 485, 30);
             ctx.strokeStyle = "#38bdf8";
@@ -482,7 +471,6 @@ HTML_TEMPLATE = """
             ctx.font = "bold 10px 'JetBrains Mono'";
             ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 153);
 
-            // Mutfak & Kahve Alanı
             ctx.fillStyle = "rgba(120, 53, 15, 0.35)";
             ctx.fillRect(580, 15, 485, 110);
             ctx.strokeStyle = "#d97706";
@@ -496,7 +484,6 @@ HTML_TEMPLATE = """
             ctx.fillStyle = "#fbbf24";
             ctx.fillText("🍩 Atıştırmalık & Kahve Makinesi", 730, 80);
 
-            // Otonom Proje Onay Odası
             ctx.fillStyle = "rgba(109, 40, 217, 0.3)";
             ctx.fillRect(580, 175, 485, 250);
             ctx.strokeStyle = "#8b5cf6";
@@ -508,17 +495,14 @@ HTML_TEMPLATE = """
             ctx.fillStyle = "#3b0764";
             ctx.fillRect(740, 270, 160, 60);
 
-            // Ayak İzlerini Çiz
             ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
             footprintList.forEach(fp => {
                 ctx.fillRect(fp.x, fp.y, 4, 4);
             });
 
-            // Ajanları ve Hareketlerini Çiz
             for (let name in agentsData) {
                 let ag = agentsData[name];
                 
-                // Ayak izi bırakma mantığı
                 if (Math.random() < 0.3) {
                     footprintList.push({x: ag.x + 10, y: ag.y + 10});
                     if (footprintList.length > 50) footprintList.shift();
@@ -694,16 +678,14 @@ def simulation_tick():
         if name == "Mutfak_Chef":
             x, y, state, speech = 650, 60, "Kahve Hazırlıyor", "Kahveler taze!"
         else:
-            # Sağlık/Enerji durumuna göre ajan mola alanına (mutfağa) kahveye gider
             data["energy"] -= random.randint(2, 6)
             if data["energy"] < 30:
-                # Mutfak mola koordinatları
                 x = random.randint(600, 750)
                 y = random.randint(40, 90)
                 state = "Mola / Kahve İçiyor"
                 speech = "☕ Kahve molası!"
                 if data["energy"] <= 10:
-                    data["energy"] = 100 # Enerji tazelendi
+                    data["energy"] = 100
             else:
                 x = data["target_x"] + random.randint(-10, 10)
                 y = data["target_y"] + random.randint(-10, 10)
@@ -860,13 +842,13 @@ def api_chat():
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
     if not session.get('logged_in'):
-        return jsonify({"status": "Yetkisiz"}}, 403
+        return jsonify({"status": "Yetkisiz"}), 403
     return jsonify({"status": check_system_uptime()})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
     if not session.get('logged_in'):
-        return jsonify({"summary": "Yetkisiz"}}, 403
+        return jsonify({"summary": "Yetkisiz"}), 403
     return jsonify({"summary": "Supabase bağlantısı aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
@@ -888,7 +870,7 @@ def api_tasks():
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
     if not session.get('logged_in'):
-        return jsonify({"decision": "Yetkisiz"}), 403
+        return jsonify({"status": "Yetkisiz"}), 403
     return jsonify({"decision": "Yönetim kurulu akıllı kapı ve mola döngüsü simülasyonunu onayladı."})
 
 if __name__ == '__main__':
