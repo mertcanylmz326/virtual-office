@@ -1,4 +1,5 @@
 import os
+import re
 import time
 import random
 import datetime
@@ -70,7 +71,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "HTML Parser Fixlendi"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Regex HTML Sanitizer Aktif"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -170,7 +171,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // CLEAN HTML PARSER</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // REGEX HTML SANITIZER</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -182,7 +183,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 TEMİZ HTML AYIKLAYICI AKTİF</span>
+        <span style="color: #fbbf24;">🚀 KUSURSUZ HTML FİLTRE AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -204,10 +205,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● PARSER ONLINE</span>
+            <span style="color: #38bdf8; font-weight: bold;">● SANITIZER ONLINE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Markdown temizleyici devreye alındı. Siteler artık kusursuz görünecek!</div>
+            <div class="log-line">[SYSTEM]: Regex tabanlı HTML temizleyici devreye sokuldu. Çöp karakterler engellendi!</div>
         </div>
     </div>
 
@@ -517,40 +518,35 @@ def api_chat():
     agent = employees[agent_name]
 
     html_code = ""
-    reply = f"Patron, Qwen 3.8B modeli ile istediğin site tamamen özgün olarak kodlandı ve temizlendi!"
+    reply = f"Patron, Qwen 3.8B modeli ile site kusursuz bir şekilde üretildi ve temizlendi!"
 
     try:
         if groq_client:
-            code_prompt = f"Sen profesyonel bir web tasarımcısın. Kullanıcının şu isteği için o sektöre özel benzersiz, şık ve eksiksiz tek dosyalık bir HTML/CSS web sitesi yaz: '{user_message}'. Sadece saf HTML kodu döndür, asla açıklama yazma, asla sohbet etme."
+            code_prompt = f"Sen kıdemli bir web geliştiricisisin. Sadece ve sadece saf, eksiksiz bir HTML/CSS web sitesi kodu yaz. Asla markdown etiketi (```html) kullanma, asla açıklama yapma, sohbet etme. İstek: {user_message}"
             comp = groq_client.chat.completions.create(
                 model="qwen/qwen3.8-27b",
                 messages=[{"role": "user", "content": code_prompt}],
-                max_tokens=2500, temperature=0.7
+                max_tokens=3000, temperature=0.7
             )
             raw_code = comp.choices[0].message.content.strip()
             
-            # KESİN VE TEMİZ HTML AYIKLAYICI (MARKDOWN SÖKÜCÜ)
-            if "```html" in raw_code:
-                parts = raw_code.split("```html")
-                if len(parts) > 1:
-                    html_code = parts[1].split("```")[0].strip()
-            elif "```" in raw_code:
-                parts = raw_code.split("```")
-                if len(parts) > 1:
-                    html_code = parts[1].strip()
+            # KESİN VE HATASIZ REGEX / SUBSTRING HTML SANITIZER
+            # 1. Adım: Eğer ```html veya ``` blokları varsa onları uçur
+            clean_code = re.sub(r'```[a-zA-Z]*', '', raw_code)
+            clean_code = clean_code.replace('```', '')
+
+            # 2. Adım: <!DOCTYPE veya <html etiketinin başladığı yeri bul, son </html> etiketine kadar al
+            lower_code = clean_code.lower()
+            start_idx = lower_code.find("<!doctype")
+            if start_idx == -1:
+                start_idx = lower_code.find("<html")
             
-            if not html_code or "<html" not in html_code.lower():
-                if "<html" in raw_code.lower():
-                    start_idx = raw_code.lower().find("<!doctype")
-                    if start_idx == -1:
-                        start_idx = raw_code.lower().find("<html")
-                    end_idx = raw_code.lower().rfind("</html>")
-                    if start_idx != -1 and end_idx != -1:
-                        html_code = raw_code[start_idx:end_idx+7]
-                    else:
-                        html_code = raw_code
-                else:
-                    html_code = raw_code
+            end_idx = lower_code.rfind("</html>")
+
+            if start_idx != -1 and end_idx != -1:
+                html_code = clean_code[start_idx:end_idx+7]
+            else:
+                html_code = clean_code.strip()
     except Exception as e:
         print(f"Groq Qwen API Üretim Hatası: {e}")
 
@@ -618,7 +614,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu HTML temizleyici parser entegrasyonunu onayladı."})
+    return jsonify({"decision": "Yönetim kurulu Regex HTML Sanitizer entegrasyonunu onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
