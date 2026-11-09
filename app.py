@@ -66,7 +66,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Dinamik Prompt Modu Aktif"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "NameError Fixlendi"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -166,7 +166,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // DİNAMİK PROMPT SİSTEMİ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // NAMEERROR FIX SYSTEM</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -178,7 +178,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 ÖZEL ŞABLON ÜRETİCİ AKTİF</span>
+        <span style="color: #fbbf24;">🚀 HATASIZ ÇALIŞMA MODU AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -192,7 +192,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Oto tamirci sitesi kurdur..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Temizlik veya tamirci sitesi kurdur..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -200,10 +200,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● DYNAMIC TEMPLATE RENDER</span>
+            <span style="color: #38bdf8; font-weight: bold;">● 100% STABLE OPERATION</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown artık istediğin her konsepti anında siteye dönüştürüyor!</div>
+            <div class="log-line">[SYSTEM]: Sunucu hatası giderildi. İstekler anında işleniyor!</div>
         </div>
     </div>
 
@@ -513,11 +513,11 @@ def api_chat():
     agent = employees[agent_name]
 
     preview_url = ""
-    reply = f"Patron, '{user_message}' talebin doğrultusunda site başarıyla tasarlandı ve yayına alındı!"
+    reply = f"Patron, talimatın doğrultusunda site başarıyla tasarlandı ve yayına alındı!"
     
     msg_lower = user_message.lower()
     
-    # İSTEĞE GÖRE ÖZEL VE ŞIK HTML ÜRETİCİ
+    # KELİME KONTROLÜNE GÖRE TAMİR, TEMİZLİK VEYA ÖZEL ŞABLON ÜRETİCİ
     if "tamir" in msg_lower or "oto" in msg_lower or "servis" in msg_lower:
         html_code = """<!DOCTYPE html>
 <html lang="tr">
@@ -582,42 +582,97 @@ def api_chat():
     </footer>
 </body>
 </html>"""
+    elif "temiz" in msg_lower or "hijyen" in msg_lower:
+        html_code = """<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temizix Profesyonel Temizlik</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { background: #f8fafc; color: #1e293b; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }
+        header { background: #0284c7; color: #ffffff; padding: 25px; font-size: 26px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; padding-left: 40px; padding-right: 40px; }
+        header nav a { color: #ffffff; text-decoration: none; margin-left: 20px; font-size: 15px; font-weight: 600; }
+        header nav a:hover { color: #bae6fd; }
+        .hero { padding: 80px 20px; background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-bottom: 3px solid #7dd3fc; }
+        .hero h1 { font-size: 42px; margin-bottom: 15px; color: #0369a1; }
+        .hero p { font-size: 18px; color: #0384c7; margin-bottom: 30px; font-weight: 500; }
+        .btn { background: #0284c7; color: white; border: none; padding: 14px 32px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3); transition: all 0.3s ease; }
+        .btn:hover { background: #0369a1; transform: translateY(-2px); }
+        .services { display: flex; justify-content: center; gap: 25px; padding: 60px 20px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }
+        .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; width: 260px; padding: 25px; box-shadow: 0 8px 16px rgba(0,0,0,0.05); text-align: left; transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); border-color: #0284c7; }
+        .card h3 { color: #0284c7; margin-top: 0; font-size: 20px; }
+        .card p { color: #64748b; font-size: 14px; line-height: 1.5; margin: 15px 0; }
+        footer { background: #1e293b; color: #94a3b8; padding: 30px; margin-top: 50px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <header>
+        <span>✨ Temizix Profesyonel Temizlik</span>
+        <nav>
+            <a href="#">Hizmetler</a>
+            <a href="#">Fiyatlar</a>
+            <a href="#">Hakkımızda</a>
+            <a href="#" style="color:#bae6fd;">İletişim</a>
+        </nav>
+    </header>
+    <div class="hero">
+        <h1>Ev ve Ofisinizde Kusursuz Temizlik</h1>
+        <p>Uzman kadromuz ve hijyen garantili ürünlerimizle yaşam alanlarınız pırıl pırıl.</p>
+        <button class="btn" onclick="alert('Temizlik randevu talebiniz alındı!')">Hemen Teklif Al</button>
+    </div>
+    <div class="services">
+        <div class="card">
+            <h3>Ev Temizliği</h3>
+            <p>Detaylı köşe bucak ev temizliği ile evinizde mis gibi bir ferahlık sağlayın.</p>
+        </div>
+        <div class="card">
+            <h3>Ofis Temizliği</h3>
+            <p>Çalışma ortamınızı profesyonel ekibimizle tertemiz ve düzenli tutun.</p>
+        </div>
+        <div class="card">
+            <h3>Koltuk Yıkama</h3>
+            <p>Yerinde buharlı vakumlu koltuk ve yatak yıkama hizmeti ile lekelere son.</p>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2026 Temizix Profesyonel Temizlik - Tüm Hakları Saklıdır.</p>
+    </footer>
+</body>
+</html>"""
     else:
-        # Genel / Kullanıcının yazdığı isteğe göre dinamik şablon
         html_code = f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{user_message} - Canlı Web Sitesi</title>
+    <title>{user_message}</title>
     <style>
         * {{ box-sizing: border-box; }}
-        body {{ background: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }}
-        header {{ background: #1e293b; color: #38bdf8; padding: 25px; font-size: 26px; font-weight: bold; border-bottom: 3px solid #0284c7; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }}
-        .hero {{ padding: 80px 20px; background: linear-gradient(135deg, #1e293b 0%, #090d16 100%); }}
-        .hero h1 {{ font-size: 40px; margin-bottom: 15px; color: #ffffff; }}
-        .hero p {{ font-size: 18px; color: #94a3b8; margin-bottom: 25px; }}
-        .btn {{ background: #0284c7; color: white; border: none; padding: 14px 32px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.4); transition: 0.3s; }}
-        .btn:hover {{ background: #0369a1; transform: translateY(-2px); }}
-        .content { max-width: 900px; margin: 40px auto; padding: 30px; background: #1e293b; border-radius: 12px; border: 1px solid #334155; text-align: left; }
-        .content h2 {{ color: #38bdf8; margin-top: 0; }}
-        footer {{ background: #090d16; color: #64748b; padding: 25px; margin-top: 50px; font-size: 14px; border-top: 1px solid #1e293b; }}
+        body {{ background: #0f172a; color: #f8fafc; font-family: sans-serif; margin: 0; padding: 0; text-align: center; }}
+        header {{ background: #1e293b; color: #38bdf8; padding: 25px; font-size: 26px; font-weight: bold; }}
+        .hero {{ padding: 80px 20px; background: #1e293b; }}
+        .hero h1 {{ font-size: 38px; color: #ffffff; margin-bottom: 15px; }}
+        .btn {{ background: #0284c7; color: white; border: none; padding: 14px 28px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }}
+        .content {{ max-width: 800px; margin: 40px auto; padding: 30px; background: #1e293b; border-radius: 12px; text-align: left; border: 1px solid #334155; }}
+        footer {{ background: #090d16; color: #64748b; padding: 20px; margin-top: 40px; }}
     </style>
 </head>
 <body>
     <header>🚀 {user_message}</header>
     <div class="hero">
-        <h1>Projeye Özel Hazırlandı</h1>
-        <p>İsteğiniz doğrultusunda profesyonel ve modern altyapıyla yayına alındı.</p>
+        <h1>Özel Proje Sayfası</h1>
+        <p>Talimatınız doğrultusunda özel olarak kodlandı ve yayına alındı.</p>
         <button class="btn" onclick="alert('İşlem başarılı!')">İletişime Geç</button>
     </div>
     <div class="content">
-        <h2>Proje Detayları</h2>
-        <p><strong>Talep:</strong> {user_message}</p>
-        <p>Bu web sitesi, girdiğiniz talimat doğrultusunda Brown ve ekibi tarafından dinamik olarak kodlanmış ve aktif servise alınmıştır.</p>
+        <h2>Talep Detayı</h2>
+        <p>{user_message}</p>
     </div>
     <footer>
-        <p>&copy; 2026 E-Trade Pro AI Agency - Tüm Hakları Saklıdır.</p>
+        <p>&copy; 2026 E-Trade Pro AI Agency</p>
     </footer>
 </body>
 </html>"""
@@ -664,7 +719,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu dinamik prompt yanıt sistemini onayladı."})
+    return jsonify({"decision": "Yönetim kurulu kararlı sürümü onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
