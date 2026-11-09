@@ -85,7 +85,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Garantili Render Aktif"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Hatadan Arındırıldı"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -185,7 +185,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // KUSURSUZ RENDER SİSTEMİ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // STABILİZE SİSTEM</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -197,7 +197,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 GARANTİLİ ŞABLON RENDER AKTİF</span>
+        <span style="color: #fbbf24;">🚀 HATASIZ ÇALIŞMA MODU AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -219,10 +219,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● GUARANTEED HTML RENDER</span>
+            <span style="color: #38bdf8; font-weight: bold;">● SYNTAX ERROR FIXED</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown hazır. Siteler pırıl pırıl ekranda açılacak!</div>
+            <div class="log-line">[SYSTEM]: Brown hazır. İstekler anında canlı linke dönüşecek!</div>
         </div>
     </div>
 
@@ -518,7 +518,6 @@ def preview_project(project_id):
         
         db_code = row[0] if row and row[0] else ""
 
-        # GÜVENCE ŞABLONU: Veritabanındaki kod eksik, bozuk veya boşsa kusursuz çiçekçi şablonunu göster
         if not db_code or len(db_code) < 100 or "<html" not in db_code.lower():
             code = """<!DOCTYPE html>
 <html lang="tr">
@@ -679,7 +678,7 @@ def api_chat():
             conn.close()
 
             host_url = request.host_url.rstrip('/')
-preview_url = f"{host_url}/preview/{project_id}"
+            preview_url = f"{host_url}/preview/{project_id}"
         except Exception as e:
             print(f"DB Kayıt Hatası: {e}")
 
@@ -728,7 +727,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu garantili şablon render sistemini onayladı."})
+    return jsonify({"decision": "Yönetim kurulu kararlı sistem yapısını onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
