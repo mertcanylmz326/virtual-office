@@ -1,11 +1,10 @@
 import os
 import re
-import base64
 import time
 import random
 import datetime
 import psycopg2
-from flask import Flask, render_template_string, jsonify, request, Response, redirect
+from flask import Flask, render_template_string, jsonify, request, Response
 from groq import Groq
 
 app = Flask(__name__)
@@ -72,7 +71,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Base64 Render Aktif"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Direct Response Aktif"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -172,7 +171,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // BASE64 FORCE RENDER</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // DIRECT HTML RENDER</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -184,7 +183,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 KESİN GÖRÜNTÜLEME MODU AKTİF</span>
+        <span style="color: #fbbf24;">🚀 GÜVENLİ RENDER AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -209,7 +208,7 @@ HTML_TEMPLATE = """
             <span style="color: #38bdf8; font-weight: bold;">● RENDER ONLINE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Base64 zorunlu görüntüleme motoru aktif edildi. Boş sayfa hatası imkansız!</div>
+            <div class="log-line">[SYSTEM]: Güvenli MIME type response motoru aktif edildi. ERR_UNSAFE_REDIRECT engellendi!</div>
         </div>
     </div>
 
@@ -492,11 +491,8 @@ def preview_project(project_id):
         conn.close()
         
         db_code = row[0] if row and row[0] else "<h1>Proje kodu bulunamadı.</h1>"
-        
-        # Kesin çözüm: Yanıtı doğrudan Base64 Data URI ile yönlendir (Boş ekranı imkansız kılar)
-        encoded_html = base64.b64encode(db_code.encode('utf-8')).decode('utf-8')
-        data_uri = f"data:text/html;charset=utf-8;base64,{encoded_html}"
-        return redirect(data_uri, code=302)
+        # Tarayıcıyı kısıtlamayan doğrudan güvenli HTML Response döndür
+        return Response(db_code, mimetype='text/html')
     except Exception as e:
         print(f"Preview Hatası: {e}")
     return "Proje bulunamadı.", 404
@@ -511,7 +507,7 @@ def api_chat():
     agent = employees[agent_name]
 
     html_code = ""
-    reply = f"Patron, Qwen 3.8B modeli siteyi üretti ve Base64 Render motoruyla mühürlendi!"
+    reply = f"Patron, Qwen 3.8B modeli siteyi üretti ve doğrudan sunuldu!"
 
     try:
         if groq_client:
@@ -604,7 +600,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu Base64 Force Render entegrasyonunu onayladı."})
+    return jsonify({"decision": "Yönetim kurulu Direct Response entegrasyonunu onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
