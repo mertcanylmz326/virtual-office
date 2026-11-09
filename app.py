@@ -69,18 +69,16 @@ def check_system_uptime():
     return "UptimeRobot API aktif."
 
 employees = {
-    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
-    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "GPT-OSS 120B Aktif"},
-    
-    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
-    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
-    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 375, "room_y": 155, "color": "#f97316", "state": "Masada", "speech": "Sistem Sağlığı OK"},
-    
-    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "color": "#14b8a6", "state": "Masada", "speech": "Sözleşme aktif"},
-    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "color": "#64748b", "state": "Masada", "speech": "Firewall koruyor"},
-    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 375, "room_y": 295, "color": "#ec4899", "state": "Masada", "speech": "Hedefler tuttu"},
-    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 580, "room_y": 15, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "speech": "Taze kahve!"}
+    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "color": "#3b82f6", "state": "Masada", "speech": "Destek aktif"},
+    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "color": "#ef4444", "state": "Masada", "speech": "Operasyon OK"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "color": "#10b981", "state": "Masada", "speech": "GPT-OSS 120B"},
+    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
+    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
+    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "color": "#f97316", "state": "Masada", "speech": "Sistem Sağlığı"},
+    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "color": "#14b8a6", "state": "Masada", "speech": "Sözleşme OK"},
+    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "color": "#64748b", "state": "Masada", "speech": "Firewall aktif"},
+    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "color": "#ec4899", "state": "Masada", "speech": "Hedefler tuttu"},
+    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "color": "#f43f5e", "state": "Kahve Hazırlıyor", "speech": "Taze kahve!"}
 }
 
 HTML_TEMPLATE = """
@@ -89,10 +87,10 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Cyber Agency HQ</title>
+    <title>E-Trade Pro - Isometric Math Engine HQ</title>
     <style>
         body { 
-            background-color: #030712; 
+            background-color: #010205; 
             color: #f8fafc; 
             font-family: 'Courier New', Courier, monospace; 
             text-align: center; 
@@ -101,7 +99,7 @@ HTML_TEMPLATE = """
             overflow-x: hidden; 
         }
         #game-topbar {
-            background: #0f172a;
+            background: #060913;
             border-bottom: 2px solid #38bdf8;
             padding: 10px 15px;
             display: flex;
@@ -112,17 +110,17 @@ HTML_TEMPLATE = """
             gap: 8px;
         }
         .top-btn { 
-            background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; 
+            background: #0f172a; color: #38bdf8; border: 1px solid #1e293b; padding: 6px 12px; 
             border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px;
         }
-        .top-btn:hover { background: #38bdf8; color: #030712; }
+        .top-btn:hover { background: #38bdf8; color: #010205; }
 
         #stats-bar {
-            background: #090d16;
+            background: #030712;
             padding: 8px 15px;
             display: flex;
             justify-content: space-around;
-            border-bottom: 1px solid #1e293b;
+            border-bottom: 1px solid #0f172a;
             font-size: 12px;
             font-weight: bold;
             flex-wrap: wrap;
@@ -132,31 +130,31 @@ HTML_TEMPLATE = """
         #game-container {
             position: relative;
             width: 1080px;
-            height: 440px;
+            height: 500px;
             max-width: 100%;
             margin: 10px auto;
             border: 3px solid #38bdf8;
-            border-radius: 8px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.9);
-            background: #060913;
+            border-radius: 12px;
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.3);
+            background: #02040a;
             overflow: hidden;
         }
         canvas { display: block; width: 100%; height: 100%; }
 
         .action-bar { margin: 10px auto; width: 1080px; max-width: 100%; display: flex; justify-content: space-between; gap: 10px; padding: 0 10px; box-sizing: border-box; }
         #command-panel {
-            background: #0f172a; border: 2px solid #334155; padding: 8px; border-radius: 8px; display: flex; gap: 8px; align-items: center; flex-grow: 1; flex-wrap: wrap;
+            background: #060913; border: 2px solid #1e293b; padding: 8px; border-radius: 8px; display: flex; gap: 8px; align-items: center; flex-grow: 1; flex-wrap: wrap;
         }
-        select, input[type="text"] { background: #1e293b; color: #fff; border: 1px solid #475569; padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 12px; }
+        select, input[type="text"] { background: #0f172a; color: #fff; border: 1px solid #334155; padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 12px; }
         input[type="text"] { flex-grow: 1; min-width: 200px; }
         .send-btn { background: #0284c7; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
         .send-btn:hover { background: #0369a1; }
 
         #activity-terminal {
-            margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
+            margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #010205; border: 2px solid #1e293b; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
-        .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
-        .terminal-body { padding: 10px; height: 160px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
+        .terminal-header { background: #060913; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
+        .terminal-body { padding: 10px; height: 140px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
         .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
 
         @media (max-width: 768px) {
@@ -171,7 +169,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // CYBER HQ (GPT-OSS 120B)</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🪐 E-TRADE PRO // ISOMETRIC MATH ENGINE HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -183,11 +181,11 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 OFİS PLANI: CYBERNETIC LAB</span>
+        <span style="color: #fbbf24;">🚀 3D MATH PROJEKSİYON AKTİF</span>
     </div>
 
     <div id="game-container">
-        <canvas id="officeCanvas" width="1080" height="440"></canvas>
+        <canvas id="officeCanvas" width="1080" height="500"></canvas>
     </div>
 
     <div class="action-bar">
@@ -204,11 +202,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● CYBER GRID ONLINE</span>
+            <span>⚡ MATH ENGINE OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8; font-weight: bold;">● ENGINE ONLINE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Cybernetic Lab ofis tasarımı yüklendi. Sunucu odaları aktif!</div>
+            <div class="log-line">[SYSTEM]: İzometrik matematiksel motor yüklendi. Yörünge simülasyonu devrede!</div>
         </div>
     </div>
 
@@ -218,6 +216,7 @@ HTML_TEMPLATE = """
         const terminalLogs = document.getElementById('terminal-logs');
 
         let agentsData = {};
+        let angleOffset = 0;
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
@@ -234,169 +233,103 @@ HTML_TEMPLATE = """
 
         function drawOffice() {
             const w = 1080;
-            const h = 440;
+            const h = 500;
             ctx.clearRect(0, 0, w, h);
 
-            // Zemin: Koyu Cyber Grid
-            ctx.fillStyle = "#070b16";
+            // Uzay/Cyber Arka Plan Gradyanı
+            let grad = ctx.createRadialGradient(w/2, h/2, 20, w/2, h/2, 600);
+            grad.addColorStop(0, "#0b1329");
+            grad.addColorStop(1, "#010205");
+            ctx.fillStyle = grad;
             ctx.fillRect(0, 0, w, h);
-            
-            ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
-            ctx.lineWidth = 1;
-            for (let i = 0; i < w; i += 30) {
+
+            // Merkez Devasa Enerji Çekirdeği (Reactor Core)
+            angleOffset += 0.02;
+            let centerX = w / 2;
+            let centerY = h / 2 - 10;
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 90, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(56, 189, 248, 0.1)";
+            ctx.fill();
+            ctx.strokeStyle = "#38bdf8";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Dönen Enerji Halkaları (Matematiksel Projeksiyon)
+            for (let i = 0; i < 3; i++) {
+                let ringRadius = 50 + i * 15;
                 ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i, h);
-                ctx.stroke();
-            }
-            for (let j = 0; j < h; j += 30) {
-                ctx.beginPath();
-                ctx.moveTo(0, j);
-                ctx.lineTo(w, j);
-                ctx.stroke();
-            }
-
-            // Koridorlar
-            ctx.fillStyle = "#0f172a";
-            ctx.fillRect(0, 130, w, 35);
-            ctx.fillRect(0, 270, w, 35);
-            ctx.fillRect(530, 0, 35, h);
-
-            // 9 Odalı Çalışma Alanı
-            const rooms = [
-                {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO", glow: "#3b82f6"},
-                {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444"},
-                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (DEV)", glow: "#10b981"},
-                {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b"},
-                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6"},
-                {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL (İK)", glow: "#f97316"},
-                {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX", glow: "#14b8a6"},
-                {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR", glow: "#64748b"},
-                {x: 375, y: 295, w: 160, h: 105, name: "9. KEREM", glow: "#ec4899"}
-            ];
-
-            rooms.forEach(r => {
-                ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
-                ctx.fillRect(r.x, r.y, r.w, r.h);
-
-                ctx.strokeStyle = "rgba(56, 189, 248, 0.5)";
+                ctx.arc(centerX, centerY, ringRadius, angleOffset * (i+1), angleOffset * (i+1) + Math.PI);
+                ctx.strokeStyle = i === 0 ? "#f43f5e" : (i === 1 ? "#38bdf8" : "#10b981");
                 ctx.lineWidth = 2;
-                ctx.strokeRect(r.x, r.y, r.w, r.h);
-
-                ctx.strokeStyle = r.glow;
-                ctx.lineWidth = 1;
-                ctx.strokeRect(r.x + 3, r.y + 3, r.w - 6, r.h - 6);
-
-                ctx.fillStyle = "#38bdf8";
-                ctx.font = "bold 9px 'Courier New'";
-                ctx.fillText(r.name, r.x + 8, r.y + 14);
-
-                // Masa ve Ekran
-                ctx.fillStyle = "#1e293b";
-                ctx.fillRect(r.x + 50, r.y + 55, 60, 24);
-                ctx.fillStyle = r.glow;
-                ctx.fillRect(r.x + 68, r.y + 60, 24, 12);
-
-                // Bitki / Süs
-                ctx.fillStyle = "#78350f";
-                ctx.fillRect(r.x + 15, r.y + 55, 16, 18);
-                ctx.fillStyle = "#4ade80";
-                ctx.font = "12px sans-serif";
-                ctx.fillText("🌿", r.x + 13, r.y + 50);
-
-                // Kapı geçişleri
-                ctx.fillStyle = "#38bdf8";
-                if (r.y < 130) ctx.fillRect(r.x + 65, r.y + r.h - 3, 30, 6);
-                else if (r.y > 250) ctx.fillRect(r.x + 65, r.y - 3, 30, 6);
-                else ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
-            });
-
-            // CEO Kontrol Merkezi
-            ctx.fillStyle = "rgba(2, 132, 199, 0.2)";
-            ctx.fillRect(580, 135, 485, 30);
-            ctx.strokeStyle = "#38bdf8";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(580, 135, 485, 30);
-            ctx.fillStyle = "#38bdf8";
-            ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 153);
-
-            // Mutfak & Kahve Alanı
-            ctx.fillStyle = "rgba(120, 53, 15, 0.3)";
-            ctx.fillRect(580, 15, 485, 110);
-            ctx.strokeStyle = "#d97706";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(580, 15, 485, 110);
-            ctx.fillStyle = "#fde68a";
-            ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("☕ MUTFAK & KAHVE ALANI", 595, 30);
-
-            ctx.fillStyle = "#451a03";
-            ctx.fillRect(720, 55, 100, 40);
-            ctx.fillStyle = "#1e293b";
-            ctx.fillRect(960, 30, 40, 50);
-            ctx.fillStyle = "#fbbf24";
-            ctx.fillRect(970, 40, 18, 12);
-
-            // Otonom Proje Onay Odası & Siber Sunucu Labı
-            ctx.fillStyle = "rgba(109, 40, 217, 0.25)";
-            ctx.fillRect(580, 175, 485, 250);
-            ctx.strokeStyle = "#8b5cf6";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(580, 175, 485, 250);
-            ctx.fillStyle = "#e9d5ff";
-            ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("🤝 OTONOM PROJE ONAY ODASI & SUNUCU LABI", 600, 195);
-
-            // Sunucu Kabinleri Görseli (Server Racks)
-            ctx.fillStyle = "#1e1b4b";
-            ctx.fillRect(600, 220, 70, 180);
-            ctx.strokeStyle = "#38bdf8";
-            ctx.strokeRect(600, 220, 70, 180);
-            for(let sy = 230; sy < 390; sy += 25) {
-                ctx.fillStyle = "#38bdf8";
-                ctx.fillRect(610, sy, 10, 8);
-                ctx.fillStyle = "#4ade80";
-                ctx.fillRect(630, sy, 8, 8);
-                ctx.fillStyle = "#ef4444";
-                ctx.fillRect(650, sy, 6, 6);
+                ctx.stroke();
             }
 
-            ctx.fillStyle = "#3b0764";
-            ctx.fillRect(740, 270, 160, 60);
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 10px 'Courier New'";
+            ctx.textAlign = "center";
+            ctx.fillText("CORE REACTOR", centerX, centerY - 4);
+            ctx.fillStyle = "#4ade80";
+            ctx.font = "9px 'Courier New'";
+            ctx.fillText("ONLINE", centerX, centerY + 10);
+            ctx.textAlign = "left";
 
-            // Ajanları Çiz
-            for (let name in agentsData) {
-                let ag = agentsData[name];
+            // 10 Ajanın Dairesel Yörünge Konumları (Matematiksel Açı Dağılımı)
+            const agentKeys = Object.keys(agentsData);
+            let totalAgents = agentKeys.length > 0 ? agentKeys.length : 10;
+            let radiusX = 360;
+            let radiusY = 180;
+
+            let index = 0;
+            for (let name in employees) {
+                let angle = (index / 10) * (Math.PI * 2) + angleOffset * 0.2;
+                let x = centerX + Math.cos(angle) * radiusX - 60;
+                let y = centerY + Math.sin(angle) * radiusY - 35;
+
+                // Merkez Çekirdekten İstasyona Bağlantı Çizgisi
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(x + 60, y + 35);
+                ctx.strokeStyle = "rgba(56, 189, 248, 0.15)";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // İstasyon Podu
+                ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+                ctx.fillRect(x, y, 120, 70);
+                let empColor = employees[name].color;
+                ctx.strokeStyle = empColor;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, 120, 70);
+
+                ctx.fillStyle = empColor;
+                ctx.font = "bold 9px 'Courier New'";
+                ctx.fillText(name, x + 8, y + 16);
+                
+                ctx.fillStyle = "#94a3b8";
+                ctx.font = "8px 'Courier New'";
+                ctx.fillText(employees[name].role, x + 8, y + 28);
+
+                // Ajanın Kutucuktaki Canlı Konumu
+                let ag = agentsData[name] || { color: empColor, title: "Junior", speech: "Aktif" };
                 ctx.fillStyle = ag.color;
-                ctx.fillRect(ag.x, ag.y, 24, 24);
+                ctx.fillRect(x + 85, y + 35, 22, 22);
                 ctx.strokeStyle = "#ffffff";
                 ctx.lineWidth = 1;
-                ctx.strokeRect(ag.x, ag.y, 24, 24);
-
-                // Anten
-                ctx.fillStyle = "#38bdf8";
-                ctx.fillRect(ag.x + 11, ag.y - 4, 2, 4);
-
-                // Gözler
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(ag.x + 5, ag.y + 7, 4, 4);
-                ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
-
-                // İsim & Unvan
-                ctx.fillStyle = "#38bdf8";
-                ctx.font = "bold 8px 'Courier New'";
-                ctx.fillText(name + ` (${ag.title})`, ag.x - 6, ag.y + 38);
+                ctx.strokeRect(x + 85, y + 35, 22, 22);
 
                 // Konuşma Balonu
-                let bubbleText = ag.speech || ag.state;
+                let bubbleText = ag.speech || "Hazır";
                 ctx.fillStyle = "#f8fafc";
-                ctx.fillRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
+                ctx.fillRect(x + 5, y + 42, 70, 18);
                 ctx.strokeStyle = "#38bdf8";
-                ctx.strokeRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
-                ctx.fillStyle = "#0f172a";
-                ctx.font = "bold 9px 'Courier New'";
-                ctx.fillText(bubbleText, ag.x - 8, ag.y - 11);
+                ctx.strokeRect(x + 5, y + 42, 70, 18);
+                ctx.fillStyle = "#02040a";
+                ctx.font = "bold 8px 'Courier New'";
+                ctx.fillText(bubbleText.substring(0, 12), x + 8, y + 54);
+
+                index++;
             }
         }
 
@@ -411,7 +344,7 @@ HTML_TEMPLATE = """
                 agentsData = mapped;
                 drawOffice();
             });
-        }, 1500);
+        }, 100); // 100ms akışkan matematiksel animasyon döngüsü
 
         function sendDirectMessage() {
             const agentName = document.getElementById('agent-select').value;
@@ -496,16 +429,10 @@ def simulation_tick():
         company_state["active_clients"] = random.randint(3, 8)
 
     for name, data in employees.items():
-        if name == "Mutfak_Chef":
-            x, y, state, speech = 630, 60, "Kahve Hazırlıyor", "Kahveler hazır!"
-        else:
-            x, y = data["room_x"] + 45, data["room_y"] + 50
-            state, speech = "Masada Çalışıyor", f"{data['role']} Aktif"
-
         agent_list.append({
             "name": name, "role": data["role"], "level": data.get("level", 1),
-            "title": data.get("title", "Junior"), "x": x, "y": y, 
-            "state": state, "speech": speech, "color": data["color"]
+            "title": data.get("title", "Junior"), "x": 0, "y": 0, 
+            "state": "Aktif", "speech": f"{data['role']} Çalışıyor", "color": data["color"]
         })
 
     return jsonify({"agents": agent_list, "budget": company_state["budget"], "active_clients": company_state["active_clients"]})
@@ -560,10 +487,10 @@ def api_chat():
             reply = f"Patron, {agent['role']} departmanı olarak notumuzu aldık!"
 
     else:
-        reply = "Patron, GPT-OSS 120B yazılım motoru ile site sıfırdan ve eksiksiz kodlandı!"
+        reply = "Patron, GPT-OSS 120B motoru ve matematiksel izometrik üs mimarisiyle site üretildi!"
         try:
             if groq_client:
-                code_prompt = f"Sen kıdemli bir web geliştiricisisin. Sadece ve sadece saf, eksiksiz bir HTML/CSS web sitesi kodu yaz. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"
+                code_prompt = f"Sen kıdemli bir web geliştiricisisin. Sadece ve sadece saf, eksiksiz bir HTML/CSS web sitesi yaz. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
@@ -594,33 +521,25 @@ def api_chat():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Özel Konsept Web Tasarımı</title>
+    <title>Central Core Konsept</title>
     <style>
-        body {{ background: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }}
-        header {{ background: linear-gradient(135deg, #1e293b, #0f172a); padding: 50px 20px; text-align: center; border-bottom: 3px solid #38bdf8; }}
-        h1 {{ color: #38bdf8; margin: 0; font-size: 32px; }}
-        .container {{ max-width: 1000px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }}
-        .card {{ background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; }}
-        .card h3 {{ color: #fbbf24; margin-top: 0; }}
-        .btn {{ display: inline-block; background: #0284c7; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px; }}
-        .btn:hover {{ background: #0369a1; }}
+        body {{ background: #02040a; color: #f8fafc; font-family: sans-serif; margin: 0; padding: 0; }}
+        header {{ background: #0f172a; padding: 50px 20px; text-align: center; border-bottom: 3px solid #38bdf8; }}
+        h1 {{ color: #38bdf8; margin: 0; font-size: 30px; }}
+        .container {{ max-width: 900px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }}
+        .card {{ background: #090d16; padding: 30px; border-radius: 10px; border: 1px solid #1e293b; }}
+        .card h3 {{ color: #4ade80; margin-top: 0; }}
     </style>
 </head>
 <body>
     <header>
-        <h1>Kurumsal Web Çözümleri</h1>
-        <p style="color: #94a3b8; margin-top: 10px;">Sektörel standartlara uygun profesyonel konsept tasarım</p>
+        <h1>Central Core Mimari Tasarım</h1>
+        <p style="color: #94a3b8; margin-top: 10px;">İleri düzey dairesel üs sistemleri entegrasyonu</p>
     </header>
     <div class="container">
         <div class="card">
-            <h3>Hızlı Başlangıç</h3>
-            <p>İstediğiniz konsept ve özellikler doğrultusunda tam uyumlu altyapı hazırlandı.</p>
-            <a href="#" class="btn">Detayları İncele</a>
-        </div>
-        <div class="card">
-            <h3>Özel Tasarım</h3>
-            <p>Modern arayüz bileşenleri ve şık renk paletiyle kullanıcı deneyimi en üst düzeyde.</p>
-            <a href="#" class="btn">İletişime Geç</a>
+            <h3>Sistem Aktif</h3>
+            <p>Talebiniz doğrultusunda matematiksel projeksiyon motoruyla tasarlandı.</p>
         </div>
     </div>
 </body>
@@ -668,7 +587,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu Cybernetic Lab ofis tasarımını onayladı."})
+    return jsonify({"decision": "Yönetim kurulu İseometrik Matematik Motoru entegrasyonunu onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
