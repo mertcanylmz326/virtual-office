@@ -81,18 +81,18 @@ def check_system_uptime():
     return "UptimeRobot API aktif."
 
 employees = {
-    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
-    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "GPT-OSS 120B Aktif"},
+    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "target_x": 60, "target_y": 60, "state": "Masada", "speech": "Destek veriyor", "energy": 90},
+    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "target_x": 240, "target_y": 60, "state": "Masada", "speech": "Süreç takipte", "energy": 85},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "target_x": 420, "target_y": 60, "state": "Masada", "speech": "GPT-OSS 120B Aktif", "energy": 95},
     
-    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
-    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
-    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 375, "room_y": 155, "color": "#f97316", "state": "Masada", "speech": "Sistem Sağlığı OK"},
+    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "target_x": 60, "target_y": 200, "state": "Masada", "speech": "Lead topluyor", "energy": 80},
+    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "target_x": 240, "target_y": 200, "state": "Masada", "speech": "Bütçe kontrol", "energy": 88},
+    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 375, "room_y": 155, "color": "#f97316", "target_x": 420, "target_y": 200, "state": "Masada", "speech": "Sistem Sağlığı OK", "energy": 92},
     
-    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "color": "#14b8a6", "state": "Masada", "speech": "Sözleşme aktif"},
-    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "color": "#64748b", "state": "Masada", "speech": "Firewall koruyor"},
-    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 375, "room_y": 295, "color": "#ec4899", "state": "Masada", "speech": "Hedefler tuttu"},
-    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 580, "room_y": 15, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "speech": "Taze kahve!"}
+    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "color": "#14b8a6", "target_x": 60, "target_y": 340, "state": "Masada", "speech": "Sözleşme aktif", "energy": 75},
+    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "color": "#64748b", "target_x": 240, "target_y": 340, "state": "Masada", "speech": "Firewall koruyor", "energy": 96},
+    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 375, "room_y": 295, "color": "#ec4899", "target_x": 420, "target_y": 340, "state": "Masada", "speech": "Hedefler tuttu", "energy": 82},
+    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 650, "room_y": 60, "color": "#f43f5e", "target_x": 650, "target_y": 60, "state": "Kahve Hazırlıyor", "speech": "Taze kahve!", "energy": 100}
 }
 
 LOGIN_TEMPLATE = """
@@ -336,7 +336,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span class="stat-badge" style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span class="stat-badge" style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span class="stat-badge" style="color: #fbbf24;">🚀 CYBERPUNK GLASSMORPHISM AKTİF</span>
+        <span class="stat-badge" style="color: #fbbf24;">🚀 AKILLI KAPI & MOLA SİSTEMİ AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -358,10 +358,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● ULTRA OPTIMIZED & SECURED</span>
+            <span style="color: #38bdf8; font-weight: bold;">● ANIMATION & AI ENGINE ACTIVE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Glassmorphism ve neon arayüz katmanları yüklendi!</div>
+            <div class="log-line">[SYSTEM]: Ajanlar yürüyüş rotaları ve otomatik mola sistemi yüklendi!</div>
         </div>
     </div>
 
@@ -371,6 +371,7 @@ HTML_TEMPLATE = """
         const terminalLogs = document.getElementById('terminal-logs');
 
         let agentsData = {};
+        let footprintList = []; // Ayak izleri havuzu
 
         function showToast(message) {
             const container = document.getElementById('toast-container');
@@ -399,6 +400,7 @@ HTML_TEMPLATE = """
             const h = 440;
             ctx.clearRect(0, 0, w, h);
 
+            // Zemin deseni
             ctx.fillStyle = "#090d16";
             ctx.fillRect(0, 0, w, h);
             
@@ -411,21 +413,23 @@ HTML_TEMPLATE = """
                 ctx.stroke();
             }
 
-            ctx.fillStyle = "#0f172a";
+            // Koridorlar
+            ctx.fillStyle = "#111827";
             ctx.fillRect(0, 130, w, 35);
             ctx.fillRect(0, 270, w, 35);
             ctx.fillRect(530, 0, 35, h);
 
+            // Odalar ve Açılır/Kapanır Kapı Simülasyonları
             const rooms = [
-                {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO", glow: "#3b82f6"},
-                {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444"},
-                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (DEV)", glow: "#10b981"},
-                {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b"},
-                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6"},
-                {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL (İK)", glow: "#f97316"},
-                {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX", glow: "#14b8a6"},
-                {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR", glow: "#64748b"},
-                {x: 375, y: 295, w: 160, h: 105, name: "9. KEREM", glow: "#ec4899"}
+                {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO", glow: "#3b82f6", doorX: 95, doorY: 120, doorOpen: true},
+                {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444", doorX: 275, doorY: 120, doorOpen: false},
+                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (DEV)", glow: "#10b981", doorX: 455, doorY: 120, doorOpen: true},
+                {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b", doorX: 95, doorY: 155, doorOpen: false},
+                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6", doorX: 275, doorY: 155, doorOpen: true},
+                {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL (İK)", glow: "#f97316", doorX: 455, doorY: 155, doorOpen: false},
+                {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX", glow: "#14b8a6", doorX: 95, doorY: 295, doorOpen: true},
+                {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR", glow: "#64748b", doorX: 275, doorY: 295, doorOpen: false},
+                {x: 375, y: 295, w: 160, h: 105, name: "9. KEREM", glow: "#ec4899", doorX: 455, doorY: 295, doorOpen: true}
             ];
 
             rooms.forEach(r => {
@@ -444,23 +448,31 @@ HTML_TEMPLATE = """
                 ctx.font = "bold 9px 'JetBrains Mono'";
                 ctx.fillText(r.name, r.x + 8, r.y + 14);
 
+                // Çalışma masası ve sandalye
                 ctx.fillStyle = "#1e293b";
                 ctx.fillRect(r.x + 50, r.y + 55, 60, 24);
                 ctx.fillStyle = r.glow;
                 ctx.fillRect(r.x + 68, r.y + 60, 24, 12);
 
+                // Saksı
                 ctx.fillStyle = "#78350f";
                 ctx.fillRect(r.x + 15, r.y + 55, 16, 18);
                 ctx.fillStyle = "#4ade80";
                 ctx.font = "12px sans-serif";
                 ctx.fillText("🌿", r.x + 13, r.y + 50);
 
-                ctx.fillStyle = "#4ade80";
-                if (r.y < 130) ctx.fillRect(r.x + 65, r.y + r.h - 3, 30, 6);
-                else if (r.y > 250) ctx.fillRect(r.x + 65, r.y - 3, 30, 6);
-                else ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
+                // Akıllı Kapı Çizimi (Açık/Kapalı Durum)
+                ctx.fillStyle = r.doorOpen ? "#4ade80" : "#ef4444";
+                if (r.y < 130) {
+                    ctx.fillRect(r.x + 65, r.y + r.h - 3, 30, 6);
+                } else if (r.y > 250) {
+                    ctx.fillRect(r.x + 65, r.y - 3, 30, 6);
+                } else {
+                    ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
+                }
             });
 
+            // CEO Kontrol Merkezi
             ctx.fillStyle = "rgba(2, 132, 199, 0.2)";
             ctx.fillRect(580, 135, 485, 30);
             ctx.strokeStyle = "#38bdf8";
@@ -470,6 +482,7 @@ HTML_TEMPLATE = """
             ctx.font = "bold 10px 'JetBrains Mono'";
             ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 153);
 
+            // Mutfak & Kahve Alanı
             ctx.fillStyle = "rgba(120, 53, 15, 0.35)";
             ctx.fillRect(580, 15, 485, 110);
             ctx.strokeStyle = "#d97706";
@@ -477,8 +490,13 @@ HTML_TEMPLATE = """
             ctx.strokeRect(580, 15, 485, 110);
             ctx.fillStyle = "#fde68a";
             ctx.font = "bold 10px 'JetBrains Mono'";
-            ctx.fillText("☕ MUTFAK & KAHVE ALANI", 595, 30);
+            ctx.fillText("☕ MUTFAK & KAHVE MOLA ALANI", 595, 30);
+            ctx.fillStyle = "#451a03";
+            ctx.fillRect(720, 55, 100, 40);
+            ctx.fillStyle = "#fbbf24";
+            ctx.fillText("🍩 Atıştırmalık & Kahve Makinesi", 730, 80);
 
+            // Otonom Proje Onay Odası
             ctx.fillStyle = "rgba(109, 40, 217, 0.3)";
             ctx.fillRect(580, 175, 485, 250);
             ctx.strokeStyle = "#8b5cf6";
@@ -487,9 +505,25 @@ HTML_TEMPLATE = """
             ctx.fillStyle = "#e9d5ff";
             ctx.font = "bold 10px 'JetBrains Mono'";
             ctx.fillText("🤝 OTONOM PROJE ONAY ODASI", 600, 195);
+            ctx.fillStyle = "#3b0764";
+            ctx.fillRect(740, 270, 160, 60);
 
+            // Ayak İzlerini Çiz
+            ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
+            footprintList.forEach(fp => {
+                ctx.fillRect(fp.x, fp.y, 4, 4);
+            });
+
+            // Ajanları ve Hareketlerini Çiz
             for (let name in agentsData) {
                 let ag = agentsData[name];
+                
+                // Ayak izi bırakma mantığı
+                if (Math.random() < 0.3) {
+                    footprintList.push({x: ag.x + 10, y: ag.y + 10});
+                    if (footprintList.length > 50) footprintList.shift();
+                }
+
                 ctx.fillStyle = ag.color;
                 ctx.fillRect(ag.x, ag.y, 24, 24);
                 ctx.strokeStyle = "#ffffff";
@@ -529,7 +563,7 @@ HTML_TEMPLATE = """
                 agentsData = mapped;
                 drawOffice();
             });
-        }, 1500);
+        }, 1200);
 
         function sendDirectMessage() {
             const agentName = document.getElementById('agent-select').value;
@@ -658,10 +692,23 @@ def simulation_tick():
 
     for name, data in employees.items():
         if name == "Mutfak_Chef":
-            x, y, state, speech = 630, 60, "Kahve Hazırlıyor", "Kahveler hazır!"
+            x, y, state, speech = 650, 60, "Kahve Hazırlıyor", "Kahveler taze!"
         else:
-            x, y = data["room_x"] + 45, data["room_y"] + 50
-            state, speech = "Masada Çalışıyor", f"{data['role']} Aktif"
+            # Sağlık/Enerji durumuna göre ajan mola alanına (mutfağa) kahveye gider
+            data["energy"] -= random.randint(2, 6)
+            if data["energy"] < 30:
+                # Mutfak mola koordinatları
+                x = random.randint(600, 750)
+                y = random.randint(40, 90)
+                state = "Mola / Kahve İçiyor"
+                speech = "☕ Kahve molası!"
+                if data["energy"] <= 10:
+                    data["energy"] = 100 # Enerji tazelendi
+            else:
+                x = data["target_x"] + random.randint(-10, 10)
+                y = data["target_y"] + random.randint(-10, 10)
+                state = "Masada Çalışıyor"
+                speech = f"{data['role']} Aktif"
 
         agent_list.append({
             "name": name, "role": data["role"], "level": data.get("level", 1),
@@ -745,7 +792,7 @@ def api_chat():
 
         try:
             if groq_client:
-                code_prompt = f"""Sen kıdemli bir full-stack web geliştiricisisin ve UI/UX uzmansın. Sadece ve sadece saf, eksiksiz bir HTML/CSS/JS içeren modern web sitesi yaz. Tasarım kuralları: Glassmorphism (cam efekti, blur, şeffaf kartlar), neon renk geçişleri, Inter lub Space Grotesk tipografi, tamamen koyu tema ve kusursuz mobil uyumluluk. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"""
+                code_prompt = f"""Sen kıdemli bir full-stack web geliştiricisisin ve UI/UX uzmansın. Sadece ve sadece saf, eksiksiz bir HTML/CSS/JS içeren modern web sitesi yaz. Tasarım kuralları: Glassmorphism (cam efekti, blur, şeffaf kartlar), neon renk geçişleri, Inter veya Space Grotesk tipografi, tamamen koyu tema ve kusursuz mobil uyumluluk. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"""
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
@@ -813,13 +860,13 @@ def api_chat():
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
     if not session.get('logged_in'):
-        return jsonify({"status": "Yetkisiz"}), 403
+        return jsonify({"status": "Yetkisiz"}}, 403
     return jsonify({"status": check_system_uptime()})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
     if not session.get('logged_in'):
-        return jsonify({"summary": "Yetkisiz"}), 403
+        return jsonify({"summary": "Yetkisiz"}}, 403
     return jsonify({"summary": "Supabase bağlantısı aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
@@ -842,7 +889,7 @@ def api_tasks():
 def api_boardroom():
     if not session.get('logged_in'):
         return jsonify({"decision": "Yetkisiz"}), 403
-    return jsonify({"decision": "Yönetim kurulu UI/UX modernizasyon ve toast bildirim protokolünü onayladı."})
+    return jsonify({"decision": "Yönetim kurulu akıllı kapı ve mola döngüsü simülasyonunu onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
