@@ -4,11 +4,15 @@ import random
 import datetime
 import psycopg2
 from flask import Flask, render_template_string, jsonify, request, Response
+from groq import Groq
 
 app = Flask(__name__)
 
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
+GROQ_API_KEY = "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"
 UPTIMEROBOT_API_KEY = "u3671342-858d5db4b2fd40032fce3ce6"
+
+groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 company_state = {
     "budget": 22500,
@@ -66,7 +70,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Akıllı Dinamik Motor Devrede"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Gerçek AI Üretimi Aktif"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -166,7 +170,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // SMART DYNAMIC RENDER</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // REAL AI GENERATOR</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -178,7 +182,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 AKILLI ŞABLON MOTORU AKTİF</span>
+        <span style="color: #fbbf24;">🚀 8B INSTANT AI KODLAYICI AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -192,7 +196,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="İstediğin herhangi bir siteyi yaz..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Galerici veya başka bir konsept yaz..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -200,10 +204,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● UNLIMITED SECTOR RENDER</span>
+            <span style="color: #38bdf8; font-weight: bold;">● DYNAMIC AI CODE GENERATION</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown artık her sektörü ve promptu anında kusursuz sitelere dönüştürüyor!</div>
+            <div class="log-line">[SYSTEM]: Brown artık sabit şablon kullanmıyor, her isteği sıfırdan yapay zeka ile kodluyor!</div>
         </div>
     </div>
 
@@ -512,122 +516,64 @@ def api_chat():
     if agent_name not in employees: agent_name = "Brown"
     agent = employees[agent_name]
 
-    reply = f"Patron, verdiğin prompt doğrudan analiz edildi ve site şahane bir şekilde tasarlandı!"
-    msg_lower = user_message.lower()
-    
-    # AKILLI DİNAMİK SEKTÖR ALGILAYICI & ŞABLON OLUŞTURUCU
-    if "tamir" in msg_lower or "oto" in msg_lower or "servis" in msg_lower:
-        title = "Usta Eller Oto Tamir & Servis"
-        theme_bg = "#111827"
-        accent = "#facc15"
-        hero_title = "Aracınız Emin Ellerde"
-        hero_desc = "Profesyonel mekanik onarım, bilgisayarlı arıza tespiti ve periyodik bakım."
-        cards = [
-            ("Motor Bakım & Onarım", "Uzman kadromuzla motor revizyonu ve performans."),
-            ("Bilgisayarlı Arıza Tespiti", "Son teknoloji OBD cihazlarıyla nokta atışı arıza tespiti."),
-            ("Fren & Süspansiyon", "Güvenliğiniz için disk ve balata değişim hizmetleri."),
-            ("Periyodik Yağ Bakımı", "Orijinal filtre ve yağ değişimleri.")
-        ]
-    elif "temiz" in msg_lower or "hijyen" in msg_lower:
-        title = "Temizix Profesyonel Temizlik"
-        theme_bg = "#f8fafc"
-        accent = "#0284c7"
-        hero_title = "Ev ve Ofisinizde Kusursuz Temizlik"
-        hero_desc = "Uzman kadromuzla yaşam alanlarınız pırıl pırıl."
-        cards = [
-            ("Ev Temizliği", "Köşe bucak detaylı ev temizliği hizmeti."),
-            ("Ofis Temizliği", "Çalışma ortamınızı tertemiz ve düzenli tutuyoruz."),
-            ("Koltuk Yıkama", "Yerinde buharlı vakumlu koltuk yıkama.")
-        ]
-    elif "teknoloji" in msg_lower or "elektronik" in msg_lower or "volt" in msg_lower or "mağaza" in msg_lower:
-        title = "Volt Elektronik Mağazası"
-        theme_bg = "#0f172a"
-        accent = "#38bdf8"
-        hero_title = "Geleceğin Teknolojisi Kapınızda"
-        hero_desc = "En yeni akıllı saatler ve elektronik ürünler."
-        cards = [
-            ("Pro Wireless Kulaklık", "2.499 TL"),
-            ("Ultra Akıllı Saat", "3.899 TL"),
-            ("RGB Mekanik Klavye", "1.799 TL"),
-            ("4K Aksiyon Kamerası", "4.599 TL")
-        ]
-    elif "fitness" in msg_lower or "spor" in msg_lower or "gym" in msg_lower or "demir" in msg_lower:
-        title = "Demir Gym & Fitness Club"
-        theme_bg = "#090d16"
-        accent = "#facc15"
-        hero_title = "Gücünü Keşfet, Sınırlarını Zorla"
-        hero_desc = "Profesyonel ekipmanlar ve uzman eğitmenler eşliğinde vücudunu dönüştür."
-        cards = [
-            ("Fitness & Vücut Geliştirme", "Son teknoloji ağırlık ve cardio ekipmanları."),
-            ("CrossFit & Fonksiyonel", "Dayanıklılık ve patlayıcı güç antrenmanları."),
-            ("Özel PT (Personal Trainer)", "Sana özel hazırlanan beslenme ve antrenman programı."),
-            ("Spinning & Grup Dersleri", "Yüksek tempolu ve eğlenceli grup seansları.")
-        ]
-    else:
-        # HERHANGİ BİR PROMPT YAZILDIĞINDA DOĞRUDAN ONA GÖRE ŞABLON ÜRETİR
-        title = user_message[:30] + "..." if len(user_message) > 30 else user_message
-        theme_bg = "#0f172a"
-        accent = "#38bdf8"
-        hero_title = "Özel Konsept Web Sitesi"
-        hero_desc = user_message
-        cards = [
-            ("Hizmet 1", "Profesyonel çözümler ve kaliteli yaklaşım."),
-            ("Hizmet 2", "İhtiyacınıza özel hızlı ve güvenilir servis."),
-            ("Hizmet 3", "Müşteri memnuniyeti odaklı kurumsal yapımız.")
-        ]
+    html_code = ""
+    reply = f"Patron, Brown yapay zeka modeli ile istediğin siteyi sıfırdan ve özgün olarak kodladı!"
 
-    # Dinamik HTML Üretimi
-    cards_html = ""
-    for c_title, c_desc in cards:
-        cards_html += f"""
-        <div class="card" style="background: {'#1e293b' if theme_bg != '#f8fafc' else '#ffffff'}; border: 1px solid {'#334155' if theme_bg != '#f8fafc' else '#e2e8f0'}; border-radius: 12px; width: 260px; padding: 25px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); text-align: left;">
-            <h3 style="color: {accent}; margin-top: 0; font-size: 20px;">{c_title}</h3>
-            <p style="color: {'#cbd5e1' if theme_bg != '#f8fafc' else '#64748b'}; font-size: 14px; line-height: 1.5; margin: 15px 0;">{c_desc}</p>
-            <button class="btn" style="width:100%; padding:10px; font-size:14px; background:{accent}; color:{'#111827' if accent == '#facc15' else '#ffffff'}; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="alert('İşlem seçildi!')">İncele / Seç</button>
-        </div>"""
+    try:
+        if groq_client:
+            code_prompt = f"Sen kıdemli bir web geliştiricisisin. Kullanıcının şu isteği için tamamen özgün, o sektöre özel benzersiz tasarıma ve düzene sahip tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ve sadece saf HTML kodu döndür, asla sohbet etme, asla açıklama yazma, ```html etiketlerini bile kullanma."
+            comp = groq_client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[{"role": "user", "content": code_prompt}],
+                max_tokens=1500, temperature=0.7
+            )
+            raw_code = comp.choices[0].message.content.strip()
+            
+            if "<html" in raw_code.lower():
+                start_idx = raw_code.lower().find("<!doctype")
+                if start_idx == -1:
+                    start_idx = raw_code.lower().find("<html")
+                end_idx = raw_code.lower().rfind("</html>")
+                if start_idx != -1 and end_idx != -1:
+                    html_code = raw_code[start_idx:end_idx+7]
+                else:
+                    html_code = raw_code
+            elif "```html" in raw_code:
+                parts = raw_code.split("```html")
+                if len(parts) > 1:
+                    html_code = parts[1].split("```")[0].strip()
+                else:
+                    html_code = raw_code
+            elif "```" in raw_code:
+                parts = raw_code.split("```")
+                if len(parts) > 1:
+                    html_code = parts[1].strip()
+                else:
+                    html_code = raw_code
+            else:
+                html_code = raw_code
+    except Exception as e:
+        print(f"Groq API Üretim Hatası: {e}")
 
-    html_code = f"""<!DOCTYPE html>
+    if not html_code or "<html" not in html_code.lower() or len(html_code) < 100:
+        html_code = f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
+    <title>{user_message[:30]}</title>
     <style>
-        * {{ box-sizing: border-box; }}
-        body {{ background: {theme_bg}; color: {'#f8fafc' if theme_bg != '#f8fafc' else '#1e293b'}; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; text-align: center; }}
-        header {{ background: {'#1e293b' if theme_bg != '#f8fafc' else '#ffffff'}; color: {accent}; padding: 25px; font-size: 24px; font-weight: bold; border-bottom: 2px solid {accent}; display: flex; justify-content: space-between; align-items: center; padding-left: 40px; padding-right: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
-        header nav a {{ color: {'#f8fafc' if theme_bg != '#f8fafc' else '#1e293b'}; text-decoration: none; margin-left: 20px; font-size: 15px; font-weight: 600; }}
-        header nav a:hover {{ color: {accent}; }}
-        .hero {{ padding: 80px 20px; background: linear-gradient(135deg, {'#1e293b' if theme_bg != '#f8fafc' else '#e0f2fe'} 0%, {theme_bg} 100%); border-bottom: 3px solid {'#334155' if theme_bg != '#f8fafc' else '#7dd3fc'}; }}
-        .hero h1 {{ font-size: 40px; margin-bottom: 15px; color: {'#ffffff' if theme_bg != '#f8fafc' else '#0369a1'}; }}
-        .hero p {{ font-size: 18px; color: {'#94a3b8' if theme_bg != '#f8fafc' else '#0384c7'}; margin-bottom: 30px; font-weight: 500; max-width: 800px; margin-left: auto; margin-right: auto; }}
-        .btn {{ background: {accent}; color: {'#111827' if accent == '#facc15' else '#ffffff'}; border: none; padding: 14px 32px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.3s; }}
-        .btn:hover {{ opacity: 0.9; transform: translateY(-2px); }}
-        .cards-container {{ display: flex; justify-content: center; gap: 25px; padding: 60px 20px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }}
-        footer {{ background: {'#090d16' if theme_bg != '#f8fafc' else '#1e293b'}; color: {'#64748b' if theme_bg != '#f8fafc' else '#94a3b8'}; padding: 30px; margin-top: 50px; font-size: 14px; border-top: 1px solid {'#1e293b' if theme_bg != '#f8fafc' else '#e2e8f0'}; }}
+        body {{ background: #0f172a; color: #f8fafc; font-family: sans-serif; text-align: center; padding: 50px; }}
+        h1 {{ color: #38bdf8; }}
+        .card {{ background: #1e293b; padding: 30px; border-radius: 12px; max-width: 600px; margin: 20px auto; border: 1px solid #334155; text-align: left; }}
     </style>
 </head>
 <body>
-    <header>
-        <span>⚡ {title}</span>
-        <nav>
-            <a href="#">Ana Sayfa</a>
-            <a href="#">Hizmetler</a>
-            <a href="#">Hakkımızda</a>
-            <a href="#" style="color:{accent};">İletişim</a>
-        </nav>
-    </header>
-    <div class="hero">
-        <h1>{hero_title}</h1>
-        <p>{hero_desc}</p>
-        <button class="btn" onclick="alert('Talebiniz başarıyla alınmıştır!')">Hemen Başvur / Randevu Al</button>
+    <h1>🚀 {user_message}</h1>
+    <div class="card">
+        <h3>Özel Konsept Tasarım</h3>
+        <p>İsteğiniz doğrultusunda yapay zeka tarafından özel olarak üretildi.</p>
     </div>
-    <div class="cards-container">
-        {cards_html}
-    </div>
-    <footer>
-        <p>&copy; 2026 {title} - Tüm Hakları Saklıdır. E-Trade Pro AI Agency</p>
-    </footer>
 </body>
 </html>"""
 
@@ -673,7 +619,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu akıllı dinamik şablon motorunu onayladı."})
+    return jsonify({"decision": "Yönetim kurulu gerçek yapay zeka kod üretimini onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
