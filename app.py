@@ -41,6 +41,18 @@ def init_db():
                 target_y FLOAT DEFAULT 70,
                 plant_health INT DEFAULT 95
             );
+            
+            -- Eski tablolarda x, y kolonları yoksa otomatik ekle (Migration)
+            ALTER TABLE agents_state ADD COLUMN IF NOT EXISTS x FLOAT DEFAULT 70;
+            ALTER TABLE agents_state ADD COLUMN IF NOT EXISTS y FLOAT DEFAULT 70;
+            ALTER TABLE agents_state ADD COLUMN IF NOT EXISTS target_x FLOAT DEFAULT 70;
+            ALTER TABLE agents_state ADD COLUMN IF NOT EXISTS target_y FLOAT DEFAULT 70;
+            ALTER TABLE agents_state ADD COLUMN IF NOT EXISTS hunger INT DEFAULT 85;
+            ALTER TABLE agents_state ADD COLUMN IF NOT EXISTS thirst INT DEFAULT 90;
+            ALTER TABLE agents_state ADD COLUMN IF NOT EXISTS caffeine INT DEFAULT 80;
+            ALTER TABLE agents_state ADD COLUMN IF NOT EXISTS energy INT DEFAULT 100;
+            ALTER TABLE agents_state ADD COLUMN IF NOT EXISTS plant_health INT DEFAULT 95;
+
             CREATE TABLE IF NOT EXISTS agent_logs (
                 id SERIAL PRIMARY KEY,
                 agent_name TEXT,
@@ -69,7 +81,8 @@ def init_db():
             cur.execute("""
                 INSERT INTO agents_state (name, role, x, y, target_x, target_y) 
                 VALUES (%s, %s, %s, %s, %s, %s) 
-                ON CONFLICT (name) DO NOTHING;
+                ON CONFLICT (name) DO UPDATE 
+                SET role = EXCLUDED.role;
             """, (name, role, x, y, x, y))
         
         conn.commit()
@@ -245,7 +258,7 @@ HTML_TEMPLATE = """
         const terminalLogs = document.getElementById('terminal-logs');
 
         let agentsData = [];
-        let footsteps = []; // Ayak izi efektleri için dizi
+        let footsteps = [];
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
@@ -269,13 +282,13 @@ HTML_TEMPLATE = """
             ctx.fillStyle = "#0b0f19";
             ctx.fillRect(0, 0, w, h);
 
-            // Geniş Koridor Ağı (Gerçekçi Koridorlar)
+            // Geniş Koridor Ağı
             ctx.fillStyle = "#111827";
-            ctx.fillRect(0, 140, 520, 45); // Yatay Koridor 1
-            ctx.fillRect(0, 310, 520, 45); // Yatay Koridor 2
-            ctx.fillRect(500, 0, 45, h);   // Dikey Ana Koridor
+            ctx.fillRect(0, 140, 520, 45); 
+            ctx.fillRect(0, 310, 520, 45); 
+            ctx.fillRect(500, 0, 45, h);   
 
-            // 9 Ajan Odası (Sol Blok - Kutular içinde eşyalı gerçek odalar)
+            // 9 Ajan Odası (Sol Blok)
             const rooms = [
                 {x: 20, y: 20, name: "1. MARCO", color: "#3b82f6"},
                 {x: 185, y: 20, name: "2. TALİSCA", color: "#ef4444"},
@@ -295,12 +308,10 @@ HTML_TEMPLATE = """
                 ctx.lineWidth = 2;
                 ctx.strokeRect(r.x, r.y, 145, 105);
 
-                // Oda Başlığı
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 9px 'Courier New'";
                 ctx.fillText(r.name, r.x + 8, r.y + 14);
 
-                // Çalışma Masası
                 ctx.fillStyle = "#1e293b";
                 ctx.fillRect(r.x + 45, r.y + 45, 55, 20);
             });
@@ -312,7 +323,6 @@ HTML_TEMPLATE = """
             ctx.fillStyle = "#fde68a"; ctx.font = "bold 10px 'Courier New'";
             ctx.fillText("☕ MUTFAK & MOLA ALANI (Açlık & Kafein İstasyonu)", 590, 38);
             
-            // Mutfak Masası & Dolaplar
             ctx.fillStyle = "#451a03"; ctx.fillRect(590, 50, 180, 25);
             ctx.fillStyle = "#292524"; ctx.fillRect(680, 85, 160, 45);
 
@@ -328,7 +338,6 @@ HTML_TEMPLATE = """
             ctx.strokeStyle = "#8b5cf6"; ctx.strokeRect(570, 340, 480, 160);
             ctx.fillStyle = "#e9d5ff"; ctx.fillText("🤝 OTONOM PROJE ONAY ODASI & SUNUCU MERKEZİ", 590, 360);
 
-            // Sunucu Kabinleri (Server Racks)
             ctx.fillStyle = "#1e1b4b"; ctx.fillRect(590, 380, 110, 105);
             ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(590, 380, 110, 105);
             for(let sy=395; sy<470; sy+=20) {
@@ -337,7 +346,7 @@ HTML_TEMPLATE = """
                 ctx.fillStyle = "#ef4444"; ctx.fillRect(640, sy, 8, 8);
             }
 
-            // Ayak İzi Efektlerini Çiz
+            // Ayak İzi Efektleri
             footprints.forEach(fp => {
                 ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
                 ctx.beginPath();
@@ -345,31 +354,26 @@ HTML_TEMPLATE = """
                 ctx.fill();
             });
 
-            // Ajanları ve Üstlerindeki Şarj/İhtiyaç Barlarını Çiz
+            // Ajanları ve İhtiyaç Barlarını Çiz
             agentsData.forEach(ag => {
-                // Ayak izi ekle
                 if (Math.hypot(ag.x - ag.target_x, ag.y - ag.target_y) > 2) {
                     footprints.push({x: ag.x, y: ag.y + 10});
                     if (footprints.length > 50) footprints.shift();
                 }
 
-                // Ajan Robot Figürü
                 ctx.fillStyle = ag.color;
                 ctx.fillRect(ag.x - 12, ag.y - 12, 24, 24);
                 ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1;
                 ctx.strokeRect(ag.x - 12, ag.y - 12, 24, 24);
 
-                // Gözler & Anten
                 ctx.fillStyle = "#38bdf8"; ctx.fillRect(ag.x - 1, ag.y - 18, 2, 6);
                 ctx.fillStyle = "#ffffff";
                 ctx.fillRect(ag.x - 8, ag.y - 5, 4, 4);
                 ctx.fillRect(ag.x + 4, ag.y - 5, 4, 4);
 
-                // Ajan İsim & Rolü
                 ctx.fillStyle = "#38bdf8"; ctx.font = "bold 8px 'Courier New'";
                 ctx.fillText(ag.name, ag.x - 15, ag.y - 22);
 
-                // ŞARJ İŞARETLİ ÜST İHTİYAÇ BARLARI (Açlık, Susuzluk, Kafein, Enerji)
                 let bars = [
                     {val: ag.hunger, col: "#f59e0b", offset: -26},
                     {val: ag.thirst, col: "#38bdf8", offset: -18},
@@ -383,7 +387,6 @@ HTML_TEMPLATE = """
                     ctx.fillRect(ag.x + 16, ag.y + b.offset, (b.val / 100) * 35, 6);
                 });
 
-                // Konuşma Balonu
                 let bubbleText = ag.speech || "Çalışıyor";
                 ctx.fillStyle = "#f8fafc";
                 ctx.fillRect(ag.x - 20, ag.y + 16, ctx.measureText(bubbleText).width + 10, 14);
@@ -509,7 +512,6 @@ def simulation_tick():
                 speech = "Masada Çalışıyor"
                 target_x, target_y = meta["home_x"], meta["home_y"]
 
-                # Otonom İhtiyaç Eşikleri (Açlık<%50, Susuzluk<%65, Kafein<%55, Yorgunluk<%30)
                 if h < 50:
                     speech = "Acıktım! Mutfağa gidiyorum..."
                     target_x, target_y = 650, 90
@@ -523,7 +525,6 @@ def simulation_tick():
                     speech = "Yorgunluk %95! Dinleniyorum..."
                     target_x, target_y = 750, 90
 
-                # Hedefe doğru hareket simülasyonu (Yumuşak yürüyüş)
                 new_x = x + (target_x - x) * 0.2
                 new_y = y + (target_y - y) * 0.2
 
@@ -586,7 +587,6 @@ def api_chat():
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
-        # Kullanıcı mesaj atınca ajan hemen masasına (home koordinatına) koşar!
         home_coords = employees_meta.get(agent_name, {"home_x": 70, "home_y": 70})
         cur.execute("""
             UPDATE agents_state 
@@ -654,7 +654,7 @@ def api_uptime():
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
-    return jsonify({"summary": "Supabase veritabanı, otonom hareket ve ayak izi simülasyonu aktif."})
+    return jsonify({"summary": "Supabase veritabanı migration ve otonom hareket simülasyonu aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
@@ -672,7 +672,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu canlı yürüyen ofis simülasyonunu onayladı."})
+    return jsonify({"decision": "Yönetim kurulu veritabanı güncellemesini ve canlı yürüyen ofis simülasyonunu onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
