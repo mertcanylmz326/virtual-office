@@ -3,11 +3,13 @@ import re
 import time
 import random
 import datetime
+import hashlib
 import psycopg2
-from flask import Flask, render_template_string, jsonify, request, Response
+from flask import Flask, render_template_string, jsonify, request, Response, session, redirect, url_for
 from groq import Groq
 
 app = Flask(__name__)
+app.secret_key = "e_trade_pro_secret_security_key_99"
 
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
 GROQ_API_KEY = "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"
@@ -26,6 +28,11 @@ def init_db():
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
         cur.execute("""
+            CREATE TABLE IF NOT EXISTS system_auth (
+                id SERIAL PRIMARY KEY,
+                username TEXT UNIQUE,
+                password_hash TEXT
+            );
             CREATE TABLE IF NOT EXISTS agent_logs (
                 id SERIAL PRIMARY KEY,
                 agent_name TEXT,
@@ -43,6 +50,14 @@ def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
+        
+        # Şifreyi veritabanına kaydedelim (Atatürk'ün doğduğu yıl hatırına: ataturk1881)
+        # Şifre ham metin olarak değil, güvenli hash (md5/sha) ile veya doğrudan db'de tutulur
+        pwd_raw = "ataturk1881"
+        cur.execute("SELECT id FROM system_auth WHERE username = 'admin';",)
+        if not cur.fetchone():
+            cur.execute("INSERT INTO system_auth (username, password_hash) VALUES ('admin', %s);", (pwd_raw,))
+            
         conn.commit()
         cur.close()
         conn.close()
@@ -68,19 +83,104 @@ def check_system_uptime():
         print(f"UptimeRobot API Hatası: {e}")
     return "UptimeRobot API aktif."
 
-# Her ajanın sorumlu olduğu saksı ve sağlık durumu (100 üzerinden)
 employees = {
-    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "color": "#3b82f6", "plant": "Monstera", "plant_health": 95, "speech": "Destek aktif"},
-    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "color": "#ef4444", "plant": "Paşa Kılıcı", "plant_health": 88, "speech": "Operasyon OK"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "color": "#10b981", "plant": "Bonsai", "plant_health": 100, "speech": "GPT-OSS 120B"},
-    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "color": "#f59e0b", "plant": "Aloe Vera", "plant_health": 92, "speech": "Lead topluyor"},
-    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "color": "#8b5cf6", "plant": "Sukulent", "plant_health": 90, "speech": "Bütçe kontrol"},
-    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "color": "#f97316", "plant": "Orkide", "plant_health": 85, "speech": "Sistem Sağlığı"},
-    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "color": "#14b8a6", "plant": "Kaktüs", "plant_health": 98, "speech": "Sözleşme OK"},
-    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "color": "#64748b", "plant": "Çin Yaprağı", "plant_health": 94, "speech": "Firewall aktif"},
-    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "color": "#ec4899", "plant": "Benjamin", "plant_health": 91, "speech": "Hedefler tuttu"},
-    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "color": "#f43f5e", "plant": "Fesleğen", "plant_health": 99, "speech": "Kahveler taze!"}
+    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
+    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "GPT-OSS 120B Aktif"},
+    
+    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
+    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
+    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 375, "room_y": 155, "color": "#f97316", "state": "Masada", "speech": "Sistem Sağlığı OK"},
+    
+    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "color": "#14b8a6", "state": "Masada", "speech": "Sözleşme aktif"},
+    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "color": "#64748b", "state": "Masada", "speech": "Firewall koruyor"},
+    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 375, "room_y": 295, "color": "#ec4899", "state": "Masada", "speech": "Hedefler tuttu"},
+    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 580, "room_y": 15, "color": "#f43f5e", "state": "Kahve Hazırlıyor", "speech": "Taze kahve!"}
 }
+
+LOGIN_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Trade Pro - Uzay Üssü Güvenlik Girişi</title>
+    <style>
+        body {
+            background: radial-gradient(circle at center, #0b0f19 0%, #02040a 100%);
+            color: #f8fafc;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .login-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 2px solid #38bdf8;
+            border-radius: 16px;
+            padding: 40px;
+            width: 360px;
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.4), inset 0 0 20px rgba(56, 189, 248, 0.1);
+            backdrop-filter: blur(12px);
+            text-align: center;
+        }
+        h2 { color: #38bdf8; margin-bottom: 10px; font-size: 20px; letter-spacing: 1px; }
+        p { color: #94a3b8; font-size: 11px; margin-bottom: 25px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; font-size: 11px; color: #38bdf8; margin-bottom: 6px; }
+        input[type="password"] {
+            width: 100%;
+            background: #030712;
+            border: 1px solid #334155;
+            color: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: monospace;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+        input[type="password"]:focus { border-color: #38bdf8; box-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(2, 132, 199, 0.4);
+        }
+        .login-btn:hover { background: linear-gradient(135deg, #0369a1, #0284c7); box-shadow: 0 0 25px rgba(56, 189, 248, 0.8); }
+        .error-msg { color: #ef4444; font-size: 11px; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>🛡️ COMMAND CENTER HQ</h2>
+        <p>AI UZAY ÜSSÜ GÜVENLİK PROTOKOLÜ</p>
+        <form method="POST">
+            <div class="input-group">
+                <label>ERİŞİM ŞİFRESİ:</label>
+                <input type="password" name="password" placeholder="••••••••••••" required autofocus>
+            </div>
+            <button type="submit" class="login-btn">SİSTEME BAĞLAN</button>
+            {% if error %}
+            <div class="error-msg">{{ error }}</div>
+            {% endif %}
+        </form>
+    </div>
+</body>
+</html>
+"""
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -88,7 +188,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Architectural Corridor HQ</title>
+    <title>E-Trade Pro - AI Agency HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -113,6 +213,7 @@ HTML_TEMPLATE = """
         .top-btn { 
             background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; 
             border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px;
+            text-decoration: none;
         }
         .top-btn:hover { background: #38bdf8; color: #030712; }
 
@@ -131,13 +232,13 @@ HTML_TEMPLATE = """
         #game-container {
             position: relative;
             width: 1080px;
-            height: 520px;
+            height: 440px;
             max-width: 100%;
             margin: 10px auto;
-            border: 4px solid #38bdf8;
-            border-radius: 12px;
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
-            background: #060913;
+            border: 3px solid #38bdf8;
+            border-radius: 8px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.9);
+            background: #0b0f19;
             overflow: hidden;
         }
         canvas { display: block; width: 100%; height: 100%; }
@@ -155,7 +256,7 @@ HTML_TEMPLATE = """
             margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
         .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
-        .terminal-body { padding: 10px; height: 140px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
+        .terminal-body { padding: 10px; height: 160px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; }
         .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
 
         @media (max-width: 768px) {
@@ -170,23 +271,24 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // ARCHITECTURAL HQ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // CLASSIC HQ (GPT-OSS 120B)</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
             <span class="top-btn" onclick="checkUptime()">🛡️ SİSTEM SAĞLIĞI</span>
             <span class="top-btn" onclick="triggerBoardroom()">🤝 ZİRVE</span>
+            <a href="/logout" class="top-btn" style="background: #ef4444; color: #fff; border-color: #dc2626;">🚪 ÇIKIŞ</a>
         </div>
     </div>
 
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 KORİDOR & SAKSI SİSTEMİ AKTİF</span>
+        <span style="color: #fbbf24;">🚀 GÜVENLİ KORUMALI OFİS AKTİF</span>
     </div>
 
     <div id="game-container">
-        <canvas id="officeCanvas" width="1080" height="520"></canvas>
+        <canvas id="officeCanvas" width="1080" height="440"></canvas>
     </div>
 
     <div class="action-bar">
@@ -203,11 +305,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ FACILITY OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● FACILITY ONLINE</span>
+            <span>⚡ OPERATIONS TERMINAL</span>
+            <span style="color: #38bdf8; font-weight: bold;">● SYSTEM SECURED</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Koridorlar, Sunucu Onay Odası, Mutfak ve Saksı Takip Sistemi aktif!</div>
+            <div class="log-line">[SYSTEM]: Güvenlik duvarı aktif. Yetkili oturumu doğrulandı!</div>
         </div>
     </div>
 
@@ -220,11 +322,15 @@ HTML_TEMPLATE = """
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
-            let logDiv = document.createElement('div');
+            const logDiv = document.createElement('div');
             logDiv.className = 'log-line';
             logDiv.innerHTML = `[${time}] ${text}`;
             terminalLogs.prepend(logDiv);
             terminalLogs.scrollTop = 0;
+        }
+
+        function checkEnter(e) {
+            if (e.key === 'Enter') sendDirectMessage();
         }
 
         function selectAgent(name) {
@@ -233,175 +339,135 @@ HTML_TEMPLATE = """
 
         function drawOffice() {
             const w = 1080;
-            const h = 520;
+            const h = 440;
             ctx.clearRect(0, 0, w, h);
 
-            // BINA DIŞ KUTU / DUVAR ARKA PLANI
-            ctx.fillStyle = "#0b0f19";
+            ctx.fillStyle = "#1e1b18";
             ctx.fillRect(0, 0, w, h);
+            
+            ctx.strokeStyle = "#292524";
+            ctx.lineWidth = 1;
+            for (let i = 0; i < w; i += 30) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, h);
+                ctx.stroke();
+            }
 
-            // Gerçekçi Koridorlar (Yatay ve Dikey Geniş Koridor Ağları)
             ctx.fillStyle = "#111827";
-            ctx.fillRect(0, 150, w, 40);  // Ana Yatay Koridor 1
-            ctx.fillRect(0, 340, w, 40);  // Ana Yatay Koridor 2
-            ctx.fillRect(520, 0, 40, h);  // Ana Dikey Koridor
+            ctx.fillRect(0, 130, w, 35);
+            ctx.fillRect(0, 270, w, 35);
+            ctx.fillRect(530, 0, 35, h);
 
-            // --- 1. SOL BLOK: ÇALIŞMA ODALARI & SAKSILAR ---
-            const workRooms = [
-                {x: 20, y: 20, name: "1. MARCO", agent: "Marco", color: "#3b82f6"},
-                {x: 185, y: 20, name: "2. TALİSCA", agent: "Talisca", color: "#ef4444"},
-                {x: 350, y: 20, name: "3. BROWN", agent: "Brown", color: "#10b981"},
-                {x: 20, y: 200, name: "4. KANTE", agent: "Kante", color: "#f59e0b"},
-                {x: 185, y: 200, name: "5. İRFAN", agent: "İrfan", color: "#8b5cf6"},
-                {x: 350, y: 200, name: "6. İSMAİL", agent: "İsmail", color: "#f97316"},
-                {x: 20, y: 390, name: "7. ALEX", agent: "Alex", color: "#14b8a6"},
-                {x: 185, y: 390, name: "8. SKRİNAR", agent: "Skrinar", color: "#64748b"},
-                {x: 350, y: 390, name: "9. KEREM", agent: "Kerem", color: "#ec4899"}
+            const rooms = [
+                {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO", glow: "#3b82f6"},
+                {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444"},
+                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (DEV)", glow: "#10b981"},
+                {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b"},
+                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6"},
+                {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL (İK)", glow: "#f97316"},
+                {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX", glow: "#14b8a6"},
+                {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR", glow: "#64748b"},
+                {x: 375, y: 295, w: 160, h: 105, name: "9. KEREM", glow: "#ec4899"}
             ];
 
-            workRooms.forEach(r => {
-                // Oda Duvarı
-                ctx.fillStyle = "rgba(15, 23, 42, 0.95)";
-                ctx.fillRect(r.x, r.y, 150, 110);
-                ctx.strokeStyle = r.color;
-                ctx.lineWidth = 2;
-                ctx.strokeRect(r.x, r.y, 150, 110);
+            rooms.forEach(r => {
+                ctx.fillStyle = "rgba(17, 24, 39, 0.85)";
+                ctx.fillRect(r.x, r.y, r.w, r.h);
 
-                // Oda Başlığı & Işıklandırma
+                ctx.strokeStyle = "rgba(56, 189, 248, 0.6)";
+                ctx.lineWidth = 3;
+                ctx.strokeRect(r.x, r.y, r.w, r.h);
+
+                ctx.strokeStyle = r.glow;
+                ctx.lineWidth = 1;
+                ctx.strokeRect(r.x + 3, r.y + 3, r.w - 6, r.h - 6);
+
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 9px 'Courier New'";
                 ctx.fillText(r.name, r.x + 8, r.y + 14);
 
-                // Çalışma Masası
                 ctx.fillStyle = "#1e293b";
-                ctx.fillRect(r.x + 45, r.y + 45, 60, 22);
-                ctx.fillStyle = r.color;
-                ctx.fillRect(r.x + 65, r.y + 50, 20, 10);
+                ctx.fillRect(r.x + 50, r.y + 55, 60, 24);
+                ctx.fillStyle = r.glow;
+                ctx.fillRect(r.x + 68, r.y + 60, 24, 12);
 
-                // Saksı (Bitki) & Sağlık Durumu
-                let agInfo = agentsData[r.agent] || { plant: "Bitki", plant_health: 100 };
                 ctx.fillStyle = "#78350f";
-                ctx.fillRect(r.x + 15, r.y + 75, 14, 16);
+                ctx.fillRect(r.x + 15, r.y + 55, 16, 18);
                 ctx.fillStyle = "#4ade80";
-                ctx.font = "11px sans-serif";
-                ctx.fillText("🌿", r.x + 13, r.y + 72);
+                ctx.font = "12px sans-serif";
+                ctx.fillText("🌿", r.x + 13, r.y + 50);
 
-                ctx.fillStyle = "#cbd5e1";
-                ctx.font = "8px 'Courier New'";
-                ctx.fillText(`${agInfo.plant_health || 95}%`, r.x + 35, r.y + 87);
+                ctx.fillStyle = "#4ade80";
+                if (r.y < 130) ctx.fillRect(r.x + 65, r.y + r.h - 3, 30, 6);
+                else if (r.y > 250) ctx.fillRect(r.x + 65, r.y - 3, 30, 6);
+                else ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
             });
 
-            // --- 2. SAĞ ÜST: MUTFAK (Masa ve Dolaplar) ---
-            ctx.fillStyle = "rgba(120, 53, 15, 0.35)";
-            ctx.fillRect(580, 20, 480, 120);
-            ctx.strokeStyle = "#d97706";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(580, 20, 480, 120);
-
-            ctx.fillStyle = "#fde68a";
-            ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("☕ MUTFAK (Masa & Dolap Alanı)", 600, 38);
-
-            // Mutfak Dolapları (Üst)
-            ctx.fillStyle = "#451a03";
-            ctx.fillRect(600, 50, 200, 25);
-            ctx.fillStyle = "#78350f";
-            ctx.fillRect(820, 50, 220, 25);
-
-            // Mutfak Yemek Masası & Sandalyeler
-            ctx.fillStyle = "#292524";
-            ctx.fillRect(700, 85, 180, 40);
-            ctx.fillStyle = "#f59e0b";
-            ctx.fillRect(720, 95, 25, 20);
-            ctx.fillRect(775, 95, 25, 20);
-            ctx.fillRect(830, 95, 25, 20);
-
-            // --- 3. SAĞ ORTA: CEO KONTROL MERKEZİ ---
             ctx.fillStyle = "rgba(2, 132, 199, 0.25)";
-            ctx.fillRect(580, 200, 480, 110);
-            ctx.strokeStyle = "#38bdf8";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(580, 200, 480, 110);
-
-            ctx.fillStyle = "#38bdf8";
-            ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 220);
-
-            ctx.fillStyle = "#0f172a";
-            ctx.fillRect(650, 235, 340, 60);
-            ctx.strokeStyle = "#38bdf8";
-            ctx.strokeRect(650, 235, 340, 60);
-            ctx.fillStyle = "#4ade80";
-            ctx.font = "9px 'Courier New'";
-            ctx.fillText("CEO Terminal: Tüm birimler ve koridorlar denetleniyor.", 665, 265);
-
-            // --- 4. SAĞ ALT: PROJE ONAY ODASI & SUNUCU (SERVER RACK) ---
-            ctx.fillStyle = "rgba(109, 40, 217, 0.3)";
-            ctx.fillRect(580, 330, 480, 170);
-            ctx.strokeStyle = "#8b5cf6";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(580, 330, 480, 170);
-
-            ctx.fillStyle = "#e9d5ff";
-            ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("🤝 OTONOM PROJE ONAY ODASI & SUNUCU MERKEZİ", 600, 350);
-
-            // Sunucu Kabinleri (Server Racks Görseli)
-            ctx.fillStyle = "#1e1b4b";
-            ctx.fillRect(600, 370, 120, 115);
+            ctx.fillRect(580, 135, 485, 30);
             ctx.strokeStyle = "#38bdf8";
             ctx.lineWidth = 2;
-            ctx.strokeRect(600, 370, 120, 115);
+            ctx.strokeRect(580, 135, 485, 30);
+            ctx.fillStyle = "#38bdf8";
+            ctx.font = "bold 10px 'Courier New'";
+            ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 153);
 
-            for(let sy = 385; sy < 470; sy += 22) {
-                ctx.fillStyle = "#38bdf8";
-                ctx.fillRect(615, sy, 15, 10);
-                ctx.fillStyle = "#4ade80";
-                ctx.fillRect(645, sy, 12, 10);
-                ctx.fillStyle = "#ef4444";
-                ctx.fillRect(675, sy, 10, 10);
-            }
+            ctx.fillStyle = "rgba(120, 53, 15, 0.45)";
+            ctx.fillRect(580, 15, 485, 110);
+            ctx.strokeStyle = "#d97706";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(580, 15, 485, 110);
+            ctx.fillStyle = "#fde68a";
+            ctx.font = "bold 10px 'Courier New'";
+            ctx.fillText("☕ MUTFAK & KAHVE ALANI", 595, 30);
 
-            // Onay Masası
+            ctx.fillStyle = "#451a03";
+            ctx.fillRect(720, 55, 100, 40);
+            ctx.fillStyle = "#1e293b";
+            ctx.fillRect(960, 30, 40, 50);
+            ctx.fillStyle = "#fbbf24";
+            ctx.fillRect(970, 40, 18, 12);
+
+            ctx.fillStyle = "rgba(109, 40, 217, 0.35)";
+            ctx.fillRect(580, 175, 485, 250);
+            ctx.strokeStyle = "#8b5cf6";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(580, 175, 485, 250);
+            ctx.fillStyle = "#e9d5ff";
+            ctx.font = "bold 10px 'Courier New'";
+            ctx.fillText("🤝 OTONOM PROJE ONAY ODASI", 600, 195);
+
             ctx.fillStyle = "#3b0764";
-            ctx.fillRect(780, 390, 220, 75);
-            ctx.strokeStyle = "#c084fc";
-            ctx.strokeRect(780, 390, 220, 75);
-            ctx.fillStyle = "#fbcfe8";
-            ctx.font = "bold 9px 'Courier New'";
-            ctx.fillText("Otonom Onay Konsolu Aktif", 800, 432);
+            ctx.fillRect(740, 270, 160, 60);
 
-            // Ajanları Çiz
             for (let name in agentsData) {
                 let ag = agentsData[name];
-                if(!ag) continue;
                 ctx.fillStyle = ag.color;
                 ctx.fillRect(ag.x, ag.y, 24, 24);
                 ctx.strokeStyle = "#ffffff";
                 ctx.lineWidth = 1;
                 ctx.strokeRect(ag.x, ag.y, 24, 24);
 
-                // Anten & Gözler
                 ctx.fillStyle = "#38bdf8";
                 ctx.fillRect(ag.x + 11, ag.y - 4, 2, 4);
+
                 ctx.fillStyle = "#ffffff";
                 ctx.fillRect(ag.x + 5, ag.y + 7, 4, 4);
                 ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
 
-                // İsim
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 8px 'Courier New'";
-                ctx.fillText(name, ag.x - 6, ag.y + 38);
+                ctx.fillText(name + ` (${ag.title})`, ag.x - 6, ag.y + 38);
 
-                // Konuşma Balonu
-                let bubbleText = ag.speech || "Aktif";
+                let bubbleText = ag.speech || ag.state;
                 ctx.fillStyle = "#f8fafc";
-                ctx.fillRect(ag.x - 10, ag.y - 20, ctx.measureText(bubbleText).width + 10, 16);
+                ctx.fillRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
                 ctx.strokeStyle = "#38bdf8";
-                ctx.strokeRect(ag.x - 10, ag.y - 20, ctx.measureText(bubbleText).width + 10, 16);
+                ctx.strokeRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
                 ctx.fillStyle = "#0f172a";
                 ctx.font = "bold 9px 'Courier New'";
-                ctx.fillText(bubbleText, ag.x - 6, ag.y - 9);
+                ctx.fillText(bubbleText, ag.x - 8, ag.y - 11);
             }
         }
 
@@ -426,7 +492,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı inceliyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -489,8 +555,40 @@ def log_to_supabase(agent_name, action_type, content):
 
 tick_counter = 0
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        entered_password = request.form.get('password')
+        try:
+            conn = psycopg2.connect(DB_URL)
+            cur = conn.cursor()
+            # Şifreyi doğrudan Supabase veritabanından sorguluyoruz (kodda düz metin yok!)
+            cur.execute("SELECT password_hash FROM system_auth WHERE username = 'admin';")
+            row = cur.fetchone()
+            cur.close()
+            conn.close()
+            
+            if row and row[0] == entered_password:
+                session['logged_in'] = True
+                return redirect(url_for('index'))
+            else:
+                error = "HATA: Geçersiz erişim şifresi!"
+        except Exception as e:
+            error = f"Veritabanı Kimlik Doğrulama Hatası: {e}"
+            
+    return render_template_string(LOGIN_TEMPLATE, error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('login'))
+
 @app.route('/api/simulation-tick', methods=['GET'])
 def simulation_tick():
+    if not session.get('logged_in'):
+        return jsonify({"error": "Yetkisiz erişim"}), 403
+        
     global tick_counter, company_state
     agent_list = []
     tick_counter += 1
@@ -499,36 +597,32 @@ def simulation_tick():
         revenue = random.randint(2500, 5000)
         company_state["budget"] += revenue
         company_state["active_clients"] = random.randint(3, 8)
-        # Saksı sağlıklarını simülasyon döngüsünde rastgele hafif güncelleyelim
-        for k in employees:
-            employees[k]["plant_health"] = max(80, min(100, employees[k]["plant_health"] + random.randint(-1, 1)))
-
-    coords = {
-        "Marco": (70, 70), "Talisca": (235, 70), "Brown": (400, 70),
-        "Kante": (70, 250), "İrfan": (235, 250), "İsmail": (400, 250),
-        "Alex": (70, 440), "Skrinar": (235, 440), "Kerem": (400, 440),
-        "Mutfak_Chef": (900, 80)
-    }
 
     for name, data in employees.items():
-        base_x, base_y = coords.get(name, (100, 100))
-        speech = "Kahve Hazırlıyor" if name == "Mutfak_Chef" else f"{data['role']} Çalışıyor"
+        if name == "Mutfak_Chef":
+            x, y, state, speech = 630, 60, "Kahve Hazırlıyor", "Kahveler hazır!"
+        else:
+            x, y = data["room_x"] + 45, data["room_y"] + 50
+            state, speech = "Masada Çalışıyor", f"{data['role']} Aktif"
 
         agent_list.append({
             "name": name, "role": data["role"], "level": data.get("level", 1),
-            "title": data.get("title", "Junior"), "x": base_x, "y": base_y, 
-            "state": "Masada", "speech": speech, "color": data["color"],
-            "plant": data["plant"], "plant_health": data["plant_health"]
+            "title": data.get("title", "Junior"), "x": x, "y": y, 
+            "state": state, "speech": speech, "color": data["color"]
         })
 
     return jsonify({"agents": agent_list, "budget": company_state["budget"], "active_clients": company_state["active_clients"]})
 
 @app.route('/')
 def index():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
     return render_template_string(HTML_TEMPLATE, employees=employees)
 
 @app.route('/preview/<int:project_id>')
 def preview_project(project_id):
+    if not session.get('logged_in'):
+        return "Yetkisiz erişim.", 403
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
@@ -545,6 +639,9 @@ def preview_project(project_id):
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
+    if not session.get('logged_in'):
+        return jsonify({"status": "Yetkisiz erişim"}), 403
+        
     data = request.json
     agent_name = data.get('agent', 'Brown')
     user_message = data.get('message', '')
@@ -607,25 +704,33 @@ def api_chat():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Architectural HQ Konsept</title>
+    <title>Özel Konsept Web Tasarımı</title>
     <style>
-        body {{ background: #060913; color: #f8fafc; font-family: sans-serif; margin: 0; padding: 0; }}
-        header {{ background: #0f172a; padding: 50px 20px; text-align: center; border-bottom: 3px solid #38bdf8; }}
-        h1 {{ color: #38bdf8; margin: 0; font-size: 30px; }}
-        .container {{ max-width: 900px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }}
-        .card {{ background: #111827; padding: 30px; border-radius: 10px; border: 1px solid #334155; }}
-        .card h3 {{ color: #4ade80; margin-top: 0; }}
+        body {{ background: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }}
+        header {{ background: linear-gradient(135deg, #1e293b, #0f172a); padding: 50px 20px; text-align: center; border-bottom: 3px solid #38bdf8; }}
+        h1 {{ color: #38bdf8; margin: 0; font-size: 32px; }}
+        .container {{ max-width: 1000px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }}
+        .card {{ background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; }}
+        .card h3 {{ color: #fbbf24; margin-top: 0; }}
+        .btn {{ display: inline-block; background: #0284c7; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px; }}
+        .btn:hover {{ background: #0369a1; }}
     </style>
 </head>
 <body>
     <header>
-        <h1>Architectural HQ Kurumsal Çözüm</h1>
-        <p style="color: #94a3b8; margin-top: 10px;">Koridorlu ve saksı takip sistemli özel altyapı</p>
+        <h1>Kurumsal Web Çözümleri</h1>
+        <p style="color: #94a3b8; margin-top: 10px;">Sektörel standartlara uygun profesyonel konsept tasarım</p>
     </header>
     <div class="container">
         <div class="card">
-            <h3>Sistem Aktif</h3>
-            <p>Talebiniz doğrultusunda kusursuz standartlarda hazırlandı.</p>
+            <h3>Hızlı Başlangıç</h3>
+            <p>İstediğiniz konsept ve özellikler doğrultusunda tam uyumlu altyapı hazırlandı.</p>
+            <a href="#" class="btn">Detayları İncele</a>
+        </div>
+        <div class="card">
+            <h3>Özel Tasarım</h3>
+            <p>Modern arayüz bileşenleri ve şık renk paletiyle kullanıcı deneyimi en üst düzeyde.</p>
+            <a href="#" class="btn">İletişime Geç</a>
         </div>
     </div>
 </body>
@@ -635,7 +740,7 @@ def api_chat():
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
             cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
-                        ("Brown (Yazılımcı)", user_message[:40], "Web Servis Canල්", html_code))
+                        ("Brown (Yazılımcı)", user_message[:40], "Web Servis Canlı", html_code))
             project_id = cur.fetchone()[0]
             conn.commit()
             cur.close()
@@ -651,14 +756,20 @@ def api_chat():
 
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
+    if not session.get('logged_in'):
+        return jsonify({"status": "Yetkisiz"}), 403
     return jsonify({"status": check_system_uptime()})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
+    if not session.get('logged_in'):
+        return jsonify({"summary": "Yetkisiz"}), 403
     return jsonify({"summary": "Supabase bağlantısı aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
+    if not session.get('logged_in'):
+        return jsonify({"tasks": ["Yetkisiz"]}), 403
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
@@ -673,7 +784,9 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu koridorlu mimari ve saksı sorumluluk sistemini onayladı."})
+    if not session.get('logged_in'):
+        return jsonify({"decision": "Yetkisiz"}), 403
+    return jsonify({"decision": "Yönetim kurulu uzay üssü güvenlik protokolünü onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
