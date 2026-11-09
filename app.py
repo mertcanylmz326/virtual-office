@@ -28,12 +28,12 @@ def init_db():
             CREATE TABLE IF NOT EXISTS agents_state (
                 name TEXT PRIMARY KEY,
                 role TEXT,
-                hunger INT DEFAULT 80,
-                thirst INT DEFAULT 85,
-                caffeine INT DEFAULT 90,
+                hunger INT DEFAULT 85,
+                thirst INT DEFAULT 90,
+                caffeine INT DEFAULT 80,
                 energy INT DEFAULT 100,
                 location TEXT DEFAULT 'Ofiste',
-                speech TEXT DEFAULT 'Çalışıyor',
+                speech TEXT DEFAULT 'Masada Çalışıyor',
                 plant_health INT DEFAULT 95
             );
             CREATE TABLE IF NOT EXISTS agent_logs (
@@ -55,7 +55,6 @@ def init_db():
         """)
         conn.commit()
         
-        # Başlangıç verilerini kontrol et / yükle
         default_agents = [
             ("Marco", "Destek"), ("Talisca", "Operasyon"), ("Brown", "Yazılım"),
             ("Kante", "Pazarlama"), ("İrfan", "Finans"), ("İsmail", "İK & Sistem"),
@@ -83,23 +82,23 @@ def check_system_uptime():
             monitors = data.get("monitors", [])
             if monitors:
                 status_code = monitors[0].get("status")
-                status_text = "Aktif" if status_code in [2, 2.0] else f"Kod: {status_code}"
-                return f"UptimeRobot: {status_text}."
-    except:
-        pass
+                status_text = "Aktif (Çalışıyor)" if status_code in [2, 2.0] else f"Kod Durumu: {status_code}"
+                return f"UptimeRobot: Sistem monitörleri {status_text}."
+    except Exception as e:
+        print(f"UptimeRobot API Hatası: {e}")
     return "UptimeRobot API aktif."
 
 employees_meta = {
-    "Marco": {"color": "#3b82f6", "plant": "Monstera", "room_x": 30, "room_y": 30},
-    "Talisca": {"color": "#ef4444", "plant": "Paşa Kılıcı", "room_x": 200, "room_y": 30},
-    "Brown": {"color": "#10b981", "plant": "Bonsai", "room_x": 370, "room_y": 30},
-    "Kante": {"color": "#f59e0b", "plant": "Aloe Vera", "room_x": 30, "room_y": 170},
-    "İrfan": {"color": "#8b5cf6", "plant": "Sukulent", "room_x": 200, "room_y": 170},
-    "İsmail": {"color": "#f97316", "plant": "Orkide", "room_x": 370, "room_y": 170},
-    "Alex": {"color": "#14b8a6", "plant": "Kaktüs", "room_x": 30, "room_y": 310},
-    "Skrinar": {"color": "#64748b", "plant": "Çin Yaprağı", "room_x": 200, "room_y": 310},
-    "Kerem": {"color": "#ec4899", "plant": "Benjamin", "room_x": 370, "room_y": 310},
-    "Mutfak_Chef": {"color": "#f43f5e", "plant": "Fesleğen", "room_x": 600, "room_y": 30}
+    "Marco": {"room_x": 15, "room_y": 15, "color": "#3b82f6"},
+    "Talisca": {"room_x": 195, "room_y": 15, "color": "#ef4444"},
+    "Brown": {"room_x": 375, "room_y": 15, "color": "#10b981"},
+    "Kante": {"room_x": 15, "room_y": 155, "color": "#f59e0b"},
+    "İrfan": {"room_x": 195, "room_y": 155, "color": "#8b5cf6"},
+    "İsmail": {"room_x": 375, "room_y": 155, "color": "#f97316"},
+    "Alex": {"room_x": 15, "room_y": 295, "color": "#14b8a6"},
+    "Skrinar": {"room_x": 195, "room_y": 295, "color": "#64748b"},
+    "Kerem": {"room_x": 375, "room_y": 295, "color": "#ec4899"},
+    "Mutfak_Chef": {"room_x": 580, "room_y": 15, "color": "#f43f5e"}
 }
 
 HTML_TEMPLATE = """
@@ -108,7 +107,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Living Cyber Office</title>
+    <title>E-Trade Pro - Living AI Agency HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -127,6 +126,8 @@ HTML_TEMPLATE = """
             justify-content: space-between;
             align-items: center;
             font-size: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
         .top-btn { 
             background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; 
@@ -142,18 +143,20 @@ HTML_TEMPLATE = """
             border-bottom: 1px solid #1e293b;
             font-size: 12px;
             font-weight: bold;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         #game-container {
             position: relative;
             width: 1080px;
-            height: 480px;
+            height: 440px;
             max-width: 100%;
             margin: 10px auto;
             border: 3px solid #38bdf8;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            background: #060913;
+            border-radius: 8px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.9);
+            background: #0b0f19;
             overflow: hidden;
         }
         canvas { display: block; width: 100%; height: 100%; }
@@ -170,15 +173,23 @@ HTML_TEMPLATE = """
         #activity-terminal {
             margin: 0 auto 15px auto; width: 1080px; max-width: 100%; background: #030712; border: 2px solid #334155; border-radius: 8px; text-align: left; overflow: hidden; box-sizing: border-box;
         }
-        .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; }
-        .terminal-body { padding: 10px; height: 130px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; font-family: monospace; }
+        .terminal-header { background: #0f172a; padding: 6px 12px; font-size: 11px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; }
+        .terminal-body { padding: 10px; height: 140px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.4; word-break: break-word; overflow-wrap: break-word; font-family: monospace; }
         .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
+
+        @media (max-width: 768px) {
+            #game-topbar { flex-direction: column; align-items: stretch; text-align: center; }
+            #game-topbar > div { display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+            .action-bar { padding: 0 5px; }
+            #command-panel { flex-direction: column; align-items: stretch; }
+            input[type="text"], select, .send-btn { width: 100%; box-sizing: border-box; }
+        }
     </style>
 </head>
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // LİVİNG CYBER OFFICE SİMÜLASYONU</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // LİVİNG HQ (OTONOM SİMÜLASYON)</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -190,11 +201,11 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 OTONOM İHTİYAÇ SİSTEMİ AKTİF</span>
+        <span style="color: #fbbf24;">🚀 İHTİYAÇ VE MOLA SİSTEMİ AKTİF</span>
     </div>
 
     <div id="game-container">
-        <canvas id="officeCanvas" width="1080" height="480"></canvas>
+        <canvas id="officeCanvas" width="1080" height="440"></canvas>
     </div>
 
     <div class="action-bar">
@@ -212,10 +223,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ SİMÜLASYON OPERASYON TERMİNALİ</span>
-            <span style="color: #38bdf8; font-weight: bold;">● DB SYNCED</span>
+            <span style="color: #38bdf8; font-weight: bold;">● DB PERSISTENT</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SİSTEM]: Canlı simülasyon, koridorlar, saksı takipleri ve otonom ihtiyaç barları başlatıldı.</div>
+            <div class="log-line">[SİSTEM]: Odalar, gerçekçi koridorlar, saksılar ve otonom barlar aktif!</div>
         </div>
     </div>
 
@@ -224,11 +235,11 @@ HTML_TEMPLATE = """
         const ctx = canvas.getContext('2d');
         const terminalLogs = document.getElementById('terminal-logs');
 
-        let simulationData = [];
+        let agentsData = [];
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
-            let logDiv = document.createElement('div');
+            const logDiv = document.createElement('div');
             logDiv.className = 'log-line';
             logDiv.innerHTML = `[${time}] ${text}`;
             terminalLogs.prepend(logDiv);
@@ -241,91 +252,100 @@ HTML_TEMPLATE = """
 
         function drawOffice() {
             const w = 1080;
-            const h = 480;
+            const h = 440;
             ctx.clearRect(0, 0, w, h);
 
-            // Zemin Grid
-            ctx.fillStyle = "#070b16";
+            // Zemin Tasarımı
+            ctx.fillStyle = "#1e1b18";
             ctx.fillRect(0, 0, w, h);
-            ctx.strokeStyle = "rgba(56, 189, 248, 0.05)";
+            
+            ctx.strokeStyle = "#292524";
+            ctx.lineWidth = 1;
             for (let i = 0; i < w; i += 30) {
                 ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
             }
-            for (let j = 0; j < h; j += 30) {
-                ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(w, j); ctx.stroke();
-            }
 
-            // Koridorlar
-            ctx.fillStyle = "#0f172a";
-            ctx.fillRect(0, 140, 520, 30);
-            ctx.fillRect(0, 280, 520, 30);
-            ctx.fillRect(500, 0, 30, h);
+            // Gerçekçi Koridor Ağları (Yatay & Dikey)
+            ctx.fillStyle = "#111827";
+            ctx.fillRect(0, 130, w, 35);
+            ctx.fillRect(0, 270, w, 35);
+            ctx.fillRect(530, 0, 35, h);
 
-            // Özel Alanlar (Mutfak & Sunucu Odası)
-            ctx.fillStyle = "rgba(120, 53, 15, 0.3)";
-            ctx.fillRect(550, 15, 510, 130);
-            ctx.strokeStyle = "#d97706"; ctx.strokeRect(550, 15, 510, 130);
-            ctx.fillStyle = "#fde68a"; ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("☕ MUTFAK & DİNLENME ALANI (Mola İstasyonu)", 570, 32);
-
-            ctx.fillStyle = "rgba(109, 40, 217, 0.25)";
-            ctx.fillRect(550, 160, 510, 305);
-            ctx.strokeStyle = "#8b5cf6"; ctx.strokeRect(550, 160, 510, 305);
-            ctx.fillStyle = "#e9d5ff";
-            ctx.fillText("🤝 OTONOM PROJE ONAY ODASI & SUNUCU MERKEZİ", 570, 180);
-
-            // Server Racks
-            ctx.fillStyle = "#1e1b4b";
-            ctx.fillRect(570, 200, 100, 240);
-            ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(570, 200, 100, 240);
-            for(let sy=215; sy<420; sy+=25) {
-                ctx.fillStyle = "#38bdf8"; ctx.fillRect(580, sy, 10, 8);
-                ctx.fillStyle = "#4ade80"; ctx.fillRect(600, sy, 8, 8);
-                ctx.fillStyle = "#ef4444"; ctx.fillRect(620, sy, 6, 6);
-            }
-
-            // Ajanları ve Odalarını Çiz
-            simulationData.forEach(ag => {
+            // Odaları ve Üzerindeki Barları Çiz
+            agentsData.forEach(ag => {
                 let rx = ag.room_x;
                 let ry = ag.room_y;
+                let rw = 160;
+                let rh = 105;
 
-                // Oda Kutusu
-                ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
-                ctx.fillRect(rx, ry, 150, 125);
-                ctx.strokeStyle = ag.color; ctx.lineWidth = 2;
-                ctx.strokeRect(rx, ry, 150, 125);
+                // Oda Dış Çerçevesi
+                ctx.fillStyle = "rgba(17, 24, 39, 0.9)";
+                ctx.fillRect(rx, ry, rw, rh);
+                ctx.strokeStyle = ag.color;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(rx, ry, rw, rh);
 
-                // İsim & Rol
-                ctx.fillStyle = "#38bdf8"; ctx.font = "bold 9px 'Courier New'";
-                ctx.fillText(`${ag.name} (${ag.role})`, rx + 8, ry + 14);
+                // Oda Başlığı
+                ctx.fillStyle = "#38bdf8";
+                ctx.font = "bold 9px 'Courier New'";
+                ctx.fillText(`${ag.name} (${ag.role})`, rx + 8, ry + 12);
 
                 // Saksı & Sağlık
-                ctx.fillStyle = "#4ade80"; ctx.font = "11px sans-serif";
-                ctx.fillText("🌿", rx + 10, ry + 36);
-                ctx.fillStyle = "#94a3b8"; ctx.font = "8px 'Courier New'";
-                ctx.fillText(`Saksı: ${ag.plant_health}%`, rx + 30, ry + 34);
+                ctx.fillStyle = "#78350f";
+                ctx.fillRect(rx + 10, ry + 22, 14, 16);
+                ctx.fillStyle = "#4ade80"; ctx.font = "10px sans-serif";
+                ctx.fillText("🌿", rx + 8, ry + 34);
+                ctx.fillStyle = "#4ade80"; ctx.font = "8px 'Courier New'";
+                ctx.fillText(`${ag.plant_health}%`, rx + 26, ry + 32);
 
-                // İhtiyaç Barları (Açlık, Susuzluk, Kafein, Enerji)
+                // AÇLIK, SUSUZLUK, KAFEİN, ENERJİ Barlarları Odasının Üstünde/İçinde
                 let bars = [
-                    {label: "Aç", val: ag.hunger, y: 48, col: "#f59e0b"},
-                    {label: "Su", val: ag.thirst, y: 62, col: "#38bdf8"},
-                    {label: "Kafein", val: ag.caffeine, y: 76, col: "#ec4899"},
-                    {label: "Enerji", val: ag.energy, y: 90, col: "#10b981"}
+                    {label: "Açlık", val: ag.hunger, y: 44, col: "#f59e0b", thresh: 50},
+                    {label: "Susuz", val: ag.thirst, y: 56, col: "#38bdf8", thresh: 65},
+                    {label: "Kafein", val: ag.caffeine, y: 68, col: "#ec4899", thresh: 55},
+                    {label: "Enerji", val: ag.energy, y: 80, col: "#10b981", thresh: 30}
                 ];
 
                 bars.forEach(b => {
-                    ctx.fillStyle = "#1e293b"; ctx.fillRect(rx + 8, ry + b.y, 80, 8);
-                    ctx.fillStyle = b.col; ctx.fillRect(rx + 8, ry + b.y, (b.val / 100) * 80, 8);
+                    ctx.fillStyle = "#1e293b"; ctx.fillRect(rx + 50, ry + b.y, 65, 8);
+                    ctx.fillStyle = b.val < b.thresh ? "#ef4444" : b.col; 
+                    ctx.fillRect(rx + 50, ry + b.y, (b.val / 100) * 65, 8);
                     ctx.fillStyle = "#fff"; ctx.font = "7px 'Courier New'";
-                    ctx.fillText(`${b.label}:${b.val}%`, rx + 92, ry + b.y + 7);
+                    ctx.fillText(`${b.label}:${b.val}%`, rx + 118, ry + b.y + 7);
                 });
 
-                // Ajan Durum / Konuşma Balonu
+                // Ajan Durum Kutusu / Konuşma
                 ctx.fillStyle = ag.color;
-                ctx.fillRect(rx + 8, ry + 103, 134, 16);
-                ctx.fillStyle = "#030712"; ctx.font = "bold 8px 'Courier New'";
-                ctx.fillText(ag.speech.substring(0, 22), rx + 12, ry + 114);
+                ctx.fillRect(rx + 8, ry + 91, 144, 12);
+                ctx.fillStyle = "#030712"; ctx.font = "bold 7px 'Courier New'";
+                ctx.fillText(ag.speech.substring(0, 26), rx + 10, ry + 99);
             });
+
+            // Sağ Taraf Özel Odalar (Mutfak, CEO, Onay Odası)
+            ctx.fillStyle = "rgba(120, 53, 15, 0.45)";
+            ctx.fillRect(580, 15, 485, 110);
+            ctx.strokeStyle = "#d97706"; ctx.lineWidth = 2; ctx.strokeRect(580, 15, 485, 110);
+            ctx.fillStyle = "#fde68a"; ctx.font = "bold 10px 'Courier New'";
+            ctx.fillText("☕ MUTFAK & KAHVE İSTASYONU (Mola Alanı)", 595, 30);
+
+            ctx.fillStyle = "rgba(2, 132, 199, 0.25)";
+            ctx.fillRect(580, 135, 485, 30);
+            ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(580, 135, 485, 30);
+            ctx.fillStyle = "#38bdf8"; ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 153);
+
+            ctx.fillStyle = "rgba(109, 40, 217, 0.35)";
+            ctx.fillRect(580, 175, 485, 250);
+            ctx.strokeStyle = "#8b5cf6"; ctx.strokeRect(580, 175, 485, 250);
+            ctx.fillStyle = "#e9d5ff"; ctx.fillText("🤝 OTONOM PROJE ONAY ODASI & SUNUCU LABI", 600, 195);
+
+            // Sunucu Kabinleri Görseli
+            ctx.fillStyle = "#1e1b4b"; ctx.fillRect(600, 220, 70, 180);
+            ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(600, 220, 70, 180);
+            for(let sy=230; sy<390; sy+=25) {
+                ctx.fillStyle = "#38bdf8"; ctx.fillRect(610, sy, 10, 8);
+                ctx.fillStyle = "#4ade80"; ctx.fillRect(630, sy, 8, 8);
+                ctx.fillStyle = "#ef4444"; ctx.fillRect(650, sy, 6, 6);
+            }
         }
 
         setInterval(() => {
@@ -334,7 +354,7 @@ HTML_TEMPLATE = """
             .then(data => {
                 document.getElementById('stat-budget').innerText = data.budget;
                 document.getElementById('stat-clients').innerText = data.active_clients;
-                simulationData = data.agents;
+                agentsData = data.agents;
                 drawOffice();
             });
         }, 1500);
@@ -347,7 +367,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} merkeze çağrılıyor ve talimat işleniyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} odasına koşuyor ve talimatı işliyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -416,20 +436,19 @@ def simulation_tick():
     tick_counter += 1
 
     if tick_counter % 10 == 0:
-        company_state["budget"] += random.randint(1000, 3000)
+        company_state["budget"] += random.randint(1500, 3500)
         company_state["active_clients"] = random.randint(4, 9)
 
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
         
-        # Otonom ihtiyaç simülasyonu ve veritabanı güncellemesi
+        # Otonom ihtiyaç mekanizması (Açlık<%50, Susuzluk<%65, Kafein<%55, Yorgunluk/Enerji<%30)
         for name in employees_meta:
-            # Her tick'te rastgele ihtiyaç azalması (%50, %65, %55 eşikleri)
-            hunger_delta = random.randint(-4, 2)
-            thirst_delta = random.randint(-5, 2)
-            caffeine_delta = random.randint(-4, 2)
-            energy_delta = random.randint(-3, 1)
+            h_delta = random.randint(-4, 2)
+            t_delta = random.randint(-5, 2)
+            c_delta = random.randint(-4, 2)
+            e_delta = random.randint(-3, 2)
 
             cur.execute("""
                 UPDATE agents_state 
@@ -438,24 +457,30 @@ def simulation_tick():
                     caffeine = GREATEST(10, LEAST(100, caffeine + %s)),
                     energy = GREATEST(10, LEAST(100, energy + %s))
                 WHERE name = %s RETURNING hunger, thirst, caffeine, energy;
-            """, (hunger_delta, thirst_delta, caffeine_delta, energy_delta, name))
+            """, (h_delta, t_delta, c_delta, e_delta, name))
             
             row = cur.fetchone()
             if row:
                 h, t, c, e = row
-                speech = f"{employees_meta[name].get('role', 'Çalışan')} Aktif"
-                
-                # Eşik kontrolleri (Açlık<%50, Susuzluk<%65, Kafein<%55, Yorgunluk<%30)
+                speech = "Masada Çalışıyor"
+                location = "Ofiste"
+
                 if h < 50:
-                    speech = "Acıktım, yemek arıyorum!"
+                    speech = "Acıktım! Mutfağa gidiyorum..."
+                    location = "Mutfakta"
                 elif t < 65:
-                    speech = "Çok susadım, su içmeliyim!"
+                    speech = "Çok susadım! Su içiyorum..."
+                    location = "Mutfakta"
                 elif c < 55:
-                    speech = "Kafein lazım, kahveciye gidiyorum!"
+                    speech = "Kafein azaldı! Kahve alıyorum..."
+                    location = "Mutfakta"
                 elif e < 35:
-                    speech = "Yorgunluk %95! Mola veriyorum..."
-                
-                cur.execute("UPDATE agents_state SET speech = %s WHERE name = %s", (speech, name))
+                    speech = "Yorgunluk %95! Dinleniyorum..."
+                    location = "Dinlenme Alanında"
+                else:
+                    speech = "Projeler kodlanıyor..."
+
+                cur.execute("UPDATE agents_state SET speech = %s, location = %s WHERE name = %s", (speech, location, name))
 
         conn.commit()
 
@@ -467,7 +492,7 @@ def simulation_tick():
         agents_list = []
         for r in rows:
             name = r[0]
-            meta = employees_meta.get(name, {"color": "#38bdf8", "room_x": 30, "room_y": 30})
+            meta = employees_meta.get(name, {"room_x": 15, "room_y": 15, "color": "#38bdf8"})
             agents_list.append({
                 "name": name, "role": r[1], "hunger": r[2], "thirst": r[3],
                 "caffeine": r[4], "energy": r[5], "location": r[6], "speech": r[7],
@@ -512,7 +537,7 @@ def api_chat():
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
-        cur.execute("UPDATE agents_state SET speech = 'CEO talimatını işliyor...' WHERE name = %s", (agent_name,))
+        cur.execute("UPDATE agents_state SET speech = 'Odasına koştu, talimatı işliyor!' WHERE name = %s", (agent_name,))
         conn.commit()
         cur.close()
         conn.close()
@@ -521,7 +546,7 @@ def api_chat():
     if agent_name != "Brown":
         try:
             if groq_client:
-                prompt = f"Sen ofiste çalışan bir uzmansın. Patronun (Kullanıcı) sana şu mesajı gönderdi: '{user_message}'. Kısa ve profesyonel bir iş yanıtı ver."
+                prompt = f"Sen ofiste çalışan bir uzmansın. Patronun sana şu mesajı gönderdi: '{user_message}'. Kısa ve profesyonel bir iş yanıtı ver."
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": prompt}],
@@ -529,13 +554,13 @@ def api_chat():
                 )
                 reply = comp.choices[0].message.content.strip()
         except:
-            reply = f"Patron, talimatınız alınmıştır."
+            reply = f"Patron, talimatınız işleme alındı."
         if not reply: reply = "Notumuzu aldık patron!"
     else:
         reply = "Patron, GPT-OSS 120B motoru ile site kodlandı!"
         try:
             if groq_client:
-                code_prompt = f"Sadece eksiksiz bir HTML/CSS web sitesi kodu yaz. Asla markdown veya açıklama kullanma. İstek: {user_message}"
+                code_prompt = f"Sadece eksiksiz bir HTML/CSS web sitesi yaz. Asla markdown veya açıklama kullanma. İstek: {user_message}"
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
@@ -551,7 +576,7 @@ def api_chat():
             pass
 
         if not html_code or "<html" not in html_code.lower():
-            html_code = "<امل><!DOCTYPE html><html><head><title>Proje</title></head><body><h1>Özel Konsept</h1></body></html>"
+            html_code = "<!DOCTYPE html><html><head><title>Proje</title></head><body><h1>Özel Konsept</h1></body></html>"
 
         try:
             conn = psycopg2.connect(DB_URL)
@@ -574,7 +599,7 @@ def api_uptime():
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
-    return jsonify({"summary": "Supabase veritabanı ve otonom simülasyon aktif."})
+    return jsonify({"summary": "Supabase veritabanı ve otonom ihtiyaç simülasyonu aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
@@ -592,7 +617,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu otonom ihtiyaç ve canlı simülasyon sistemini onayladı."})
+    return jsonify({"decision": "Yönetim kurulu canlı otonom ofis simülasyonunu onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
