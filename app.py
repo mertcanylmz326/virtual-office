@@ -26,6 +26,21 @@ def init_db():
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
         cur.execute("""
+            CREATE TABLE IF NOT EXISTS agents_state (
+                name TEXT PRIMARY KEY,
+                role TEXT,
+                hunger INT DEFAULT 85,
+                thirst INT DEFAULT 90,
+                caffeine INT DEFAULT 80,
+                energy INT DEFAULT 100,
+                location TEXT DEFAULT 'Ofiste',
+                speech TEXT DEFAULT 'Masada Çalışıyor',
+                x FLOAT DEFAULT 70,
+                y FLOAT DEFAULT 70,
+                target_x FLOAT DEFAULT 70,
+                target_y FLOAT DEFAULT 70,
+                plant_health INT DEFAULT 95
+            );
             CREATE TABLE IF NOT EXISTS agent_logs (
                 id SERIAL PRIMARY KEY,
                 agent_name TEXT,
@@ -43,6 +58,20 @@ def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
+        conn.commit()
+        
+        default_agents = [
+            ("Marco", "Destek", 70, 70), ("Talisca", "Operasyon", 235, 70), ("Brown", "Yazılım", 400, 70),
+            ("Kante", "Pazarlama", 70, 250), ("İrfan", "Finans", 235, 250), ("İsmail", "İK & Sistem", 400, 250),
+            ("Alex", "Hukuk", 70, 420), ("Skrinar", "Siber", 235, 420), ("Kerem", "Başarı", 400, 420), ("Mutfak_Chef", "Mutfak", 850, 80)
+        ]
+        for name, role, x, y in default_agents:
+            cur.execute("""
+                INSERT INTO agents_state (name, role, x, y, target_x, target_y) 
+                VALUES (%s, %s, %s, %s, %s, %s) 
+                ON CONFLICT (name) DO NOTHING;
+            """, (name, role, x, y, x, y))
+        
         conn.commit()
         cur.close()
         conn.close()
@@ -68,18 +97,17 @@ def check_system_uptime():
         print(f"UptimeRobot API Hatası: {e}")
     return "UptimeRobot API aktif."
 
-# Her ajanın sorumlu olduğu saksı ve sağlık durumu (100 üzerinden)
-employees = {
-    "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "color": "#3b82f6", "plant": "Monstera", "plant_health": 95, "speech": "Destek aktif"},
-    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "color": "#ef4444", "plant": "Paşa Kılıcı", "plant_health": 88, "speech": "Operasyon OK"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "color": "#10b981", "plant": "Bonsai", "plant_health": 100, "speech": "GPT-OSS 120B"},
-    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "color": "#f59e0b", "plant": "Aloe Vera", "plant_health": 92, "speech": "Lead topluyor"},
-    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "color": "#8b5cf6", "plant": "Sukulent", "plant_health": 90, "speech": "Bütçe kontrol"},
-    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "color": "#f97316", "plant": "Orkide", "plant_health": 85, "speech": "Sistem Sağlığı"},
-    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "color": "#14b8a6", "plant": "Kaktüs", "plant_health": 98, "speech": "Sözleşme OK"},
-    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "color": "#64748b", "plant": "Çin Yaprağı", "plant_health": 94, "speech": "Firewall aktif"},
-    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "color": "#ec4899", "plant": "Benjamin", "plant_health": 91, "speech": "Hedefler tuttu"},
-    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "color": "#f43f5e", "plant": "Fesleğen", "plant_health": 99, "speech": "Kahveler taze!"}
+employees_meta = {
+    "Marco": {"role": "Destek", "color": "#3b82f6", "home_x": 70, "home_y": 70},
+    "Talisca": {"role": "Operasyon", "color": "#ef4444", "home_x": 235, "home_y": 70},
+    "Brown": {"role": "Yazılım", "color": "#10b981", "home_x": 400, "home_y": 70},
+    "Kante": {"role": "Pazarlama", "color": "#f59e0b", "home_x": 70, "home_y": 250},
+    "İrfan": {"role": "Finans", "color": "#8b5cf6", "home_x": 235, "home_y": 250},
+    "İsmail": {"role": "İK & Sistem", "color": "#f97316", "home_x": 400, "home_y": 250},
+    "Alex": {"role": "Hukuk", "color": "#14b8a6", "home_x": 70, "home_y": 420},
+    "Skrinar": {"role": "Siber", "color": "#64748b", "home_x": 235, "home_y": 420},
+    "Kerem": {"role": "Başarı", "color": "#ec4899", "home_x": 400, "home_y": 420},
+    "Mutfak_Chef": {"role": "Mutfak", "color": "#f43f5e", "home_x": 850, "home_y": 80}
 }
 
 HTML_TEMPLATE = """
@@ -88,7 +116,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Architectural Corridor HQ</title>
+    <title>E-Trade Pro - Living Architectural HQ</title>
     <style>
         body { 
             background-color: #030712; 
@@ -170,7 +198,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // ARCHITECTURAL HQ</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // LİVİNG ARCHITECTURAL HQ</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -182,7 +210,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 KORİDOR & SAKSI SİSTEMİ AKTİF</span>
+        <span style="color: #fbbf24;">🚀 KORİDOR, İHTİYAÇ BARLARI VE AYAK İZLERİ AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -192,8 +220,8 @@ HTML_TEMPLATE = """
     <div class="action-bar">
         <div id="command-panel">
             <select id="agent-select">
-                {% for name, data in employees.items() %}
-                <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
+                {% for name in meta.keys() %}
+                <option value="{{ name }}">{{ name }}</option>
                 {% endfor %}
             </select>
             <input type="text" id="ceo-message" placeholder="Brown'a site yazdır, Kante'ye pazarlama sor..." onkeypress="checkEnter(event)">
@@ -203,11 +231,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ FACILITY OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● FACILITY ONLINE</span>
+            <span>⚡ LİVİNG FACILITY TERMINAL</span>
+            <span style="color: #38bdf8; font-weight: bold;">● OTONOM SİMÜLASYON</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Koridorlar, Sunucu Onay Odası, Mutfak ve Saksı Takip Sistemi aktif!</div>
+            <div class="log-line">[SYSTEM]: Gerçekçi odalar, koridor ağı, ayak izleri ve otonom barlar aktif edildi!</div>
         </div>
     </div>
 
@@ -216,7 +244,8 @@ HTML_TEMPLATE = """
         const ctx = canvas.getContext('2d');
         const terminalLogs = document.getElementById('terminal-logs');
 
-        let agentsData = {};
+        let agentsData = [];
+        let footsteps = []; // Ayak izi efektleri için dizi
 
         function appendLog(text) {
             const time = new Date().toLocaleTimeString();
@@ -227,8 +256,8 @@ HTML_TEMPLATE = """
             terminalLogs.scrollTop = 0;
         }
 
-        function selectAgent(name) {
-            document.getElementById('agent-select').value = name;
+        function checkEnter(e) {
+            if (e.key === 'Enter') sendDirectMessage();
         }
 
         function drawOffice() {
@@ -236,173 +265,132 @@ HTML_TEMPLATE = """
             const h = 520;
             ctx.clearRect(0, 0, w, h);
 
-            // BINA DIŞ KUTU / DUVAR ARKA PLANI
+            // Bina Arka Planı
             ctx.fillStyle = "#0b0f19";
             ctx.fillRect(0, 0, w, h);
 
-            // Gerçekçi Koridorlar (Yatay ve Dikey Geniş Koridor Ağları)
+            // Geniş Koridor Ağı (Gerçekçi Koridorlar)
             ctx.fillStyle = "#111827";
-            ctx.fillRect(0, 150, w, 40);  // Ana Yatay Koridor 1
-            ctx.fillRect(0, 340, w, 40);  // Ana Yatay Koridor 2
-            ctx.fillRect(520, 0, 40, h);  // Ana Dikey Koridor
+            ctx.fillRect(0, 140, 520, 45); // Yatay Koridor 1
+            ctx.fillRect(0, 310, 520, 45); // Yatay Koridor 2
+            ctx.fillRect(500, 0, 45, h);   // Dikey Ana Koridor
 
-            // --- 1. SOL BLOK: ÇALIŞMA ODALARI & SAKSILAR ---
-            const workRooms = [
-                {x: 20, y: 20, name: "1. MARCO", agent: "Marco", color: "#3b82f6"},
-                {x: 185, y: 20, name: "2. TALİSCA", agent: "Talisca", color: "#ef4444"},
-                {x: 350, y: 20, name: "3. BROWN", agent: "Brown", color: "#10b981"},
-                {x: 20, y: 200, name: "4. KANTE", agent: "Kante", color: "#f59e0b"},
-                {x: 185, y: 200, name: "5. İRFAN", agent: "İrfan", color: "#8b5cf6"},
-                {x: 350, y: 200, name: "6. İSMAİL", agent: "İsmail", color: "#f97316"},
-                {x: 20, y: 390, name: "7. ALEX", agent: "Alex", color: "#14b8a6"},
-                {x: 185, y: 390, name: "8. SKRİNAR", agent: "Skrinar", color: "#64748b"},
-                {x: 350, y: 390, name: "9. KEREM", agent: "Kerem", color: "#ec4899"}
+            // 9 Ajan Odası (Sol Blok - Kutular içinde eşyalı gerçek odalar)
+            const rooms = [
+                {x: 20, y: 20, name: "1. MARCO", color: "#3b82f6"},
+                {x: 185, y: 20, name: "2. TALİSCA", color: "#ef4444"},
+                {x: 350, y: 20, name: "3. BROWN", color: "#10b981"},
+                {x: 20, y: 190, name: "4. KANTE", color: "#f59e0b"},
+                {x: 185, y: 190, name: "5. İRFAN", color: "#8b5cf6"},
+                {x: 350, y: 190, name: "6. İSMAİL", color: "#f97316"},
+                {x: 20, y: 360, name: "7. ALEX", color: "#14b8a6"},
+                {x: 185, y: 360, name: "8. SKRİNAR", color: "#64748b"},
+                {x: 350, y: 360, name: "9. KEREM", color: "#ec4899"}
             ];
 
-            workRooms.forEach(r => {
-                // Oda Duvarı
+            rooms.forEach(r => {
                 ctx.fillStyle = "rgba(15, 23, 42, 0.95)";
-                ctx.fillRect(r.x, r.y, 150, 110);
+                ctx.fillRect(r.x, r.y, 145, 105);
                 ctx.strokeStyle = r.color;
                 ctx.lineWidth = 2;
-                ctx.strokeRect(r.x, r.y, 150, 110);
+                ctx.strokeRect(r.x, r.y, 145, 105);
 
-                // Oda Başlığı & Işıklandırma
+                // Oda Başlığı
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 9px 'Courier New'";
                 ctx.fillText(r.name, r.x + 8, r.y + 14);
 
                 // Çalışma Masası
                 ctx.fillStyle = "#1e293b";
-                ctx.fillRect(r.x + 45, r.y + 45, 60, 22);
-                ctx.fillStyle = r.color;
-                ctx.fillRect(r.x + 65, r.y + 50, 20, 10);
-
-                // Saksı (Bitki) & Sağlık Durumu
-                let agInfo = agentsData[r.agent] || { plant: "Bitki", plant_health: 100 };
-                ctx.fillStyle = "#78350f";
-                ctx.fillRect(r.x + 15, r.y + 75, 14, 16);
-                ctx.fillStyle = "#4ade80";
-                ctx.font = "11px sans-serif";
-                ctx.fillText("🌿", r.x + 13, r.y + 72);
-
-                ctx.fillStyle = "#cbd5e1";
-                ctx.font = "8px 'Courier New'";
-                ctx.fillText(`${agInfo.plant_health || 95}%`, r.x + 35, r.y + 87);
+                ctx.fillRect(r.x + 45, r.y + 45, 55, 20);
             });
 
-            // --- 2. SAĞ ÜST: MUTFAK (Masa ve Dolaplar) ---
+            // Sağ Üst: Mutfak & Mola Alanı
             ctx.fillStyle = "rgba(120, 53, 15, 0.35)";
-            ctx.fillRect(580, 20, 480, 120);
-            ctx.strokeStyle = "#d97706";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(580, 20, 480, 120);
+            ctx.fillRect(570, 20, 480, 140);
+            ctx.strokeStyle = "#d97706"; ctx.lineWidth = 3; ctx.strokeRect(570, 20, 480, 140);
+            ctx.fillStyle = "#fde68a"; ctx.font = "bold 10px 'Courier New'";
+            ctx.fillText("☕ MUTFAK & MOLA ALANI (Açlık & Kafein İstasyonu)", 590, 38);
+            
+            // Mutfak Masası & Dolaplar
+            ctx.fillStyle = "#451a03"; ctx.fillRect(590, 50, 180, 25);
+            ctx.fillStyle = "#292524"; ctx.fillRect(680, 85, 160, 45);
 
-            ctx.fillStyle = "#fde68a";
-            ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("☕ MUTFAK (Masa & Dolap Alanı)", 600, 38);
-
-            // Mutfak Dolapları (Üst)
-            ctx.fillStyle = "#451a03";
-            ctx.fillRect(600, 50, 200, 25);
-            ctx.fillStyle = "#78350f";
-            ctx.fillRect(820, 50, 220, 25);
-
-            // Mutfak Yemek Masası & Sandalyeler
-            ctx.fillStyle = "#292524";
-            ctx.fillRect(700, 85, 180, 40);
-            ctx.fillStyle = "#f59e0b";
-            ctx.fillRect(720, 95, 25, 20);
-            ctx.fillRect(775, 95, 25, 20);
-            ctx.fillRect(830, 95, 25, 20);
-
-            // --- 3. SAĞ ORTA: CEO KONTROL MERKEZİ ---
+            // Sağ Orta: CEO Kontrol Merkezi
             ctx.fillStyle = "rgba(2, 132, 199, 0.25)";
-            ctx.fillRect(580, 200, 480, 110);
-            ctx.strokeStyle = "#38bdf8";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(580, 200, 480, 110);
+            ctx.fillRect(570, 180, 480, 140);
+            ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(570, 180, 480, 140);
+            ctx.fillStyle = "#38bdf8"; ctx.fillText("👑 CEO KONTROL MERKEZİ", 590, 200);
 
-            ctx.fillStyle = "#38bdf8";
-            ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 220);
-
-            ctx.fillStyle = "#0f172a";
-            ctx.fillRect(650, 235, 340, 60);
-            ctx.strokeStyle = "#38bdf8";
-            ctx.strokeRect(650, 235, 340, 60);
-            ctx.fillStyle = "#4ade80";
-            ctx.font = "9px 'Courier New'";
-            ctx.fillText("CEO Terminal: Tüm birimler ve koridorlar denetleniyor.", 665, 265);
-
-            // --- 4. SAĞ ALT: PROJE ONAY ODASI & SUNUCU (SERVER RACK) ---
+            // Sağ Alt: Proje Onay Odası & Sunucular
             ctx.fillStyle = "rgba(109, 40, 217, 0.3)";
-            ctx.fillRect(580, 330, 480, 170);
-            ctx.strokeStyle = "#8b5cf6";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(580, 330, 480, 170);
+            ctx.fillRect(570, 340, 480, 160);
+            ctx.strokeStyle = "#8b5cf6"; ctx.strokeRect(570, 340, 480, 160);
+            ctx.fillStyle = "#e9d5ff"; ctx.fillText("🤝 OTONOM PROJE ONAY ODASI & SUNUCU MERKEZİ", 590, 360);
 
-            ctx.fillStyle = "#e9d5ff";
-            ctx.font = "bold 10px 'Courier New'";
-            ctx.fillText("🤝 OTONOM PROJE ONAY ODASI & SUNUCU MERKEZİ", 600, 350);
-
-            // Sunucu Kabinleri (Server Racks Görseli)
-            ctx.fillStyle = "#1e1b4b";
-            ctx.fillRect(600, 370, 120, 115);
-            ctx.strokeStyle = "#38bdf8";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(600, 370, 120, 115);
-
-            for(let sy = 385; sy < 470; sy += 22) {
-                ctx.fillStyle = "#38bdf8";
-                ctx.fillRect(615, sy, 15, 10);
-                ctx.fillStyle = "#4ade80";
-                ctx.fillRect(645, sy, 12, 10);
-                ctx.fillStyle = "#ef4444";
-                ctx.fillRect(675, sy, 10, 10);
+            // Sunucu Kabinleri (Server Racks)
+            ctx.fillStyle = "#1e1b4b"; ctx.fillRect(590, 380, 110, 105);
+            ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(590, 380, 110, 105);
+            for(let sy=395; sy<470; sy+=20) {
+                ctx.fillStyle = "#38bdf8"; ctx.fillRect(600, sy, 12, 8);
+                ctx.fillStyle = "#4ade80"; ctx.fillRect(620, sy, 10, 8);
+                ctx.fillStyle = "#ef4444"; ctx.fillRect(640, sy, 8, 8);
             }
 
-            // Onay Masası
-            ctx.fillStyle = "#3b0764";
-            ctx.fillRect(780, 390, 220, 75);
-            ctx.strokeStyle = "#c084fc";
-            ctx.strokeRect(780, 390, 220, 75);
-            ctx.fillStyle = "#fbcfe8";
-            ctx.font = "bold 9px 'Courier New'";
-            ctx.fillText("Otonom Onay Konsolu Aktif", 800, 432);
+            // Ayak İzi Efektlerini Çiz
+            footprints.forEach(fp => {
+                ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
+                ctx.beginPath();
+                ctx.arc(fp.x, fp.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
 
-            // Ajanları Çiz
-            for (let name in agentsData) {
-                let ag = agentsData[name];
-                if(!ag) continue;
+            // Ajanları ve Üstlerindeki Şarj/İhtiyaç Barlarını Çiz
+            agentsData.forEach(ag => {
+                // Ayak izi ekle
+                if (Math.hypot(ag.x - ag.target_x, ag.y - ag.target_y) > 2) {
+                    footprints.push({x: ag.x, y: ag.y + 10});
+                    if (footprints.length > 50) footprints.shift();
+                }
+
+                // Ajan Robot Figürü
                 ctx.fillStyle = ag.color;
-                ctx.fillRect(ag.x, ag.y, 24, 24);
-                ctx.strokeStyle = "#ffffff";
-                ctx.lineWidth = 1;
-                ctx.strokeRect(ag.x, ag.y, 24, 24);
+                ctx.fillRect(ag.x - 12, ag.y - 12, 24, 24);
+                ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1;
+                ctx.strokeRect(ag.x - 12, ag.y - 12, 24, 24);
 
-                // Anten & Gözler
-                ctx.fillStyle = "#38bdf8";
-                ctx.fillRect(ag.x + 11, ag.y - 4, 2, 4);
+                // Gözler & Anten
+                ctx.fillStyle = "#38bdf8"; ctx.fillRect(ag.x - 1, ag.y - 18, 2, 6);
                 ctx.fillStyle = "#ffffff";
-                ctx.fillRect(ag.x + 5, ag.y + 7, 4, 4);
-                ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
+                ctx.fillRect(ag.x - 8, ag.y - 5, 4, 4);
+                ctx.fillRect(ag.x + 4, ag.y - 5, 4, 4);
 
-                // İsim
-                ctx.fillStyle = "#38bdf8";
-                ctx.font = "bold 8px 'Courier New'";
-                ctx.fillText(name, ag.x - 6, ag.y + 38);
+                // Ajan İsim & Rolü
+                ctx.fillStyle = "#38bdf8"; ctx.font = "bold 8px 'Courier New'";
+                ctx.fillText(ag.name, ag.x - 15, ag.y - 22);
+
+                // ŞARJ İŞARETLİ ÜST İHTİYAÇ BARLARI (Açlık, Susuzluk, Kafein, Enerji)
+                let bars = [
+                    {val: ag.hunger, col: "#f59e0b", offset: -26},
+                    {val: ag.thirst, col: "#38bdf8", offset: -18},
+                    {val: ag.caffeine, col: "#ec4899", offset: -10},
+                    {val: ag.energy, col: "#10b981", offset: -2}
+                ];
+
+                bars.forEach(b => {
+                    ctx.fillStyle = "#1e293b"; ctx.fillRect(ag.x + 16, ag.y + b.offset, 35, 6);
+                    ctx.fillStyle = b.val < 40 ? "#ef4444" : b.col;
+                    ctx.fillRect(ag.x + 16, ag.y + b.offset, (b.val / 100) * 35, 6);
+                });
 
                 // Konuşma Balonu
-                let bubbleText = ag.speech || "Aktif";
+                let bubbleText = ag.speech || "Çalışıyor";
                 ctx.fillStyle = "#f8fafc";
-                ctx.fillRect(ag.x - 10, ag.y - 20, ctx.measureText(bubbleText).width + 10, 16);
-                ctx.strokeStyle = "#38bdf8";
-                ctx.strokeRect(ag.x - 10, ag.y - 20, ctx.measureText(bubbleText).width + 10, 16);
-                ctx.fillStyle = "#0f172a";
-                ctx.font = "bold 9px 'Courier New'";
-                ctx.fillText(bubbleText, ag.x - 6, ag.y - 9);
-            }
+                ctx.fillRect(ag.x - 20, ag.y + 16, ctx.measureText(bubbleText).width + 10, 14);
+                ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(ag.x - 20, ag.y + 16, ctx.measureText(bubbleText).width + 10, 14);
+                ctx.fillStyle = "#0f172a"; ctx.font = "bold 8px 'Courier New'";
+                ctx.fillText(bubbleText, ag.x - 15, ag.y + 26);
+            });
         }
 
         setInterval(() => {
@@ -411,12 +399,10 @@ HTML_TEMPLATE = """
             .then(data => {
                 document.getElementById('stat-budget').innerText = data.budget;
                 document.getElementById('stat-clients').innerText = data.active_clients;
-                let mapped = {};
-                data.agents.forEach(ag => { mapped[ag.name] = ag; });
-                agentsData = mapped;
+                agentsData = data.agents;
                 drawOffice();
             });
-        }, 1500);
+        }, 1000);
 
         function sendDirectMessage() {
             const agentName = document.getElementById('agent-select').value;
@@ -426,7 +412,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} koşa koşa masasına dönüyor ve talimatı işliyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -460,7 +446,7 @@ HTML_TEMPLATE = """
         }
 
         function checkUptime() {
-            appendLog(`> [İSMAİL - UPTIME]: Sorgulanıyor...`);
+            appendLog(`> [SİSTEM UPTIME]: Sorgulanıyor...`);
             fetch('/api/uptime').then(res => res.json()).then(data => {
                 appendLog(`> [RAPOR]: ${data.status}`);
             });
@@ -492,40 +478,85 @@ tick_counter = 0
 @app.route('/api/simulation-tick', methods=['GET'])
 def simulation_tick():
     global tick_counter, company_state
-    agent_list = []
     tick_counter += 1
 
-    if tick_counter % 12 == 0:
-        revenue = random.randint(2500, 5000)
-        company_state["budget"] += revenue
-        company_state["active_clients"] = random.randint(3, 8)
-        # Saksı sağlıklarını simülasyon döngüsünde rastgele hafif güncelleyelim
-        for k in employees:
-            employees[k]["plant_health"] = max(80, min(100, employees[k]["plant_health"] + random.randint(-1, 1)))
+    if tick_counter % 10 == 0:
+        company_state["budget"] += random.randint(1500, 3500)
+        company_state["active_clients"] = random.randint(4, 9)
 
-    coords = {
-        "Marco": (70, 70), "Talisca": (235, 70), "Brown": (400, 70),
-        "Kante": (70, 250), "İrfan": (235, 250), "İsmail": (400, 250),
-        "Alex": (70, 440), "Skrinar": (235, 440), "Kerem": (400, 440),
-        "Mutfak_Chef": (900, 80)
-    }
+    try:
+        conn = psycopg2.connect(DB_URL)
+        cur = conn.cursor()
+        
+        for name, meta in employees_meta.items():
+            h_delta = random.randint(-4, 2)
+            t_delta = random.randint(-5, 2)
+            c_delta = random.randint(-4, 2)
+            e_delta = random.randint(-3, 2)
 
-    for name, data in employees.items():
-        base_x, base_y = coords.get(name, (100, 100))
-        speech = "Kahve Hazırlıyor" if name == "Mutfak_Chef" else f"{data['role']} Çalışıyor"
+            cur.execute("""
+                UPDATE agents_state 
+                SET hunger = GREATEST(10, LEAST(100, hunger + %s)),
+                    thirst = GREATEST(10, LEAST(100, thirst + %s)),
+                    caffeine = GREATEST(10, LEAST(100, caffeine + %s)),
+                    energy = GREATEST(10, LEAST(100, energy + %s))
+                WHERE name = %s RETURNING hunger, thirst, caffeine, energy, x, y, target_x, target_y;
+            """, (h_delta, t_delta, c_delta, e_delta, name))
+            
+            row = cur.fetchone()
+            if row:
+                h, t, c, e, x, y, tx, ty = row
+                speech = "Masada Çalışıyor"
+                target_x, target_y = meta["home_x"], meta["home_y"]
 
-        agent_list.append({
-            "name": name, "role": data["role"], "level": data.get("level", 1),
-            "title": data.get("title", "Junior"), "x": base_x, "y": base_y, 
-            "state": "Masada", "speech": speech, "color": data["color"],
-            "plant": data["plant"], "plant_health": data["plant_health"]
-        })
+                # Otonom İhtiyaç Eşikleri (Açlık<%50, Susuzluk<%65, Kafein<%55, Yorgunluk<%30)
+                if h < 50:
+                    speech = "Acıktım! Mutfağa gidiyorum..."
+                    target_x, target_y = 650, 90
+                elif t < 65:
+                    speech = "Çok susadım! Su içiyorum..."
+                    target_x, target_y = 680, 90
+                elif c < 55:
+                    speech = "Kafein lazım! Kahve alıyorum..."
+                    target_x, target_y = 710, 90
+                elif e < 30:
+                    speech = "Yorgunluk %95! Dinleniyorum..."
+                    target_x, target_y = 750, 90
 
-    return jsonify({"agents": agent_list, "budget": company_state["budget"], "active_clients": company_state["active_clients"]})
+                # Hedefe doğru hareket simülasyonu (Yumuşak yürüyüş)
+                new_x = x + (target_x - x) * 0.2
+                new_y = y + (target_y - y) * 0.2
+
+                cur.execute("""
+                    UPDATE agents_state 
+                    SET speech = %s, x = %s, y = %s, target_x = %s, target_y = %s 
+                    WHERE name = %s
+                """, (speech, new_x, new_y, target_x, target_y, name))
+
+        conn.commit()
+
+        cur.execute("SELECT name, role, hunger, thirst, caffeine, energy, speech, x, y, target_x, target_y, plant_health FROM agents_state;")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        agents_list = []
+        for r in rows:
+            agents_list.append({
+                "name": r[0], "role": r[1], "hunger": r[2], "thirst": r[3],
+                "caffeine": r[4], "energy": r[5], "speech": r[6],
+                "x": r[7], "y": r[8], "target_x": r[9], "target_y": r[10],
+                "plant_health": r[11], "color": employees_meta.get(r[0], {}).get("color", "#38bdf8")
+            })
+
+        return jsonify({"agents": agents_list, "budget": company_state["budget"], "active_clients": company_state["active_clients"]})
+    except Exception as e:
+        print(f"Tick Hatası: {e}")
+        return jsonify({"agents": [], "budget": company_state["budget"], "active_clients": company_state["active_clients"]})
 
 @app.route('/')
 def index():
-    return render_template_string(HTML_TEMPLATE, employees=employees)
+    return render_template_string(HTML_TEMPLATE, meta=employees_meta)
 
 @app.route('/preview/<int:project_id>')
 def preview_project(project_id):
@@ -539,9 +570,8 @@ def preview_project(project_id):
         
         db_code = row[0] if row and row[0] else "<h1>Proje kodu bulunamadı.</h1>"
         return Response(db_code, mimetype='text/html')
-    except Exception as e:
-        print(f"Preview Hatası: {e}")
-    return "Proje bulunamadı.", 404
+    except:
+        return "Proje bulunamadı.", 404
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
@@ -549,104 +579,73 @@ def api_chat():
     agent_name = data.get('agent', 'Brown')
     user_message = data.get('message', '')
 
-    if agent_name not in employees: agent_name = "Brown"
-    agent = employees[agent_name]
-
     html_code = ""
     reply = ""
     preview_url = None
 
+    try:
+        conn = psycopg2.connect(DB_URL)
+        cur = conn.cursor()
+        # Kullanıcı mesaj atınca ajan hemen masasına (home koordinatına) koşar!
+        home_coords = employees_meta.get(agent_name, {"home_x": 70, "home_y": 70})
+        cur.execute("""
+            UPDATE agents_state 
+            SET speech = 'CEO emri! Masaya koşuyorum!', target_x = %s, target_y = %s 
+            WHERE name = %s
+        """, (home_coords["home_x"], home_coords["home_y"], agent_name))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except: pass
+
     if agent_name != "Brown":
         try:
             if groq_client:
-                prompt = f"Sen ofiste '{agent['role']}' olarak çalışan bir uzmansın. Patronun (Kullanıcı) sana şu mesajı gönderdi: '{user_message}'. Kendi departmanının uzmanlığıyla profesyonel ve kısa bir iş yanıtı ver. Asla HTML kodu yazma."
+                prompt = f"Sen ofiste çalışan bir uzmansın. Patronun sana şu mesajı gönderdi: '{user_message}'. Kısa ve profesyonel bir iş yanıtı ver."
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": prompt}],
                     max_tokens=300, temperature=0.7
                 )
                 reply = comp.choices[0].message.content.strip()
-        except Exception as e:
-            reply = f"Patron, {agent['role']} departmanı olarak talimatını aldık!"
-        
-        if not reply:
-            reply = f"Patron, {agent['role']} departmanı olarak notumuzu aldık!"
-
+        except:
+            reply = f"Patron, talimatınız işleme alındı."
+        if not reply: reply = "Notumuzu aldık patron!"
     else:
-        reply = "Patron, GPT-OSS 120B motoru ile site sıfırdan ve eksiksiz kodlandı!"
+        reply = "Patron, GPT-OSS 120B motoru ile site kodlandı!"
         try:
             if groq_client:
-                code_prompt = f"Sen kıdemli bir web geliştiricisisin. Sadece ve sadece saf, eksiksiz bir HTML/CSS web sitesi yaz. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"
+                code_prompt = f"Sadece eksiksiz bir HTML/CSS web sitesi yaz. Asla markdown veya açıklama kullanma. İstek: {user_message}"
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
                     max_tokens=4000, temperature=0.7
                 )
                 raw_code = comp.choices[0].message.content.strip()
+                clean_code = re.sub(r'```[a-zA-Z]*', '', raw_code).replace('```', '')
                 
-                clean_code = re.sub(r'```[a-zA-Z]*', '', raw_code)
-                clean_code = clean_code.replace('```', '')
+                s_idx = clean_code.lower().find("<html")
+                e_idx = clean_code.lower().rfind("</html>")
+                html_code = clean_code[s_idx:e_idx+7] if s_idx != -1 and e_idx != -1 else clean_code
+        except:
+            pass
 
-                lower_code = clean_code.lower()
-                start_idx = lower_code.find("<!doctype")
-                if start_idx == -1:
-                    start_idx = lower_code.find("<html")
-                
-                end_idx = lower_code.rfind("</html>")
-
-                if start_idx != -1 and end_idx != -1:
-                    html_code = clean_code[start_idx:end_idx+7]
-                else:
-                    html_code = clean_code.strip()
-        except Exception as e:
-            print(f"Groq API Üretim Hatası: {e}")
-
-        if not html_code or "<html" not in html_code.lower() or len(html_code) < 100:
-            html_code = f"""<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Architectural HQ Konsept</title>
-    <style>
-        body {{ background: #060913; color: #f8fafc; font-family: sans-serif; margin: 0; padding: 0; }}
-        header {{ background: #0f172a; padding: 50px 20px; text-align: center; border-bottom: 3px solid #38bdf8; }}
-        h1 {{ color: #38bdf8; margin: 0; font-size: 30px; }}
-        .container {{ max-width: 900px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }}
-        .card {{ background: #111827; padding: 30px; border-radius: 10px; border: 1px solid #334155; }}
-        .card h3 {{ color: #4ade80; margin-top: 0; }}
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Architectural HQ Kurumsal Çözüm</h1>
-        <p style="color: #94a3b8; margin-top: 10px;">Koridorlu ve saksı takip sistemli özel altyapı</p>
-    </header>
-    <div class="container">
-        <div class="card">
-            <h3>Sistem Aktif</h3>
-            <p>Talebiniz doğrultusunda kusursuz standartlarda hazırlandı.</p>
-        </div>
-    </div>
-</body>
-</html>"""
+        if not html_code or "<html" not in html_code.lower():
+            html_code = "<!DOCTYPE html><html><head><title>Proje</title></head><body><h1>Özel Konsept</h1></body></html>"
 
         try:
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
             cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
-                        ("Brown (Yazılımcı)", user_message[:40], "Web Servis Canල්", html_code))
+                        ("Brown (Yazılımcı)", user_message[:40], "Canlı Web Servis", html_code))
             project_id = cur.fetchone()[0]
             conn.commit()
             cur.close()
             conn.close()
+            preview_url = f"{request.host_url.rstrip('/')}/preview/{project_id}"
+        except: pass
 
-            host_url = request.host_url.rstrip('/')
-            preview_url = f"{host_url}/preview/{project_id}"
-        except Exception as e:
-            print(f"DB Kayıt Hatası: {e}")
-
-    log_to_supabase(agent_name, "SYSTEM_OP", f"Talimat: {user_message}")
+    log_to_supabase(agent_name, "CHAT", f"Talimat: {user_message}")
     return jsonify({"status": reply, "preview_url": preview_url})
 
 @app.route('/api/uptime', methods=['GET'])
@@ -655,7 +654,7 @@ def api_uptime():
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
-    return jsonify({"summary": "Supabase bağlantısı aktif."})
+    return jsonify({"summary": "Supabase veritabanı, otonom hareket ve ayak izi simülasyonu aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
@@ -673,7 +672,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu koridorlu mimari ve saksı sorumluluk sistemini onayladı."})
+    return jsonify({"decision": "Yönetim kurulu canlı yürüyen ofis simülasyonunu onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
