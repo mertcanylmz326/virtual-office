@@ -3,7 +3,6 @@ import re
 import time
 import random
 import datetime
-import hashlib
 import psycopg2
 from flask import Flask, render_template_string, jsonify, request, Response, session, redirect, url_for
 from groq import Groq
@@ -51,10 +50,8 @@ def init_db():
             );
         """)
         
-        # Şifreyi veritabanına kaydedelim (Atatürk'ün doğduğu yıl hatırına: ataturk1881)
-        # Şifre ham metin olarak değil, güvenli hash (md5/sha) ile veya doğrudan db'de tutulur
         pwd_raw = "ataturk1881"
-        cur.execute("SELECT id FROM system_auth WHERE username = 'admin';",)
+        cur.execute("SELECT id FROM system_auth WHERE username = 'admin';")
         if not cur.fetchone():
             cur.execute("INSERT INTO system_auth (username, password_hash) VALUES ('admin', %s);", (pwd_raw,))
             
@@ -104,7 +101,7 @@ LOGIN_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Trade Pro - Uzay Üssü Güvenlik Girişi</title>
+    <title>Command Center - Uzay Üssü Girişi</title>
     <style>
         body {
             background: radial-gradient(circle at center, #0b0f19 0%, #02040a 100%);
@@ -271,7 +268,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // CLASSIC HQ (GPT-OSS 120B)</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // HQ (GPT-OSS 120B)</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -298,7 +295,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Brown'a site yazdır, Kante'ye pazarlama sor..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Brown'a portâl/video sitesi yazdır..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -331,10 +328,6 @@ HTML_TEMPLATE = """
 
         function checkEnter(e) {
             if (e.key === 'Enter') sendDirectMessage();
-        }
-
-        function selectAgent(name) {
-            document.getElementById('agent-select').value = name;
         }
 
         function drawOffice() {
@@ -422,13 +415,6 @@ HTML_TEMPLATE = """
             ctx.font = "bold 10px 'Courier New'";
             ctx.fillText("☕ MUTFAK & KAHVE ALANI", 595, 30);
 
-            ctx.fillStyle = "#451a03";
-            ctx.fillRect(720, 55, 100, 40);
-            ctx.fillStyle = "#1e293b";
-            ctx.fillRect(960, 30, 40, 50);
-            ctx.fillStyle = "#fbbf24";
-            ctx.fillRect(970, 40, 18, 12);
-
             ctx.fillStyle = "rgba(109, 40, 217, 0.35)";
             ctx.fillRect(580, 175, 485, 250);
             ctx.strokeStyle = "#8b5cf6";
@@ -437,9 +423,6 @@ HTML_TEMPLATE = """
             ctx.fillStyle = "#e9d5ff";
             ctx.font = "bold 10px 'Courier New'";
             ctx.fillText("🤝 OTONOM PROJE ONAY ODASI", 600, 195);
-
-            ctx.fillStyle = "#3b0764";
-            ctx.fillRect(740, 270, 160, 60);
 
             for (let name in agentsData) {
                 let ag = agentsData[name];
@@ -492,7 +475,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı inceliyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} video portalı talebini kodluyor...`);
 
             fetch('/api/chat', {
                 method: 'POST',
@@ -503,7 +486,7 @@ HTML_TEMPLATE = """
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
                 if(data.preview_url) {
-                    appendLog(`> 🚀 <b style="color: #38bdf8; font-size: 14px;">CANLI SİTE LİNKİ (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Web Servis Sayfası 🌐</a>`);
+                    appendLog(`> 🚀 <b style="color: #38bdf8; font-size: 14px;">CANLI VİDEO PORTALI (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Portal Sayfası 🌐</a>`);
                 }
             })
             .catch(err => {
@@ -563,7 +546,6 @@ def login():
         try:
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
-            # Şifreyi doğrudan Supabase veritabanından sorguluyoruz (kodda düz metin yok!)
             cur.execute("SELECT password_hash FROM system_auth WHERE username = 'admin';")
             row = cur.fetchone()
             cur.close()
@@ -670,10 +652,10 @@ def api_chat():
             reply = f"Patron, {agent['role']} departmanı olarak notumuzu aldık!"
 
     else:
-        reply = "Patron, GPT-OSS 120B motoru ile site sıfırdan ve eksiksiz kodlandı!"
+        reply = "Patron, GPT-OSS 120B motoru ile video akış portalı (Pornhub/YouTube tarzı) sıfırdan kodlandı!"
         try:
             if groq_client:
-                code_prompt = f"Sen kıdemli bir web geliştiricisisin. Sadece ve sadece saf, eksiksiz bir HTML/CSS web sitesi yaz. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"
+                code_prompt = f"""Sen kıdemli bir full-stack web geliştiricisisin. Sadece ve sadece saf, eksiksiz bir HTML/CSS/JS içeren video akış platformu (Pornhub/YouTube tarzı dinamik video portalı, dark mode, kategoriler, arama çubuğu, video kartları ve oynatıcı arayüzü) yaz. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"""
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
@@ -704,33 +686,73 @@ def api_chat():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Özel Konsept Web Tasarımı</title>
+    <title>StreamHub - Premium Video Portal</title>
     <style>
-        body {{ background: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }}
-        header {{ background: linear-gradient(135deg, #1e293b, #0f172a); padding: 50px 20px; text-align: center; border-bottom: 3px solid #38bdf8; }}
-        h1 {{ color: #38bdf8; margin: 0; font-size: 32px; }}
-        .container {{ max-width: 1000px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }}
-        .card {{ background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; }}
-        .card h3 {{ color: #fbbf24; margin-top: 0; }}
-        .btn {{ display: inline-block; background: #0284c7; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px; }}
-        .btn:hover {{ background: #0369a1; }}
+        body {{ background: #0b0f19; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }}
+        header {{ background: #0f172a; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #38bdf8; }}
+        .logo {{ color: #38bdf8; font-size: 24px; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 8px; }}
+        .logo span {{ color: #f43f5e; background: rgba(244, 63, 94, 0.15); padding: 2px 8px; border-radius: 4px; font-size: 16px; }}
+        .search-bar {{ display: flex; gap: 10px; width: 40%; }}
+        .search-bar input {{ width: 100%; background: #1e293b; border: 1px solid #334155; color: #fff; padding: 10px 15px; border-radius: 6px; outline: none; }}
+        .search-bar button {{ background: #f43f5e; color: #fff; border: none; padding: 0 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }}
+        .categories {{ display: flex; gap: 10px; padding: 15px 30px; background: #030712; overflow-x: auto; border-bottom: 1px solid #1e293b; }}
+        .cat-chip {{ background: #1e293b; color: #cbd5e1; padding: 6px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; white-space: nowrap; transition: 0.2s; }}
+        .cat-chip:hover, .cat-chip.active {{ background: #38bdf8; color: #030712; font-weight: bold; }}
+        .container {{ max-width: 1400px; margin: 30px auto; padding: 0 30px; }}
+        .section-title {{ font-size: 18px; color: #38bdf8; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }}
+        .video-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }}
+        .video-card {{ background: #111827; border-radius: 10px; overflow: hidden; border: 1px solid #1e293b; transition: transform 0.2s; cursor: pointer; }}
+        .video-card:hover {{ transform: translateY(-4px); border-color: #38bdf8; }}
+        .thumbnail {{ position: relative; width: 100%; height: 160px; background: #1e293b; display: flex; align-items: center; justify-content: center; color: #64748b; font-weight: bold; }}
+        .duration {{ position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 4px; }}
+        .hd-badge {{ position: absolute; top: 8px; left: 8px; background: #f43f5e; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }}
+        .video-info {{ padding: 15px; }}
+        .video-title {{ font-size: 14px; font-weight: bold; color: #f8fafc; margin-bottom: 8px; line-height: 1.4; }}
+        .video-meta {{ font-size: 12px; color: #94a3b8; display: flex; justify-content: space-between; }}
     </style>
 </head>
 <body>
     <header>
-        <h1>Kurumsal Web Çözümleri</h1>
-        <p style="color: #94a3b8; margin-top: 10px;">Sektörel standartlara uygun profesyonel konsept tasarım</p>
-    </header>
-    <div class="container">
-        <div class="card">
-            <h3>Hızlı Başlangıç</h3>
-            <p>İstediğiniz konsept ve özellikler doğrultusunda tam uyumlu altyapı hazırlandı.</p>
-            <a href="#" class="btn">Detayları İncele</a>
+        <a href="#" class="logo">StreamHub <span>HD</span></a>
+        <div class="search-bar">
+            <input type="text" placeholder="Video, model veya kategori ara...">
+            <button>Ara</button>
         </div>
-        <div class="card">
-            <h3>Özel Tasarım</h3>
-            <p>Modern arayüz bileşenleri ve şık renk paletiyle kullanıcı deneyimi en üst düzeyde.</p>
-            <a href="#" class="btn">İletişime Geç</a>
+        <div style="color: #38bdf8; font-size: 13px; font-weight: bold;">PREMIUM VIP</div>
+    </header>
+    <div class="categories">
+        <div class="cat-chip active">Tümü</div>
+        <div class="cat-chip">Trendler</div>
+        <div class="cat-chip">Popüler</div>
+        <div class="cat-chip">Uzun Video</div>
+        <div class="cat-chip">60FPS HD</div>
+        <div class="cat-chip">Canlı Yayın</div>
+        <div class="cat-chip">Özel Seçki</div>
+    </div>
+    <div class="container">
+        <div class="section-title">🔥 Trend Olan Videolar</div>
+        <div class="video-grid">
+            <div class="video-card">
+                <div class="thumbnail">Önizleme Yükleniyor...<div class="hd-badge">HD</div><div class="duration">24:15</div></div>
+                <div class="video-info">
+                    <div class="video-title">Yapay Zeka Mimari ve Kodlama Otomasyonu Özel Gösterim #1</div>
+                    <div class="video-meta"><span>1.2M izlenme</span><span>2 gün önce</span></div>
+                </div>
+            </div>
+            <div class="video-card">
+                <div class="thumbnail">Önizleme Yükleniyor...<div class="hd-badge">4K</div><div class="duration">42:10</div></div>
+                <div class="video-info">
+                    <div class="video-title">Supabase Veritabanı ve Canlı Koridor Simülasyonu Masterclass</div>
+                    <div class="video-meta"><span>850K izlenme</span><span>5 gün önce</span></div>
+                </div>
+            </div>
+            <div class="video-card">
+                <div class="thumbnail">Önizleme Yükleniyor...<div class="hd-badge">HD</div><div class="duration">18:50</div></div>
+                <div class="video-info">
+                    <div class="video-title">Groq GPT-OSS 120B ile Sınırsız Kod Üretim Teknikleri</div>
+                    <div class="video-meta"><span>2.4M izlenme</span><span>1 hafta önce</span></div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
@@ -740,7 +762,7 @@ def api_chat():
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
             cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
-                        ("Brown (Yazılımcı)", user_message[:40], "Web Servis Canlı", html_code))
+                        ("Brown (Yazılımcı)", user_message[:40], "Canlı Video Portalı", html_code))
             project_id = cur.fetchone()[0]
             conn.commit()
             cur.close()
@@ -786,7 +808,7 @@ def api_tasks():
 def api_boardroom():
     if not session.get('logged_in'):
         return jsonify({"decision": "Yetkisiz"}), 403
-    return jsonify({"decision": "Yönetim kurulu uzay üssü güvenlik protokolünü onayladı."})
+    return jsonify({"decision": "Yönetim kurulu video akış portalı konseptini onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
