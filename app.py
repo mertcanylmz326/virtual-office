@@ -70,7 +70,7 @@ def check_system_uptime():
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "state": "Masada", "speech": "Müşteri destek veriyor"},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "state": "Masada", "speech": "Süreç takipte"},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Gerçek AI Üretimi Aktif"},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "state": "Masada", "speech": "Qwen 3.8B Model Aktif"},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "state": "Masada", "speech": "Lead topluyor"},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "state": "Masada", "speech": "Bütçe kontrol"},
@@ -170,7 +170,7 @@ HTML_TEMPLATE = """
 <body>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // REAL AI GENERATOR</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 13px;">🏢 E-TRADE PRO // QWEN 3.8B GROQ SYSTEM</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
@@ -182,7 +182,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span style="color: #fbbf24;">🚀 8B INSTANT AI KODLAYICI AKTİF</span>
+        <span style="color: #fbbf24;">🚀 QWEN/QWEN3.8-27B MODELİ AKTİF</span>
     </div>
 
     <div id="game-container">
@@ -196,7 +196,7 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Galerici veya başka bir konsept yaz..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Galerici veya istedigini yaz..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
@@ -204,10 +204,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● DYNAMIC AI CODE GENERATION</span>
+            <span style="color: #38bdf8; font-weight: bold;">● QWEN AI ONLINE</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Brown artık sabit şablon kullanmıyor, her isteği sıfırdan yapay zeka ile kodluyor!</div>
+            <div class="log-line">[SYSTEM]: Qwen 3.8B modeli Groq üzerinden bağlandı. Kod üretimi hazır!</div>
         </div>
     </div>
 
@@ -517,15 +517,15 @@ def api_chat():
     agent = employees[agent_name]
 
     html_code = ""
-    reply = f"Patron, Brown yapay zeka modeli ile istediğin siteyi sıfırdan ve özgün olarak kodladı!"
+    reply = f"Patron, Qwen 3.8B modeli ile istediğin site tamamen özgün olarak kodlandı!"
 
     try:
         if groq_client:
-            code_prompt = f"Sen kıdemli bir web geliştiricisisin. Kullanıcının şu isteği için tamamen özgün, o sektöre özel benzersiz tasarıma ve düzene sahip tek dosyalık bir HTML/CSS web sitesi kodu yaz: '{user_message}'. ÖNEMLİ: Sadece ve sadece saf HTML kodu döndür, asla sohbet etme, asla açıklama yazma, ```html etiketlerini bile kullanma."
+            code_prompt = f"Sen profesyonel bir web tasarımcısın. Kullanıcının şu isteği için o sektöre özel benzersiz, şık ve eksiksiz tek dosyalık bir HTML/CSS web sitesi yaz: '{user_message}'. Sadece saf HTML kodu döndür, asla açıklama yazma, asla sohbet etme."
             comp = groq_client.chat.completions.create(
-                model="llama-3.1-8b-instant",
+                model="qwen/qwen3.8-27b",
                 messages=[{"role": "user", "content": code_prompt}],
-                max_tokens=1500, temperature=0.7
+                max_tokens=2000, temperature=0.7
             )
             raw_code = comp.choices[0].message.content.strip()
             
@@ -553,7 +553,7 @@ def api_chat():
             else:
                 html_code = raw_code
     except Exception as e:
-        print(f"Groq API Üretim Hatası: {e}")
+        print(f"Groq Qwen API Üretim Hatası: {e}")
 
     if not html_code or "<html" not in html_code.lower() or len(html_code) < 100:
         html_code = f"""<!DOCTYPE html>
@@ -572,7 +572,7 @@ def api_chat():
     <h1>🚀 {user_message}</h1>
     <div class="card">
         <h3>Özel Konsept Tasarım</h3>
-        <p>İsteğiniz doğrultusunda yapay zeka tarafından özel olarak üretildi.</p>
+        <p>İsteğiniz doğrultusunda Qwen modeli tarafından özel olarak üretildi.</p>
     </div>
 </body>
 </html>"""
@@ -619,7 +619,7 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    return jsonify({"decision": "Yönetim kurulu gerçek yapay zeka kod üretimini onayladı."})
+    return jsonify({"decision": "Yönetim kurulu Qwen model entegrasyonunu onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
