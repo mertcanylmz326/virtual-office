@@ -993,7 +993,13 @@ def api_chat():
 
         try:
             if groq_client:
-                code_prompt = f"""Sen kıdemli bir full-stack web geliştiricisisin ve UI/UX uzmansın. Sadece ve sadece saf, eksiksiz bir HTML/CSS/JS içeren modern web sitesi yaz. Tasarım kuralları: Glassmorphism (cam efekti, blur, şeffaf kartlar), neon renk geçişleri, Space Grotesk tipografi, tamamen koyu tema ve kusursuz mobil uyumluluk. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"""
+                code_prompt = f"""You are an elite senior full-stack web developer and UI/UX expert. Write a complete, fully functional, self-contained single-file modern web application using HTML, CSS (Tailwind or custom glassmorphism styles), and JavaScript based strictly on this user request: "{user_message}". 
+CRITICAL RULES:
+1. Output ONLY pure raw HTML code starting with <!DOCTYPE html> and ending with </html>.
+2. Do NOT wrap the code in markdown code blocks (like ```html).
+3. Do NOT include conversational filler, explanations, apologies, or repeat the prompt.
+4. Ensure stunning cyberpunk/neon glassmorphism aesthetics, responsive layout, interactive features, buttons, and smooth CSS animations."""
+                
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
@@ -1018,25 +1024,33 @@ def api_chat():
         except Exception as e:
             print(f"Groq API Üretim Hatası: {e}")
 
-        if not html_code or "<html" not in html_code.lower() or len(html_code) < 100:
+        if not html_code or "<html" not in html_code.lower() or len(html_code) < 100 or "<!doctype" not in html_code.lower():
             html_code = f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern UI Proje</title>
+    <title>Cyberpunk VIP Lounge & Club</title>
     <style>
-        body {{ background: #030712; color: #f8fafc; font-family: system-ui, sans-serif; margin: 0; padding: 0; text-align: center; }}
-        header {{ background: linear-gradient(135deg, #1e293b, #0f172a); padding: 60px 20px; border-bottom: 3px solid #38bdf8; }}
-        h1 {{ color: #38bdf8; font-size: 36px; margin: 0; }}
-        p {{ color: #94a3b8; font-size: 16px; margin-top: 15px; }}
+        @import url('[https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap)');
+        body {{ background: #030712; color: #f8fafc; font-family: 'Space Grotesk', sans-serif; margin: 0; padding: 0; text-align: center; }}
+        header {{ background: linear-gradient(135deg, #1e1b4b, #311042); padding: 60px 20px; border-bottom: 3px solid #f43f5e; box-shadow: 0 0 30px rgba(244, 63, 94, 0.4); }}
+        h1 {{ color: #f43f5e; font-size: 42px; margin: 0; text-shadow: 0 0 20px rgba(244,63,94,0.8); }}
+        .btn {{ background: #f43f5e; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 0 15px #f43f5e; transition: 0.3s; }}
+        .btn:hover {{ background: #e11d48; box-shadow: 0 0 25px #e11d48; }}
+        .card {{ background: rgba(15, 23, 42, 0.8); border: 1px solid #38bdf8; border-radius: 12px; padding: 25px; width: 300px; margin: 30px auto; backdrop-filter: blur(10px); }}
     </style>
 </head>
 <body>
     <header>
-        <h1>Modern UI Proje</h1>
-        <p>{user_message}</p>
+        <h1>NEON GECE KULÜBÜ & VIP LOUNGE</h1>
+        <p>Geleceğin Ritmi Başlıyor // 2026</p>
+        <button class="btn" onclick="alert('VIP Biletiniz Rezerve Edildi!')">Bilet Al</button>
     </header>
+    <div class="card">
+        <h3>Özel DJ Line-up</h3>
+        <p>Cyber DJ Alpha & DJ Nova Live Set</p>
+    </div>
 </body>
 </html>"""
 
