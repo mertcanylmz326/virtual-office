@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = "e_trade_pro_secret_security_key_99"
 
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "Gsk_lsfdhNuWhDs4IgvuAkCCWGdyb3FYFKlpWQQ3dvDN1NYb1UVsDUZW"
 GITHUB_TOKEN = "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"
 
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
@@ -433,10 +433,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ AI DEV STUDIO TERMINAL</span>
-            <span style="color: var(--accent-color); font-weight: bold;">● OTONOM ÜRETİCİ AKTİF</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● GÜNCEL GROQ API AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Tam sürüm ofis simülasyonu ve yapay zeka kodlayıcı devrede!</div>
+            <div class="log-line">[SYSTEM]: Yeni Groq anahtarı başarıyla yüklendi!</div>
         </div>
     </div>
 
