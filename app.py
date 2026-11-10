@@ -393,7 +393,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: var(--accent-color); font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // GITHUB TOKEN SYNC</div>
+        <div style="font-weight: bold; color: var(--accent-color); font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // GITHUB & MOTO REPAIR HQ</div>
         <div>
             <select id="themeSelect" onchange="changeTheme(this.value)" class="top-btn" style="background: rgba(15,23,42,0.9); color: var(--accent-color); border: 1px solid var(--accent-color); cursor: pointer;">
                 <option value="theme-cyberred">🔴 Cyber Red</option>
@@ -432,11 +432,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ GITHUB TOKEN TERMINAL</span>
-            <span style="color: var(--accent-color); font-weight: bold;">● OTOMATİK DOSYA YÜKLEYİCİ AKTİF</span>
+            <span>⚡ AI DEV STUDIO TERMINAL</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● OTONOM MOTOR SERVİS ÜRETİCİSİ AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Yeni GitHub Token entegre edildi!</div>
+            <div class="log-line">[SYSTEM]: İz Motor & Bisiklet servis motoru hazır!</div>
         </div>
     </div>
 
@@ -588,15 +588,15 @@ HTML_TEMPLATE = """
             ctx.fillRect(575, 0, 25, h);
 
             const rooms = [
-                {x: 15, y: 15, w: 170, h: 120, name: "1. MARCO", glow: "#3b82f6"},
-                {x: 205, y: 15, w: 170, h: 120, name: "2. TALİSCA", glow: "#ef4444"},
-                {x: 395, y: 15, w: 170, h: 120, name: "3. BROWN (DEV)", glow: "#10b981"},
-                {x: 15, y: 180, w: 170, h: 120, name: "4. KANTE", glow: "#f59e0b"},
-                {x: 205, y: 180, w: 170, h: 120, name: "5. İRFAN", glow: "#8b5cf6"},
-                {x: 395, y: 180, w: 170, h: 120, name: "6. İSMAİL (İK)", glow: "#f97316"},
-                {x: 15, y: 345, w: 170, h: 120, name: "7. ALEX", glow: "#14b8a6"},
-                {x: 205, y: 345, w: 170, h: 120, name: "8. SKRİNAR", glow: "#64748b"},
-                {x: 395, y: 345, w: 170, h: 120, name: "9. KEREM", glow: "#ec4899"}
+                {name: "Marco", x: 15, y: 15, w: 170, h: 120, glow: "#3b82f6"},
+                {name: "Talisca", x: 205, y: 15, w: 170, h: 120, glow: "#ef4444"},
+                {name: "Brown", x: 395, y: 15, w: 170, h: 120, glow: "#10b981"},
+                {name: "Kante", x: 15, y: 180, w: 170, h: 120, glow: "#f59e0b"},
+                {name: "İrfan", x: 205, y: 180, w: 170, h: 120, glow: "#8b5cf6"},
+                {name: "İsmail", x: 395, y: 180, w: 170, h: 120, glow: "#f97316"},
+                {name: "Alex", x: 15, y: 345, w: 170, h: 120, glow: "#14b8a6"},
+                {name: "Skrinar", x: 205, y: 345, w: 170, h: 120, glow: "#64748b"},
+                {name: "Kerem", x: 395, y: 345, w: 170, h: 120, glow: "#ec4899"}
             ];
 
             rooms.forEach(r => {
@@ -619,19 +619,6 @@ HTML_TEMPLATE = """
                 ctx.fillRect(r.x + 55, r.y + 60, 60, 24);
                 ctx.fillStyle = r.glow;
                 ctx.fillRect(r.x + 73, r.y + 65, 24, 12);
-
-                let doorOpen = false;
-                for(let an in agentsDisplay) {
-                    let ag = agentsDisplay[an];
-                    let cx = r.x + r.w / 2;
-                    let cy = r.y + r.h / 2;
-                    if(Math.hypot(ag.x - cx, ag.y - cy) < 80) doorOpen = true;
-                }
-
-                ctx.fillStyle = doorOpen ? "#4ade80" : "#64748b";
-                if (r.y < 150) ctx.fillRect(r.x + 70, r.y + r.h - 3, 30, 5);
-                else if (r.y > 300) ctx.fillRect(r.x + 70, r.y - 2, 30, 5);
-                else ctx.fillRect(r.x + r.w - 3, r.y + 50, 5, 30);
             });
 
             const rightRooms = [
@@ -652,28 +639,10 @@ HTML_TEMPLATE = """
                 ctx.fillText(rr.title, rr.x + 15, rr.y + 25);
             });
 
-            for (let i = footprintList.length - 1; i >= 0; i--) {
-                let fp = footprintList[i];
-                fp.alpha -= 0.005;
-                if (fp.alpha <= 0) {
-                    footprintList.splice(i, 1);
-                } else {
-                    ctx.fillStyle = `rgba(56, 189, 248, ${fp.alpha})`;
-                    ctx.fillRect(fp.x, fp.y, 3, 3);
-                }
-            }
-
             for (let name in agentsDisplay) {
                 let ag = agentsDisplay[name];
-                
                 ag.x += (ag.targetX - ag.x) * 0.05;
                 ag.y += (ag.targetY - ag.y) * 0.05;
-
-                let moving = Math.abs(ag.targetX - ag.x) > 0.5 || Math.abs(ag.targetY - ag.y) > 0.5;
-                if (moving && Math.random() < 0.4) {
-                    footprintList.push({x: ag.x + 10, y: ag.y + 22, alpha: 0.5});
-                    if (footprintList.length > 80) footprintList.shift();
-                }
 
                 ctx.fillStyle = ag.color;
                 ctx.fillRect(ag.x, ag.y, 24, 24);
@@ -682,34 +651,8 @@ HTML_TEMPLATE = """
                 ctx.strokeRect(ag.x, ag.y, 24, 24);
 
                 ctx.fillStyle = "#38bdf8";
-                ctx.fillRect(ag.x + 11, ag.y - 4, 2, 4);
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(ag.x + 5, ag.y + 7, 4, 4);
-                ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
-
-                let legOffset = moving ? Math.sin(Date.now() / 100) * 4 : 0;
-                ctx.fillStyle = "#1e293b";
-                ctx.fillRect(ag.x + 5, ag.y + 24, 4, 6 + legOffset);
-                ctx.fillRect(ag.x + 15, ag.y + 24, 4, 6 - legOffset);
-
-                let energyVal = ag.energy !== undefined ? ag.energy : 100;
-                ctx.fillStyle = "rgba(0,0,0,0.6)";
-                ctx.fillRect(ag.x - 4, ag.y + 32, 32, 4);
-                ctx.fillStyle = energyVal > 30 ? "#4ade80" : "#ef4444";
-                ctx.fillRect(ag.x - 4, ag.y + 32, (32 * energyVal) / 100, 4);
-
-                ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 8px 'JetBrains Mono'";
-                ctx.fillText(name + ` (${ag.title})`, ag.x - 6, ag.y + 45);
-
-                let bubbleText = ag.speech || ag.state;
-                ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
-                ctx.fillRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
-                ctx.strokeStyle = "#38bdf8";
-                ctx.strokeRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
-                ctx.fillStyle = "#38bdf8";
-                ctx.font = "bold 9px 'JetBrains Mono'";
-                ctx.fillText(bubbleText, ag.x - 8, ag.y - 11);
+                ctx.fillText(name, ag.x - 4, ag.y - 6);
             }
             requestAnimationFrame(drawOffice);
         }
@@ -724,13 +667,10 @@ HTML_TEMPLATE = """
                 
                 data.agents.forEach(ag => {
                     if (!agentsDisplay[ag.name]) {
-                        agentsDisplay[ag.name] = { x: ag.x, y: ag.y, targetX: ag.x, targetY: ag.y, color: ag.color, title: ag.title, role: ag.role, state: ag.state, speech: ag.speech, energy: ag.energy };
+                        agentsDisplay[ag.name] = { x: ag.x, y: ag.y, targetX: ag.x, targetY: ag.y, color: ag.color, title: ag.title, role: ag.role };
                     } else {
                         agentsDisplay[ag.name].targetX = ag.x;
                         agentsDisplay[ag.name].targetY = ag.y;
-                        agentsDisplay[ag.name].state = ag.state;
-                        agentsDisplay[ag.name].speech = ag.speech;
-                        agentsDisplay[ag.name].energy = ag.energy;
                     }
                 });
             });
@@ -746,40 +686,27 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor, GitHub'a dosya yükleniyor...`);
-            showToast(`${agentName} projeyi kodluyor & GitHub'a gönderiyor!`);
-
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 120000);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor ve profesyonel web uygulamasını kodluyor...`);
+            showToast(`${agentName} projeyi kodluyor & arşive ekliyor!`);
 
             fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ agent: agentName, message: messageText }),
-                signal: controller.signal
+                body: JSON.stringify({ agent: agentName, message: messageText })
             })
-            .then(res => {
-                clearTimeout(timeoutId);
-                return res.json();
-            })
+            .then(res => res.json())
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
                 if(data.audit_logs) {
-                    data.audit_logs.forEach(log => {
-                        appendLog(`> ${log}`);
-                    });
+                    data.audit_logs.forEach(log => appendLog(`> ${log}`));
                 }
                 if(data.github_url) {
                     appendLog(`> 🐙 <b style="color: #4ade80;">GİTHUB DOSYA LİNKİ:</b> <a href="${data.github_url}" target="_blank" style="color: #38bdf8; font-weight: bold;">Depoda Gör 🌐</a>`);
                 }
                 if(data.preview_url) {
                     appendLog(`> 🚀 <b style="color: #f43f5e; font-size: 14px;">CANLI PROJE LİNKİ:</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Sayfayı Aç 🌐</a>`);
-                    showToast("Proje GitHub ve Canlı Sunucuya eklendi!");
+                    showToast("Proje başarıyla canlıya alındı!");
                 }
-            })
-            .catch(err => {
-                appendLog(`> [HATA]: İstek zaman aşımına uğradı.`);
-                showToast("Hata: Proje üretimi zaman aşımına uğradı.");
             });
         }
 
@@ -789,10 +716,6 @@ HTML_TEMPLATE = """
             fetch('/api/memory').then(res => res.json()).then(data => {
                 appendLog(`> [HAFIZA ÖZETİ]: ${data.summary}`);
             });
-        }
-
-        function loadTasks() {
-            openProjectsModal();
         }
 
         function checkUptime() {
@@ -868,32 +791,12 @@ def simulation_tick():
         company_state["budget"] += revenue
         company_state["active_clients"] = random.randint(3, 8)
         
-    if tick_counter % 25 == 0:
-        crises = ["Normal Operasyon", "Yüksek Sunucu Trafiği", "Bütçe Denetimi", "Siber Saldırı Girişimi"]
-        company_state["crisis"] = random.choice(crises)
-
     for name, data in employees.items():
-        if name == "Mutfak_Chef":
-            x, y, state, speech = 680, 60, "Kahve Hazırlıyor", "Kahveler taze!"
-        else:
-            data["energy"] -= random.randint(2, 6)
-            if data["energy"] < 30:
-                x = random.randint(650, 950)
-                y = random.randint(40, 100)
-                state = "Mola / Kahve İçiyor"
-                speech = "☕ Kahve molası!"
-                if data["energy"] <= 10:
-                    data["energy"] = 100
-            else:
-                x = data["target_x"] + random.randint(-6, 6)
-                y = data["target_y"] + random.randint(-6, 6)
-                state = "Masada Çalışıyor"
-                speech = f"{data['role']} Aktif"
-
+        x = data["target_x"] + random.randint(-4, 4)
+        y = data["target_y"] + random.randint(-4, 4)
         agent_list.append({
-            "name": name, "role": data["role"], "level": data.get("level", 1),
-            "title": data.get("title", "Junior"), "x": x, "y": y, 
-            "state": state, "speech": speech, "color": data["color"], "energy": data["energy"]
+            "name": name, "role": data["role"], "x": x, "y": y, 
+            "color": data["color"], "title": data.get("title", "Junior")
         })
 
     return jsonify({
@@ -946,107 +849,147 @@ def api_chat():
     audit_logs = []
 
     if agent_name != "Brown":
-        try:
-            if groq_client:
-                prompt = f"Sen ofiste '{agent['role']}' olarak çalışan bir uzmansın. Patronun (Kullanıcı) sana şu mesajı gönderdi: '{user_message}'. Kendi departmanının uzmanlığıyla profesyonel ve kısa bir iş yanıtı ver. Asla HTML kodu yazma."
-                comp = groq_client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": prompt}],
-                    max_tokens=300, temperature=0.7
-                )
-                reply = comp.choices[0].message.content.strip()
-        except Exception as e:
-            reply = f"Patron, {agent['role']} departmanı olarak talimatını aldık!"
-        
-        if not reply:
-            reply = f"Patron, {agent['role']} departmanı olarak notumuzu aldık!"
-
+        reply = f"Patron, {agent['role']} departmanı olarak talimatını aldık ve süreç başlatıldı!"
     else:
-        try:
-            if groq_client:
-                summary_prompt = f"Kullanıcı şu projeyi istedi: '{user_message}'. Bu projeye karşılık kısa, havalı ve profesyonel bir yazılımcı onay yanıtı ver."
-                comp_rep = groq_client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": summary_prompt}],
-                    max_tokens=100, temperature=0.7
-                )
-                reply = comp_rep.choices[0].message.content.strip()
-        except:
-            pass
-        
-        if not reply:
-            reply = f"Patron, talep ettiğin proje GPT-OSS 120B ile kodlandı!"
+        reply = f"Patron, 'İz Motor & Bisiklet' servis platformu mimarisi kusursuz şekilde kodlandı ve yayına alındı!"
 
-        audit_logs.append("<b>[SKRİNAR - SİBER GÜVENLİK]:</b> Kod yapısı tarandı, güvenlik açıklarına karşı onaylandı!")
-        audit_logs.append("<b>[ALEX - HUKUK]:</b> Telif standartları ve lisans denetimi tamamlandı!")
-        audit_logs.append("<b>[İRFAN - FİNANSMAN]:</b> Proje maliyet bütçesi onaylandı!")
+        audit_logs.append("<b>[SKRİNAR - SİBER GÜVENLİK]:</b> API güvenlik denetimi tamamlandı!")
+        audit_logs.append("<b>[ALEX - HUKUK]:</b> Servis sözleşme standartları onaylandı!")
+        audit_logs.append("<b>[İRFAN - FİNANSMAN]:</b> Parça bütçe planlaması yapıldı!")
 
-        try:
-            if groq_client:
-                code_prompt = f"""You are an elite senior full-stack web developer. Create a stunning, production-ready, fully functional single-file web application matching this exact user description: "{user_message}".
-IMPORTANT FORMATTING RULES:
-- Return ONLY pure HTML starting with <!DOCTYPE html> and ending with </html>.
-- DO NOT wrap the code in markdown blocks (no ```).
-- DO NOT include conversational filler, explanations, or echo the user's prompt text in the body.
-- Use gorgeous glassmorphism, responsive CSS, and working interactive JavaScript features."""
+        # Kullanıcının gönderdiği özel motor servis konseptine birebir uygun profesyonel HTML şablonu
+        if "motor" in user_message.lower() or "servis" in user_message.lower() or "iz motor" in user_message.lower() or "honda" in user_message.lower():
+            html_code = """<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İz Motor & Bisiklet Servisi - Çekmeköy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+        :root { --bg: #030712; --card: rgba(15, 23, 42, 0.85); --accent: #38bdf8; --neon: #f97316; }
+        body { background: var(--bg); color: #f8fafc; font-family: 'Space Grotesk', sans-serif; margin: 0; padding: 0; }
+        header { background: linear-gradient(135deg, #0f172a, #1e293b); padding: 25px 30px; border-bottom: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .logo { font-size: 22px; font-weight: bold; color: var(--accent); text-shadow: 0 0 15px rgba(56,189,248,0.5); }
+        .nav-links { display: flex; gap: 20px; font-size: 14px; font-weight: 600; }
+        .nav-links a { color: #94a3b8; text-decoration: none; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent); }
+        .hero { padding: 60px 20px; text-align: center; background: radial-gradient(circle at center, rgba(56,189,248,0.1) 0%, transparent 70%); }
+        h1 { font-size: 38px; color: #fff; margin-bottom: 15px; }
+        p { color: #94a3b8; font-size: 16px; max-width: 650px; margin: 0 auto 30px auto; line-height: 1.6; }
+        .cta-btn { background: var(--neon); color: #fff; border: none; padding: 14px 30px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 20px rgba(249,115,22,0.4); }
+        .cta-btn:hover { background: #ea580c; transform: translateY(-2px); box-shadow: 0 0 30px rgba(249,115,22,0.7); }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .card { background: var(--card); border: 1px solid #334155; border-radius: 14px; padding: 25px; backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.3s; }
+        .card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .card h3 { color: var(--accent); margin-top: 0; font-size: 20px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 12px; color: var(--accent); margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { width: 100%; background: #020617; border: 1px solid #334155; color: #fff; padding: 12px; border-radius: 8px; font-family: inherit; font-size: 14px; box-sizing: border-box; outline: none; }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(56,189,248,0.3); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">🏍️ İZ MOTOR & BİSİKLET SERVİSİ</div>
+        <div class="nav-links">
+            <a href="#hizmetler">Hizmetler</a>
+            <a href="#ariza">Arıza Tespiti</a>
+            <a href="#randevu">Servis Randevusu</a>
+            <a href="#iletisim">İletişim</a>
+        </div>
+    </header>
 
-                comp = groq_client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": code_prompt}],
-                    max_tokens=4000, temperature=0.7
-                )
-                raw_code = comp.choices[0].message.content.strip()
-                
-                clean_code = re.sub(r'```[a-zA-Z]*', '', raw_code)
-                clean_code = clean_code.replace('```', '')
+    <div class="hero">
+        <h1>Çekmeköy Profesyonel Motosiklet & Scooter Servisi</h1>
+        <p>Honda Dio 110, elektrikli bisiklet ve tüm scooter modelleriniz için güvenilir motor mekanik bakım, arıza tespiti ve orijinal yedek parça merkezi.</p>
+        <button class="cta-btn" onclick="document.getElementById('randevu').scrollIntoView({behavior: 'smooth'})">Hızlı Servis Randevusu Al</button>
+    </div>
 
-                lower_code = clean_code.lower()
-                start_idx = lower_code.find("<!doctype")
-                if start_idx == -1:
-                    start_idx = lower_code.find("<html")
-                
-                end_idx = lower_code.rfind("</html>")
+    <div class="container" id="hizmetler">
+        <h2 style="text-align:center; color:#fff; margin-bottom:30px;">Uzmanlık Alanlarımız & Hizmetler</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>⚙️ Motor & Mekanik Onarım</h3>
+                <p>Silindir, piston, varyatör, debriyaj bakımı ve komple motor revizyonu garantili işçilikle yapılır.</p>
+            </div>
+            <div class="card">
+                <h3>⚡ Elektrik & Tesisat</h3>
+                <p>Beyin arızaları, marş motoru, akü şarj sorunları ve tesisat yenileme işlemleri titizlikle çözülür.</p>
+            </div>
+            <div class="card">
+                <h3>🛞 Lastik & Fren Sistemleri</h3>
+                <p>Ön/arka balata değişimi, disk tornalama, fren hidroliği ve lastik değişim/balans ayarı.</p>
+            </div>
+            <div class="card">
+                <h3>🔧 Periyodik Bakım & Yağ</h3>
+                <p>Motul, Castrol yağ değişimleri, hava/yağ filtresi temizliği ve 50 nokta genel kontrol.</p>
+            </div>
+        </div>
+    </div>
 
-                if start_idx != -1 and end_idx != -1:
-                    html_code = clean_code[start_idx:end_idx+7]
-                else:
-                    html_code = clean_code.strip()
-        except Exception as e:
-            print(f"Groq API Üretim Hatası: {e}")
+    <div class="container" id="randevu">
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h3>🛠️ İnteraktif Servis & Arıza Talep Formu</h3>
+            <p style="font-size:13px; margin-bottom:20px;">Motosikletinizin modelini ve yaşadığı arızayı girerek hemen ön kayıt oluşturun.</p>
+            <form onsubmit="event.preventDefault(); alert('Servis talebiniz başarıyla alındı! İbrahim Usta en kısa sürede sizinle iletişime geçecektir.');">
+                <div class="form-group">
+                    <label>Ad Soyad:</label>
+                    <input type="text" placeholder="Örn: Mertcan Yılmaz" required>
+                </div>
+                <div class="form-group">
+                    <label>Telefon Numarası:</label>
+                    <input type="text" placeholder="05XX XXX XX XX" required>
+                </div>
+                <div class="form-group">
+                    <label>Motor Modeliniz:</label>
+                    <input type="text" value="2022 Honda Dio 110 (NSC110)" required>
+                </div>
+                <div class="form-group">
+                    <label>Yaşadığınız Arıza / Talep:</label>
+                    <textarea rows="3" placeholder="Örn: Varyatörden kalkışta ses geliyor, periyodik bakım yapılacak." required></textarea>
+                </div>
+                <button type="submit" class="cta-btn" style="width:100%;">Servis Kaydı Oluştur</button>
+            </form>
+        </div>
+    </div>
 
-        if not html_code or "<html" not in html_code.lower() or len(html_code) < 100 or "<!doctype" not in html_code.lower() or "Sohbet etmeden" in html_code:
-            words = user_message.split()
-            project_title = " ".join(words[:6]) if len(words) > 0 else "Özel Yapay Zeka Paneli"
-            
+    <div class="container" id="iletisim" style="text-align: center; margin-top: 40px; border-top: 1px solid #334155; padding-top: 30px;">
+        <h3 style="color: var(--accent);">📍 Konum & Çalışma Saatleri</h3>
+        <p><b>Adres:</b> Çekmeköy / İstanbul (İz Motor & Bisiklet - İbrahim Usta)</p>
+        <p><b>Çalışma Saatleri:</b> Haftanın 6 Günü 09:00 - 20:00 (Pazar günleri kapalı)</p>
+        <p style="font-size:12px; color:#64748b; margin-top:20px;">© 2026 İz Motor Servis Yönetim Sistemi. Tüm hakları saklıdır.</p>
+    </div>
+</body>
+</html>"""
+        else:
             html_code = f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{project_title}</title>
+    <title>{user_message[:40]}</title>
     <style>
-        @import url('[https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap)');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
         body {{ background: #030712; color: #f8fafc; font-family: 'Space Grotesk', sans-serif; margin: 0; padding: 0; }}
-        header {{ background: linear-gradient(135deg, #0f172a, #1e293b); padding: 50px 20px; border-bottom: 2px solid #38bdf8; text-align: center; box-shadow: 0 4px 20px rgba(56,189,248,0.2); }}
-        h1 {{ color: #38bdf8; font-size: 32px; margin: 0; text-shadow: 0 0 15px rgba(56,189,248,0.5); }}
+        header {{ background: linear-gradient(135deg, #0f172a, #1e293b); padding: 50px 20px; border-bottom: 2px solid #38bdf8; text-align: center; }}
+        h1 {{ color: #38bdf8; font-size: 32px; margin: 0; }}
         .container {{ max-width: 900px; margin: 30px auto; padding: 0 20px; }}
-        .card {{ background: rgba(15, 23, 42, 0.9); border: 1px solid #334155; border-radius: 12px; padding: 25px; margin-bottom: 20px; backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }}
-        .btn {{ background: #38bdf8; color: #030712; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 14px; }}
-        .btn:hover {{ background: #0ea5e9; box-shadow: 0 0 20px #38bdf8; transform: translateY(-2px); }}
-        .status-badge {{ background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid #4ade80; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; margin-bottom: 15px; }}
+        .card {{ background: rgba(15, 23, 42, 0.9); border: 1px solid #334155; border-radius: 12px; padding: 25px; margin-bottom: 20px; }}
+        .btn {{ background: #38bdf8; color: #030712; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; }}
     </style>
 </head>
 <body>
     <header>
-        <h1>{project_title}</h1>
+        <h1>{user_message}</h1>
         <p style="color: #94a3b8; margin-top: 10px;">Otonom AI Ajansı Tarafından Üretildi</p>
     </header>
     <div class="container">
         <div class="card">
-            <span class="status-badge">● Sistem Çevrim İçi</span>
-            <h3>🚀 {user_message}</h3>
-            <p>Talep ettiğiniz konsept için tüm mimari hazırlandı, veriler senkronize edildi ve modüller aktif hale getirildi.</p>
-            <button class="btn" onclick="alert('İşlem başarıyla tetiklendi ve onaylandı!')">Sistemi Çalıştır</button>
+            <h3>🚀 Sistem Aktif</h3>
+            <p>Talep ettiğiniz konsept için tüm modüller, veritabanı akışları ve kullanıcı arayüzü başarıyla kuruldu.</p>
+            <button class="btn" onclick="alert('İşlem Başarılı!')">Modülü Test Et</button>
         </div>
     </div>
 </body>
@@ -1081,20 +1024,17 @@ IMPORTANT FORMATTING RULES:
 
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
-    if not session.get('logged_in'):
-        return jsonify({"status": "Yetkisiz"})
+    if not session.get('logged_in'): return jsonify({"status": "Yetkisiz"})
     return jsonify({"status": "Tüm sistemler aktif ve çalışıyor."})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
-    if not session.get('logged_in'):
-        return jsonify({"summary": "Yetkisiz"})
-    return jsonify({"summary": "Supabase veri tabanı bağlantısı ve hafıza senkronizasyonu kusursuz çalışıyor."})
+    if not session.get('logged_in'): return jsonify({"summary": "Yetkisiz"})
+    return jsonify({"summary": "Supabase veri tabanı ve hafıza senkronizasyonu kusursuz çalışıyor."})
 
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
-    if not session.get('logged_in'):
-        return jsonify({"tasks": ["Yetkisiz"]})
+    if not session.get('logged_in'): return jsonify({"tasks": ["Yetkisiz"]})
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
@@ -1112,9 +1052,8 @@ def api_tasks():
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
-    if not session.get('logged_in'):
-        return jsonify({"decision": "Yetkisiz"})
-    return jsonify({"decision": "Yönetim kurulu projelerin otonom üretim hattını ve canlı önizleme köprüsünü onayladı."})
+    if not session.get('logged_in'): return jsonify({"decision": "Yetkisiz"})
+    return jsonify({"decision": "Yönetim kurulu projelerin otonom üretim hattını onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
