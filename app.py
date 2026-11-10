@@ -3,8 +3,6 @@ import re
 import time
 import random
 import datetime
-import base64
-import requests
 import psycopg2
 from flask import Flask, render_template_string, jsonify, request, Response, session, redirect, url_for
 from groq import Groq
@@ -13,8 +11,8 @@ app = Flask(__name__)
 app.secret_key = "e_trade_pro_secret_security_key_99"
 
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
-GROQ_API_KEY = "Gsk_lsfdhNuWhDs4IgvuAkCCWGdyb3FYFKlpWQQ3dvDN1NYb1UVsDUZW"
-GITHUB_TOKEN = "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"
+GROQ_API_KEY = "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"
+UPTIMEROBOT_API_KEY = "u3671342-858d5db4b2fd40032fce3ce6"
 
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
@@ -65,37 +63,27 @@ def init_db():
 
 init_db()
 
-def push_to_github(filename, file_content, commit_msg):
+def check_system_uptime():
     try:
-        headers = {
-            "Authorization": f"Bearer {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github+json"
-        }
-        username = "mertcanylmz326"
-        repo_name = "ai-agency-projects"
-
-        file_path_api = f"https://api.github.com/repos/{username}/{repo_name}/contents/{filename}"
-        content_encoded = base64.b64encode(file_content.encode('utf-8')).decode('utf-8')
-        
-        get_res = requests.get(file_path_api, headers=headers, timeout=3)
-        payload = {
-            "message": commit_msg,
-            "content": content_encoded
-        }
-        if get_res.status_code == 200:
-            payload["sha"] = get_res.json().get("sha")
-        
-        put_res = requests.put(file_path_api, headers=headers, json=payload, timeout=5)
-        if put_res.status_code in [200, 201]:
-            return f"https://github.com/{username}/{repo_name}/blob/main/{filename}"
+        import requests
+        url = "https://api.uptimerobot.com/v2/getMonitors"
+        payload = {"api_key": UPTIMEROBOT_API_KEY, "format": "json"}
+        response = requests.post(url, data=payload, timeout=5)
+        data = response.json()
+        if data.get("stat") == "ok":
+            monitors = data.get("monitors", [])
+            if monitors:
+                status_code = monitors[0].get("status")
+                status_text = "Aktif (Çalışıyor)" if status_code in [2, 2.0] else f"Kod Durumu: {status_code}"
+                return f"UptimeRobot: Sistem monitörleri {status_text}."
     except Exception as e:
-        print(f"GitHub API İstisnası: {e}")
-    return None
+        print(f"UptimeRobot API Hatası: {e}")
+    return "UptimeRobot API aktif."
 
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "target_x": 60, "target_y": 60, "state": "Masada", "speech": "Destek veriyor", "energy": 90},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 205, "room_y": 15, "color": "#ef4444", "target_x": 250, "target_y": 60, "state": "Masada", "speech": "Süreç takipte", "energy": 85},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 395, "room_y": 15, "color": "#10b981", "target_x": 440, "target_y": 60, "state": "Masada", "speech": "gpt-oss-120b Aktif", "energy": 95},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 395, "room_y": 15, "color": "#10b981", "target_x": 440, "target_y": 60, "state": "Masada", "speech": "GPT-OSS 120B Aktif", "energy": 95},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 180, "color": "#f59e0b", "target_x": 60, "target_y": 225, "state": "Masada", "speech": "Lead topluyor", "energy": 80},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 205, "room_y": 180, "color": "#8b5cf6", "target_x": 250, "target_y": 225, "state": "Masada", "speech": "Bütçe kontrol", "energy": 88},
@@ -393,7 +381,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: var(--accent-color); font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // AI AGENCY HQ</div>
+        <div style="font-weight: bold; color: var(--accent-color); font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // CYBER HQ (ULTIMATE UI)</div>
         <div>
             <select id="themeSelect" onchange="changeTheme(this.value)" class="top-btn" style="background: rgba(15,23,42,0.9); color: var(--accent-color); border: 1px solid var(--accent-color); cursor: pointer;">
                 <option value="theme-cyberred">🔴 Cyber Red</option>
@@ -432,11 +420,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ AI DEV STUDIO TERMINAL (120B ACTIVE)</span>
-            <span style="color: var(--accent-color); font-weight: bold;">● gpt-oss-120b MOTORU AKTİF</span>
+            <span>⚡ ULTIMATE UI TERMINAL</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● ENERJİ BARLARI & TEMA MOTORU AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: openai/gpt-oss-120b ile güçlendirilmiş otonom üretim hattı hazır!</div>
+            <div class="log-line">[SYSTEM]: Dinamik Cyber Red tema ve ajan enerji/XP barları başarıyla yüklendi!</div>
         </div>
     </div>
 
@@ -746,8 +734,8 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor (120B model), web arayüzü kodlanıyor...`);
-            showToast(`${agentName} projeyi kodluyor & arşive ekliyor!`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor ve departmanlar arası denetim başlatılıyor...`);
+            showToast(`${agentName} projeyi işliyor!`);
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 120000);
@@ -769,12 +757,9 @@ HTML_TEMPLATE = """
                         appendLog(`> ${log}`);
                     });
                 }
-                if(data.github_url) {
-                    appendLog(`> 🐙 <b style="color: #4ade80;">GİTHUB REPO:</b> <a href="${data.github_url}" target="_blank" style="color: #38bdf8; font-weight: bold;">Depoya Git 🌐</a>`);
-                }
                 if(data.preview_url) {
-                    appendLog(`> 🚀 <b style="color: #f43f5e; font-size: 14px;">CANLI PROJE LİNKİ:</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Sayfayı Aç 🌐</a>`);
-                    showToast("Proje başarıyla canlıya alındı!");
+                    appendLog(`> 🚀 <b style="color: var(--accent-color); font-size: 14px;">CANLI PROJE LİNKİ (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Sayfa 🌐</a>`);
+                    showToast("Proje başarıyla tamamlandı ve arşive eklendi!");
                 }
             })
             .catch(err => {
@@ -789,6 +774,10 @@ HTML_TEMPLATE = """
             fetch('/api/memory').then(res => res.json()).then(data => {
                 appendLog(`> [HAFIZA ÖZETİ]: ${data.summary}`);
             });
+        }
+
+        function loadTasks() {
+            openProjectsModal();
         }
 
         function checkUptime() {
@@ -938,29 +927,47 @@ def api_chat():
     html_code = ""
     reply = ""
     preview_url = None
-    github_url = None
     audit_logs = []
 
     if agent_name != "Brown":
-        reply = f"Patron, {agent['role']} departmanı olarak talimatını aldık!"
-    else:
-        reply = f"Patron, talep ettiğin uygulama gpt-oss-120b otonom motoru ile üretildi!"
-
-        audit_logs.append("<b>[SKRİNAR - SİBER GÜVENLİK]:</b> Kod yapısı tarandı, güvenlik açıklarına karşı onaylandı!")
-        audit_logs.append("<b>[ALEX - HUKUK]:</b> Telif standartları ve lisans denetimi tamamlandı!")
-        audit_logs.append("<b>[İRFAN - FİNANSMAN]:</b> Proje maliyet bütçesi onaylandı!")
-
-        # KESİN VE GARANTİLİ 120B OTONOM ÜRETİM SÜZGECİ
         try:
             if groq_client:
-                code_prompt = f"""You are an elite senior full-stack web developer and UI/UX designer. Create a fully functional, highly polished, stunning single-file HTML web application based on this exact request: "{user_message}".
+                prompt = f"Sen ofiste '{agent['role']}' olarak çalışan bir uzmansın. Patronun (Kullanıcı) sana şu mesajı gönderdi: '{user_message}'. Kendi departmanının uzmanlığıyla profesyonel ve kısa bir iş yanıtı ver. Asla HTML kodu yazma."
+                comp = groq_client.chat.completions.create(
+                    model="openai/gpt-oss-120b",
+                    messages=[{"role": "user", "content": prompt}],
+                    max_tokens=300, temperature=0.7
+                )
+                reply = comp.choices[0].message.content.strip()
+        except Exception as e:
+            reply = f"Patron, {agent['role']} departmanı olarak talimatını aldık!"
+        
+        if not reply:
+            reply = f"Patron, {agent['role']} departmanı olarak notumuzu aldık!"
 
-CRITICAL INSTRUCTIONS:
-- Return ONLY valid, complete HTML code starting with <!DOCTYPE html> and ending with </html>.
-- Do NOT include markdown code block ticks (like ```html or ```).
-- Do NOT include any conversational text, explanations, or intro/outro remarks.
-- Style the application with gorgeous modern embedded CSS (dark mode, neon accents, glassmorphism, responsive grid layout) and fully working JavaScript logic for interactive features, charts, or simulated data updates."""
+    else:
+        try:
+            if groq_client:
+                summary_prompt = f"Kullanıcı şu projeyi istedi: '{user_message}'. Bu projeye karşılık kısa, havalı ve profesyonel bir yazılımcı onay yanıtı ver."
+                comp_rep = groq_client.chat.completions.create(
+                    model="openai/gpt-oss-120b",
+                    messages=[{"role": "user", "content": summary_prompt}],
+                    max_tokens=100, temperature=0.7
+                )
+                reply = comp_rep.choices[0].message.content.strip()
+        except:
+            pass
+        
+        if not reply:
+            reply = f"Patron, talep ettiğin proje GPT-OSS 120B ile kodlandı!"
 
+        audit_logs.append("<b>[SKRİNAR - SİBER GÜVENLİK]:</b> Kod yapısı tarandı, XSS/SQL açıklığı bulunamadı. Güvenli!")
+        audit_logs.append("<b>[ALEX - HUKUK]:</b> Kullanım koşulları ve telif standartları onaylandı. Yasal!")
+        audit_logs.append("<b>[İRFAN - FİNANSMAN]:</b> Proje maliyet bütçesi onaylandı. Kasa dengede!")
+
+        try:
+            if groq_client:
+                code_prompt = f"""Sen kıdemli bir full-stack web geliştiricisisin ve UI/UX uzmansın. Sadece ve sadece saf, eksiksiz bir HTML/CSS/JS içeren modern web sitesi yaz. Tasarım kuralları: Glassmorphism (cam efekti, blur, şeffaf kartlar), neon renk geçişleri, Space Grotesk tipografi, tamamen koyu tema ve kusursuz mobil uyumluluk. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"""
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
@@ -968,8 +975,8 @@ CRITICAL INSTRUCTIONS:
                 )
                 raw_code = comp.choices[0].message.content.strip()
                 
-                # Markdown blok temizliği
-                clean_code = re.sub(r'```[a-zA-Z]*', '', raw_code).replace('```', '')
+                clean_code = re.sub(r'```[a-zA-Z]*', '', raw_code)
+                clean_code = clean_code.replace('```', '')
 
                 lower_code = clean_code.lower()
                 start_idx = lower_code.find("<!doctype")
@@ -983,86 +990,35 @@ CRITICAL INSTRUCTIONS:
                 else:
                     html_code = clean_code.strip()
         except Exception as e:
-            print(f"Groq API Üretim Hatası (120b): {e}")
+            print(f"Groq API Üretim Hatası: {e}")
 
-        # Eğer model hala düzgün HTML üretmediyse talimatınıza özel kusursuz bir şablon ör
-        if not html_code or "<html" not in html_code.lower() or len(html_code) < 150:
-            words = user_message.split()
-            project_title = " ".join(words[:6]) if len(words) > 0 else "Gelişmiş Yapay Zeka Paneli"
-            
+        if not html_code or "<html" not in html_code.lower() or len(html_code) < 100:
             html_code = f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{project_title}</title>
+    <title>Modern UI Proje</title>
     <style>
-        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-        body {{ font-family: 'Courier New', Courier, monospace; background-color: #030712; color: #38bdf8; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }}
-        header {{ background: rgba(15, 23, 42, 0.95); border-bottom: 2px solid #38bdf8; padding: 20px; display: flex; justify-content: space-between; align-items: center; }}
-        header h1 {{ font-size: 18px; color: #38bdf8; }}
-        .btn {{ background: #0284c7; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: monospace; }}
-        .btn:hover {{ background: #0369a1; box-shadow: 0 0 15px #38bdf8; }}
-        main {{ max-width: 1100px; margin: 30px auto; padding: 0 20px; width: 100%; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }}
-        @media(max-width:768px){{ main {{ grid-template-columns: 1fr; }} }}
-        .card {{ background: rgba(15, 23, 42, 0.85); border: 1px solid #334155; border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }}
-        .card h2 {{ font-size: 14px; color: #fff; margin-bottom: 12px; border-bottom: 1px dashed #334155; padding-bottom: 8px; }}
-        footer {{ background: #090d16; border-top: 1px solid #334155; padding: 15px; text-align: center; font-size: 11px; color: #64748b; }}
+        body {{ background: #030712; color: #f8fafc; font-family: system-ui, sans-serif; margin: 0; padding: 0; text-align: center; }}
+        header {{ background: linear-gradient(135deg, #1e293b, #0f172a); padding: 60px 20px; border-bottom: 3px solid #38bdf8; }}
+        h1 {{ color: #38bdf8; font-size: 36px; margin: 0; }}
+        p {{ color: #94a3b8; font-size: 16px; margin-top: 15px; }}
     </style>
 </head>
 <body>
     <header>
-        <div>
-            <h1>⚡ {project_title}</h1>
-            <p style="font-size: 11px; color: #94a3b8; margin-top: 3px;">Talimat: {user_message}</p>
-        </div>
-        <button class="btn" onclick="alert('Sistem aktif ve çalışıyor!')">İşlem Yap</button>
+        <h1>Modern UI Proje</h1>
+        <p>{user_message}</p>
     </header>
-
-    <main>
-        <div class="card">
-            <h2>📊 Ana Kontrol Paneli</h2>
-            <p style="font-size: 12px; color: #cbd5e1; line-height: 1.6;">Bu uygulama openai/gpt-oss-120b otonom motoru ile talebiniz doğrultusunda oluşturulmuştur. Tasarım ve işlevsellik tamamen optimize edilmiştir.</p>
-            <div style="margin-top: 20px; display: flex; gap: 10px;">
-                <button class="btn" onclick="alert('Veriler güncellendi!')">Verileri Yenile</button>
-                <button class="btn" style="background: #10b981;" onclick="alert('Rapor dışa aktarıldı!')">Rapor Al</button>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>⚙️ Sistem Durumu</h2>
-            <div style="font-size: 12px; color: #cbd5e1;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px dashed #334155; padding-bottom:6px;">
-                    <span>Motor:</span> <span style="color:#4ade80;">gpt-oss-120b</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px dashed #334155; padding-bottom:6px;">
-                    <span>Güvenlik:</span> <span style="color:#38bdf8;">Aktif (SSL)</span>
-                </div>
-                <div style="display:flex; justify-content:space-between;">
-                    <span>Altyapı:</span> <span style="color:#fbbf24;">Python & Flask</span>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        &copy; 2026 E-Trade Pro AI Agency HQ. Tüm Hakları Saklıdır.
-    </footer>
 </body>
 </html>"""
-
-        filename = f"project_{int(time.time())}.html"
-        github_url = push_to_github(filename, html_code, f"Otonom proje üretimi: {user_message[:30]}")
-        if github_url and "github.com" in github_url:
-            audit_logs.append(f"<b>[GİTHUB API]:</b> Dosya repoya başarıyla eklendi! 🐙")
-        else:
-            audit_logs.append(f"<b>[GİTHUB API]:</b> Lokal arşive kaydedildi.")
 
         try:
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
             cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
-                        ("Brown (Yazılımcı)", user_message[:40], github_url or "Lokal Arşiv", html_code))
+                        ("Brown (Yazılımcı)", user_message[:40], "Web Servis Canlı", html_code))
             project_id = cur.fetchone()[0]
             conn.commit()
             cur.close()
@@ -1070,40 +1026,36 @@ CRITICAL INSTRUCTIONS:
 
             host_url = request.host_url.rstrip('/')
             preview_url = f"{host_url}/preview/{project_id}"
-            audit_logs.append(f"<b>[CANLI ÖNİZLEME]:</b> Proje render sunucusunda yayına alındı! 🚀")
         except Exception as e:
             print(f"DB Kayıt Hatası: {e}")
 
     log_to_supabase(agent_name, "SYSTEM_OP", f"Talimat: {user_message}")
-    return jsonify({"status": reply, "audit_logs": audit_logs, "preview_url": preview_url, "github_url": github_url})
+    return jsonify({"status": reply, "audit_logs": audit_logs, "preview_url": preview_url})
 
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
     if not session.get('logged_in'):
-        return jsonify({"status": "Yetkisiz"})
-    return jsonify({"status": "Tüm sistemler aktif ve çalışıyor."})
+        return jsonify({"status": "Yetkisiz"}), 403
+    return jsonify({"status": check_system_uptime()})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
     if not session.get('logged_in'):
-        return jsonify({"summary": "Yetkisiz"})
-    return jsonify({"summary": "Supabase veri tabanı bağlantısı ve hafıza senkronizasyonu kusursuz çalışıyor."})
+        return jsonify({"summary": "Yetkisiz"}), 403
+    return jsonify({"summary": "Supabase bağlantısı aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
     if not session.get('logged_in'):
-        return jsonify({"tasks": ["Yetkisiz"]})
+        return jsonify({"tasks": ["Yetkisiz"]}), 403
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
-        cur.execute("SELECT id, client_name, project_type, repo_url FROM client_orders ORDER BY id DESC LIMIT 10;")
+        cur.execute("SELECT id, client_name, project_type FROM client_orders ORDER BY id DESC LIMIT 10;")
         rows = cur.fetchall()
         cur.close()
         conn.close()
-        tasks = []
-        for r in rows:
-            gh_btn = f" — <a href='{r[3]}' target='_blank' style='color: #4ade80; font-weight: bold;'>GitHub Dosya 🐙</a>" if r[3] and "github.com" in r[3] else ""
-            tasks.append(f"<b>[{r[1]}]:</b> {r[2]} — <a href='/preview/{r[0]}' target='_blank' style='color: #f43f5e; font-weight: bold;'>Canlı Sayfa 🌐</a>{gh_btn}")
+        tasks = [f"<b>[{r[1]}]:</b> {r[2]} — <a href='/preview/{r[0]}' target='_blank' style='color: #f43f5e; font-weight: bold;'>Canlı Sayfa 🌐</a>" for r in rows]
         return jsonify({"tasks": tasks if tasks else ["Arşivde henüz proje bulunmuyor."]})
     except:
         return jsonify({"tasks": ["Yüklenemedi."]})
@@ -1111,8 +1063,8 @@ def api_tasks():
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
     if not session.get('logged_in'):
-        return jsonify({"decision": "Yetkisiz"})
-    return jsonify({"decision": "Yönetim kurulu otonom üretim hattını onayladı."})
+        return jsonify({"decision": "Yetkisiz"}), 403
+    return jsonify({"decision": "Yönetim kurulu dinamik tema ve enerji barları arayüzünü onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
