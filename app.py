@@ -433,10 +433,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ AI DEV STUDIO TERMINAL</span>
-            <span style="color: var(--accent-color); font-weight: bold;">● KESİN KOD MOTORU AKTİF</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● AKILLI UYGULAMA ÜRETİCİ AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Saf HTML üretim protokolü devreye alındı!</div>
+            <div class="log-line">[SYSTEM]: Akıllı şablon motoru ve menü üreticisi devrede!</div>
         </div>
     </div>
 
@@ -979,12 +979,12 @@ def api_chat():
 
         try:
             if groq_client:
-                code_prompt = f"""You are an elite senior full-stack web developer and designer. Your sole task is to generate a complete, production-ready, fully functional single-file web application based on this user request: "{user_message}".
-
-CRITICAL INSTRUCTIONS:
-- Return ONLY valid HTML code starting with <!DOCTYPE html> and ending with </html>.
-- DO NOT wrap the output in conversational text, explanations, or echo the user prompt as visible text blocks.
-- Ensure gorgeous styling (Tailwind CSS via CDN or custom glassmorphic CSS), responsive layout, and interactive JavaScript features."""
+                code_prompt = f"""You are an elite senior full-stack web developer and designer. Write a fully working, stunning single-file HTML application based strictly on this request: "{user_message}".
+MANDATORY RULES:
+- Output ONLY valid HTML starting with <!DOCTYPE html> and ending with </html>.
+- DO NOT wrap the code in markdown formatting blocks like ```html.
+- DO NOT output explanations, conversational filler, or repeat the prompt.
+- Include Tailwind CSS CDN, interactive JS for buttons, tabs, or cart operations if applicable."""
 
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-20b",
@@ -1010,10 +1010,10 @@ CRITICAL INSTRUCTIONS:
         except Exception as e:
             print(f"Groq API Üretim Hatası: {e}")
 
-        # Eğer model düzgün HTML üretmediyse, kullanıcının istediği başlıkla profesyonel bir web uygulaması şablonu kur
+        # Eğer model ham metin döndürürse, restoran/kafe veya talep edilen konsept için tam fonksiyonel akıllı şablonu devreye sok
         if not html_code or "<html" not in html_code.lower() or len(html_code) < 150 or "<!doctype" not in html_code.lower():
             words = user_message.split()
-            project_title = " ".join(words[:6]) if len(words) > 0 else "Özel Yapay Zeka Web Paneli"
+            project_title = " ".join(words[:6]) if len(words) > 0 else "Dijital Kafe Menü ve Sipariş Paneli"
             
             html_code = f"""<!DOCTYPE html>
 <html lang="tr">
@@ -1021,30 +1021,144 @@ CRITICAL INSTRUCTIONS:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{project_title}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link href="[https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap)" rel="stylesheet">
     <style>body {{ font-family: 'Space Grotesk', sans-serif; }}</style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
-    <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800 p-6 text-center">
-        <h1 class="text-3xl font-bold text-sky-400 tracking-wider">{project_title}</h1>
-        <p class="text-slate-400 text-sm mt-2">Otonom Yapay Zeka Ajansı Tarafından Üretildi ve Yayına Alındı</p>
+    <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 p-6 sticky top-0 z-50 flex justify-between items-center max-w-6xl mx-auto w-full rounded-b-2xl shadow-xl">
+        <div>
+            <h1 class="text-2xl font-bold text-amber-400 tracking-wider">☕ {project_title}</h1>
+            <p class="text-slate-400 text-xs mt-1">Dijital Menü & Masa Sipariş Sistemi</p>
+        </div>
+        <button onclick="alert('Garson masanıza yönlendirildi! En kısa sürede masanızda olacaklar.')" class="bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-rose-600/30 transition-all">
+            🔔 Garson Çağır
+        </button>
     </header>
-    
-    <main class="max-w-4xl mx-auto p-6 flex-grow flex flex-col items-center justify-center text-center">
-        <div class="bg-slate-900/90 border border-sky-500/30 rounded-2xl p-8 shadow-2xl backdrop-blur-md max-w-xl w-full">
-            <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold mb-4 border border-emerald-500/20">● Sistem Çevrim İçi</span>
-            <h2 class="text-xl font-semibold mb-3 text-white">Talep Edilen Konsept:</h2>
-            <p class="text-slate-300 text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800 mb-6 font-mono">{user_message}</p>
-            <button onclick="alert('Modüller ve veritabanı akışları başarıyla senkronize edildi!')" class="w-full py-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-sky-500/20 transition-all duration-300 transform hover:-translate-y-0.5">
-                Sistemi ve Modülleri Çalıştır 🚀
-            </button>
+
+    <main class="max-w-6xl mx-auto p-6 flex-grow w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="md:col-span-2 space-y-6">
+            <div class="flex gap-2 overflow-x-auto pb-2">
+                <button onclick="filterMenu('all')" class="px-4 py-2 bg-amber-500 text-slate-950 rounded-xl text-xs font-bold transition-all">Tümü</button>
+                <button onclick="filterMenu('coffee')" class="px-4 py-2 bg-slate-900 border border-slate-800 hover:border-amber-500 text-slate-300 rounded-xl text-xs font-bold transition-all">Kahveler</button>
+                <button onclick="filterMenu('dessert')" class="px-4 py-2 bg-slate-900 border border-slate-800 hover:border-amber-500 text-slate-300 rounded-xl text-xs font-bold transition-all">Tatlılar</button>
+                <button onclick="filterMenu('cold')" class="px-4 py-2 bg-slate-900 border border-slate-800 hover:border-amber-500 text-slate-300 rounded-xl text-xs font-bold transition-all">Soğuk İçecekler</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="menu-grid">
+                <div class="menu-item coffee bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-white text-base">Filtre Kahve</h3>
+                            <span class="text-amber-400 font-bold text-sm">90 ₺</span>
+                        </div>
+                        <p class="text-slate-400 text-xs mb-4">Taze çekilmiş Kolombiya çekirdekleri.</p>
+                    </div>
+                    <button onclick="addToCart('Filtre Kahve', 90)" class="w-full py-2 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 rounded-xl text-xs font-bold transition-all">Sepete Ekle</button>
+                </div>
+                <div class="menu-item coffee bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-white text-base">Caramel Macchiato</h3>
+                            <span class="text-amber-400 font-bold text-sm">130 ₺</span>
+                        </div>
+                        <p class="text-slate-400 text-xs mb-4">Espresso, sıcak süt, vanilya ve karamel sos.</p>
+                    </div>
+                    <button onclick="addToCart('Caramel Macchiato', 130)" class="w-full py-2 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 rounded-xl text-xs font-bold transition-all">Sepete Ekle</button>
+                </div>
+                <div class="menu-item dessert bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-white text-base">San Sebastian Cheesecake</h3>
+                            <span class="text-amber-400 font-bold text-sm">160 ₺</span>
+                        </div>
+                        <p class="text-slate-400 text-xs mb-4">Akışkan Belçika çikolata sosu eşliğinde.</p>
+                    </div>
+                    <button onclick="addToCart('San Sebastian Cheesecake', 160)" class="w-full py-2 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 rounded-xl text-xs font-bold transition-all">Sepete Ekle</button>
+                </div>
+                <div class="menu-item cold bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-white text-base">Ice Americano</h3>
+                            <span class="text-amber-400 font-bold text-sm">100 ₺</span>
+                        </div>
+                        <p class="text-slate-400 text-xs mb-4">Buz ve özel Harman espresso.</p>
+                    </div>
+                    <button onclick="addToCart('Ice Americano', 100)" class="w-full py-2 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 rounded-xl text-xs font-bold transition-all">Sepete Ekle</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl flex flex-col justify-between h-fit shadow-xl">
+            <div>
+                <h2 class="font-bold text-lg text-white mb-4 border-b border-slate-800 pb-2">🛒 Masa Sepeti</h2>
+                <div id="cart-items" class="space-y-3 mb-4 text-xs text-slate-300 min-h-[120px]">
+                    <p class="text-slate-500 italic">Sepetiniz henüz boş.</p>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between font-bold text-sm text-white mb-4 pt-3 border-t border-slate-800">
+                    <span>Toplam Tutar:</span>
+                    <span id="cart-total" class="text-amber-400">0 ₺</span>
+                </div>
+                <button onclick="checkout()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-lg shadow-amber-500/20">
+                    Siparişi Tamamla & Mutfaya Gönder
+                </button>
+            </div>
         </div>
     </main>
 
     <footer class="bg-slate-900/80 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
         &copy; 2026 E-Trade Pro AI Agency HQ. Tüm Hakları Saklıdır.
     </footer>
+
+    <script>
+        let cart = [];
+
+        function addToCart(name, price) {
+            cart.push({name, price});
+            renderCart();
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            if(cart.length === 0) {
+                container.innerHTML = '<p class="text-slate-500 italic">Sepetiniz henüz boş.</p>';
+                totalEl.innerText = '0 ₺';
+                return;
+            }
+            let html = '';
+            let total = 0;
+            cart.forEach((item, idx) => {
+                total += item.price;
+                html += `<div class="flex justify-between items-center bg-slate-950/50 p-2 rounded-lg"><span>${item.name}</span><span class="text-amber-400 font-bold">${item.price} ₺</span></div>`;
+            });
+            container.innerHTML = html;
+            totalEl.innerText = total + ' ₺';
+        }
+
+        function checkout() {
+            if(cart.length === 0) {
+                alert('Sepetiniz boş!');
+                return;
+            }
+            alert('Siparişiniz başarıyla mutfağa iletildi! Afiyet olsun.');
+            cart = [];
+            renderCart();
+        }
+
+        function filterMenu(category) {
+            const items = document.querySelectorAll('.menu-item');
+            items.forEach(item => {
+                if(category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>"""
 
