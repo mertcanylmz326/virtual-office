@@ -433,10 +433,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ AI DEV STUDIO TERMINAL</span>
-            <span style="color: var(--accent-color); font-weight: bold;">● SÖZDizİMİ DÜZELTİLDİ AKTİF</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● İNLINE CSS STİL MOTORU AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Render python syntax motoru kusursuzlaştırıldı!</div>
+            <div class="log-line">[SYSTEM]: Harici CDN bağımlılıkları kaldırıldı, inline stiller entegre edildi!</div>
         </div>
     </div>
 
@@ -984,7 +984,7 @@ MANDATORY RULES:
 - Output ONLY valid HTML starting with <!DOCTYPE html> and ending with </html>.
 - DO NOT wrap the code in markdown formatting blocks like ```html.
 - DO NOT output explanations, conversational filler, or repeat the prompt.
-- Include Tailwind CSS CDN, interactive JS for buttons, tabs, or cart operations if applicable."""
+- Include embedded CSS styling so it looks gorgeous without external CDN dependencies."""
 
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-20b",
@@ -1020,94 +1020,115 @@ MANDATORY RULES:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dijital Kafe Menü ve Sipariş Paneli</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link href="[https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap)" rel="stylesheet">
-    <style>body { font-family: 'Space Grotesk', sans-serif; }</style>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #030712; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+        header { background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid #1e293b; padding: 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px); }
+        header h1 { font-size: 20px; color: #fbbf24; }
+        header p { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+        .garson-btn { background: #e11d48; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.3s; box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4); }
+        .garson-btn:hover { background: #be123c; }
+        main { max-width: 1100px; margin: 30px auto; padding: 0 20px; width: 100%; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; flex-grow: 1; }
+        @media (max-width: 768px) { main { grid-template-columns: 1fr; } }
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; }
+        .cat-btn { background: #0f172a; border: 1px solid #1e293b; color: #cbd5e1; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s; white-space: nowrap; }
+        .cat-btn.active, .cat-btn:hover { background: #fbbf24; color: #030712; border-color: #fbbf24; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; }
+        .menu-card { background: rgba(15, 23, 42, 0.8); border: 1px solid #1e293b; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; backdrop-filter: blur(8px); }
+        .menu-card h3 { font-size: 15px; color: #fff; margin-bottom: 5px; }
+        .menu-card .price { color: #fbbf24; font-weight: bold; font-size: 14px; }
+        .menu-card p { color: #94a3b8; font-size: 11px; margin: 8px 0 14px 0; }
+        .add-btn { background: #1e293b; color: #fbbf24; border: 1px solid #334155; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.3s; width: 100%; }
+        .add-btn:hover { background: #fbbf24; color: #030712; }
+        .cart-box { background: rgba(15, 23, 42, 0.9); border: 1px solid #1e293b; border-radius: 16px; padding: 20px; height: fit-content; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .cart-box h2 { font-size: 16px; color: #fff; margin-bottom: 15px; border-bottom: 1px solid #1e293b; padding-bottom: 10px; }
+        .cart-items { min-height: 120px; max-height: 250px; overflow-y: auto; margin-bottom: 15px; font-size: 12px; color: #cbd5e1; }
+        .cart-item-row { display: flex; justify-content: space-between; align-items: center; background: rgba(3, 7, 18, 0.6); padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; }
+        .cart-total-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #1e293b; }
+        .cart-total-row span:last-child { color: #fbbf24; }
+        .checkout-btn { width: 100%; background: #fbbf24; color: #030712; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.3s; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3); }
+        .checkout-btn:hover { background: #f59e0b; }
+        footer { background: #0f172a; border-top: 1px solid #1e293b; padding: 15px; text-align: center; font-size: 11px; color: #64748b; }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
-    <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 p-6 sticky top-0 z-50 flex justify-between items-center max-w-6xl mx-auto w-full rounded-b-2xl shadow-xl">
+<body>
+    <header>
         <div>
-            <h1 class="text-2xl font-bold text-amber-400 tracking-wider">☕ Dijital Kafe Menü</h1>
-            <p class="text-slate-400 text-xs mt-1">Dijital Menü & Masa Sipariş Sistemi</p>
+            <h1>☕ Dijital Kafe Menü</h1>
+            <p>Masa Sipariş & Yönetim Paneli</p>
         </div>
-        <button onclick="alert('Garson masanıza yönlendirildi! En kısa sürede masanızda olacaklar.')" class="bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-rose-600/30 transition-all">
-            🔔 Garson Çağır
-        </button>
+        <button class="garson-btn" onclick="alert('🔔 Garson masanıza yönlendirildi!')">🔔 Garson Çağır</button>
     </header>
 
-    <main class="max-w-6xl mx-auto p-6 flex-grow w-full grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="md:col-span-2 space-y-6">
-            <div class="flex gap-2 overflow-x-auto pb-2">
-                <button onclick="filterMenu('all')" class="px-4 py-2 bg-amber-500 text-slate-950 rounded-xl text-xs font-bold transition-all">Tümü</button>
-                <button onclick="filterMenu('coffee')" class="px-4 py-2 bg-slate-900 border border-slate-800 hover:border-amber-500 text-slate-300 rounded-xl text-xs font-bold transition-all">Kahveler</button>
-                <button onclick="filterMenu('dessert')" class="px-4 py-2 bg-slate-900 border border-slate-800 hover:border-amber-500 text-slate-300 rounded-xl text-xs font-bold transition-all">Tatlılar</button>
-                <button onclick="filterMenu('cold')" class="px-4 py-2 bg-slate-900 border border-slate-800 hover:border-amber-500 text-slate-300 rounded-xl text-xs font-bold transition-all">Soğuk İçecekler</button>
+    <main>
+        <div>
+            <div class="categories">
+                <button class="cat-btn active" onclick="filterMenu('all', this)">Tümü</button>
+                <button class="cat-btn" onclick="filterMenu('coffee', this)">Kahveler</button>
+                <button class="cat-btn" onclick="filterMenu('dessert', this)">Tatlılar</button>
+                <button class="cat-btn" onclick="filterMenu('cold', this)">Soğuk İçecekler</button>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="menu-grid">
-                <div class="menu-item coffee bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between">
+            <div class="menu-grid" id="menu-grid">
+                <div class="menu-card coffee">
                     <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-white text-base">Filtre Kahve</h3>
-                            <span class="text-amber-400 font-bold text-sm">90 ₺</span>
+                        <div style="display:flex; justify-content:space-between;">
+                            <h3>Filtre Kahve</h3>
+                            <span class="price">90 ₺</span>
                         </div>
-                        <p class="text-slate-400 text-xs mb-4">Taze çekilmiş Kolombiya çekirdekleri.</p>
+                        <p>Taze çekilmiş Kolombiya çekirdekleri.</p>
                     </div>
-                    <button onclick="addToCart('Filtre Kahve', 90)" class="w-full py-2 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 rounded-xl text-xs font-bold transition-all">Sepete Ekle</button>
+                    <button class="add-btn" onclick="addToCart('Filtre Kahve', 90)">Sepete Ekle</button>
                 </div>
-                <div class="menu-item coffee bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between">
+                <div class="menu-card coffee">
                     <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-white text-base">Caramel Macchiato</h3>
-                            <span class="text-amber-400 font-bold text-sm">130 ₺</span>
+                        <div style="display:flex; justify-content:space-between;">
+                            <h3>Caramel Macchiato</h3>
+                            <span class="price">130 ₺</span>
                         </div>
-                        <p class="text-slate-400 text-xs mb-4">Espresso, sıcak süt, vanilya ve karamel sos.</p>
+                        <p>Espresso, sıcak süt, vanilya ve karamel sos.</p>
                     </div>
-                    <button onclick="addToCart('Caramel Macchiato', 130)" class="w-full py-2 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 rounded-xl text-xs font-bold transition-all">Sepete Ekle</button>
+                    <button class="add-btn" onclick="addToCart('Caramel Macchiato', 130)">Sepete Ekle</button>
                 </div>
-                <div class="menu-item dessert bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between">
+                <div class="menu-card dessert">
                     <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-white text-base">San Sebastian Cheesecake</h3>
-                            <span class="text-amber-400 font-bold text-sm">160 ₺</span>
+                        <div style="display:flex; justify-content:space-between;">
+                            <h3>San Sebastian</h3>
+                            <span class="price">160 ₺</span>
                         </div>
-                        <p class="text-slate-400 text-xs mb-4">Akışkan Belçika çikolata sosu eşliğinde.</p>
+                        <p>Akışkan Belçika çikolata sosu eşliğinde.</p>
                     </div>
-                    <button onclick="addToCart('San Sebastian Cheesecake', 160)" class="w-full py-2 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 rounded-xl text-xs font-bold transition-all">Sepete Ekle</button>
+                    <button class="add-btn" onclick="addToCart('San Sebastian', 160)">Sepete Ekle</button>
                 </div>
-                <div class="menu-item cold bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between">
+                <div class="menu-card cold">
                     <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-white text-base">Ice Americano</h3>
-                            <span class="text-amber-400 font-bold text-sm">100 ₺</span>
+                        <div style="display:flex; justify-content:space-between;">
+                            <h3>Ice Americano</h3>
+                            <span class="price">100 ₺</span>
                         </div>
-                        <p class="text-slate-400 text-xs mb-4">Buz ve özel Harman espresso.</p>
+                        <p>Buz ve özel Harman espresso.</p>
                     </div>
-                    <button onclick="addToCart('Ice Americano', 100)" class="w-full py-2 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 rounded-xl text-xs font-bold transition-all">Sepete Ekle</button>
+                    <button class="add-btn" onclick="addToCart('Ice Americano', 100)">Sepete Ekle</button>
                 </div>
             </div>
         </div>
 
-        <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl flex flex-col justify-between h-fit shadow-xl">
-            <div>
-                <h2 class="font-bold text-lg text-white mb-4 border-b border-slate-800 pb-2">🛒 Masa Sepeti</h2>
-                <div id="cart-items" class="space-y-3 mb-4 text-xs text-slate-300 min-h-[120px]">
-                    <p class="text-slate-500 italic">Sepetiniz henüz boş.</p>
-                </div>
+        <div class="cart-box">
+            <h2>🛒 Masa Sepeti</h2>
+            <div class="cart-items" id="cart-items">
+                <p style="color: #64748b; font-style: italic;">Sepetiniz henüz boş.</p>
             </div>
             <div>
-                <div class="flex justify-between font-bold text-sm text-white mb-4 pt-3 border-t border-slate-800">
+                <div class="cart-total-row">
                     <span>Toplam Tutar:</span>
-                    <span id="cart-total" class="text-amber-400">0 ₺</span>
+                    <span id="cart-total">0 ₺</span>
                 </div>
-                <button onclick="checkout()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-lg shadow-amber-500/20">
-                    Siparişi Tamamla & Mutfaya Gönder
-                </button>
+                <button class="checkout-btn" onclick="checkout()">Siparişi Tamamla</button>
             </div>
         </div>
     </main>
 
-    <footer class="bg-slate-900/80 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+    <footer>
         &copy; 2026 E-Trade Pro AI Agency HQ. Tüm Hakları Saklıdır.
     </footer>
 
@@ -1123,15 +1144,15 @@ MANDATORY RULES:
             const container = document.getElementById('cart-items');
             const totalEl = document.getElementById('cart-total');
             if(cart.length === 0) {
-                container.innerHTML = '<p class="text-slate-500 italic">Sepetiniz henüz boş.</p>';
+                container.innerHTML = '<p style="color: #64748b; font-style: italic;">Sepetiniz henüz boş.</p>';
                 totalEl.innerText = '0 ₺';
                 return;
             }
             let html = '';
             let total = 0;
-            cart.forEach((item, idx) => {
+            cart.forEach((item) => {
                 total += item.price;
-                html += '<div class="flex justify-between items-center bg-slate-950/50 p-2 rounded-lg"><span>' + item.name + '</span><span class="text-amber-400 font-bold">' + item.price + ' ₺</span></div>';
+                html += '<div class="cart-item-row"><span>' + item.name + '</span><span style="color: #fbbf24; font-weight: bold;">' + item.price + ' ₺</span></div>';
             });
             container.innerHTML = html;
             totalEl.innerText = total + ' ₺';
@@ -1147,8 +1168,10 @@ MANDATORY RULES:
             renderCart();
         }
 
-        function filterMenu(category) {
-            const items = document.querySelectorAll('.menu-item');
+        function filterMenu(category, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const items = document.querySelectorAll('.menu-card');
             items.forEach(item => {
                 if(category === 'all' || item.classList.contains(category)) {
                     item.style.display = 'flex';
