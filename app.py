@@ -399,8 +399,8 @@ HTML_TEMPLATE = """
         const ctx = canvas.getContext('2d');
         const terminalLogs = document.getElementById('terminal-logs');
 
-        let agentsDisplay = {}; // Ekranda süzülen gerçek zamanlı koordinatlar
-        let footprintList = []; // Ayak izleri havuzu
+        let agentsDisplay = {};
+        let footprintList = [];
         let activeModalAgent = null;
 
         const roomCoords = [
@@ -610,7 +610,6 @@ HTML_TEMPLATE = """
             ctx.fillStyle = "#3b0764";
             ctx.fillRect(740, 270, 160, 60);
 
-            // Ayak İzlerini Çiz ve Yavaşça Soluklaştır
             for (let i = footprintList.length - 1; i >= 0; i--) {
                 let fp = footprintList[i];
                 fp.alpha -= 0.005;
@@ -622,47 +621,39 @@ HTML_TEMPLATE = """
                 }
             }
 
-            // Ajanları Gerçekçi Lerp (Akıcı Yürüyüş) ve Bacak Animasyonlarıyla Çiz
             for (let name in agentsDisplay) {
                 let ag = agentsDisplay[name];
                 
-                // Hedefine yumuşak geçiş (Linear Interpolation)
                 ag.x += (ag.targetX - ag.x) * 0.1;
                 ag.y += (ag.targetY - ag.y) * 0.1;
 
-                // Yürürken ayak izi bırak
                 let moving = Math.abs(ag.targetX - ag.x) > 0.5 || Math.abs(ag.targetY - ag.y) > 0.5;
                 if (moving && Math.random() < 0.4) {
                     footprintList.push({x: ag.x + 10, y: ag.y + 22, alpha: 0.5});
                     if (footprintList.length > 80) footprintList.shift();
                 }
 
-                // Gövde
                 ctx.fillStyle = ag.color;
                 ctx.fillRect(ag.x, ag.y, 24, 24);
                 ctx.strokeStyle = "#ffffff";
                 ctx.lineWidth = 1;
                 ctx.strokeRect(ag.x, ag.y, 24, 24);
 
-                // Kafa / Gözler
                 ctx.fillStyle = "#38bdf8";
                 ctx.fillRect(ag.x + 11, ag.y - 4, 2, 4);
                 ctx.fillStyle = "#ffffff";
                 ctx.fillRect(ag.x + 5, ag.y + 7, 4, 4);
                 ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
 
-                // Bacak Animasyonu (Yürürken sallanan minik ayaklar)
                 let legOffset = moving ? Math.sin(Date.now() / 80) * 4 : 0;
                 ctx.fillStyle = "#1e293b";
                 ctx.fillRect(ag.x + 5, ag.y + 24, 4, 6 + legOffset);
                 ctx.fillRect(ag.x + 15, ag.y + 24, 4, 6 - legOffset);
 
-                // İsim Etiketi
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 8px 'JetBrains Mono'";
                 ctx.fillText(name + ` (${ag.title})`, ag.x - 6, ag.y + 42);
 
-                // Konuşma Baloncuğu
                 let bubbleText = ag.speech || ag.state;
                 ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
                 ctx.fillRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
@@ -675,7 +666,6 @@ HTML_TEMPLATE = """
             requestAnimationFrame(drawOffice);
         }
 
-        // Sunucudan veri alıp hedefleri güncelle
         setInterval(() => {
             fetch('/api/simulation-tick')
             .then(res => res.json())
@@ -697,7 +687,6 @@ HTML_TEMPLATE = """
             });
         }, 2000);
 
-        // Animasyon döngüsünü başlat
         requestAnimationFrame(drawOffice);
 
         function sendDirectMessage() {
@@ -1009,13 +998,13 @@ def api_chat():
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
     if not session.get('logged_in'):
-        return jsonify({"status": "Yetkisiz"}}, 403
+        return jsonify({"status": "Yetkisiz"}), 403
     return jsonify({"status": check_system_uptime()})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
     if not session.get('logged_in'):
-        return jsonify({"summary": "Yetkisiz"}}, 403
+        return jsonify({"summary": "Yetkisiz"}), 403
     return jsonify({"summary": "Supabase bağlantısı aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
