@@ -1105,19 +1105,19 @@ def api_chat():
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
     if not session.get('logged_in'):
-        return jsonify({"status": "Yetkisiz"}}, 403
+        return jsonify({"status": "Yetkisiz"})
     return jsonify({"status": check_system_uptime()})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
     if not session.get('logged_in'):
-        return jsonify({"summary": "Yetkisiz"}}, 403
+        return jsonify({"summary": "Yetkisiz"})
     return jsonify({"summary": "Supabase bağlantısı aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
     if not session.get('logged_in'):
-        return jsonify({"tasks": ["Yetkisiz"]}}, 403
+        return jsonify({"tasks": ["Yetkisiz"]})
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
@@ -1136,7 +1136,7 @@ def api_tasks():
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
     if not session.get('logged_in'):
-        return jsonify({"decision": "Yetkisiz"}}, 403
+        return jsonify({"decision": "Yetkisiz"})
     return jsonify({"decision": "Yönetim kurulu Vercel ve GitHub tam otonom deploy zincirini onayladı."})
 
 if __name__ == '__main__':
