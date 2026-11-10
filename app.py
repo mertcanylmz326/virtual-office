@@ -95,7 +95,7 @@ def push_to_github(filename, file_content, commit_msg):
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "target_x": 60, "target_y": 60, "state": "Masada", "speech": "Destek veriyor", "energy": 90},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 205, "room_y": 15, "color": "#ef4444", "target_x": 250, "target_y": 60, "state": "Masada", "speech": "Süreç takipte", "energy": 85},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 395, "room_y": 15, "color": "#10b981", "target_x": 440, "target_y": 60, "state": "Masada", "speech": "GPT-OSS 120B Aktif", "energy": 95},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 395, "room_y": 15, "color": "#10b981", "target_x": 440, "target_y": 60, "state": "Masada", "speech": "gpt-oss-20b Aktif", "energy": 95},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 180, "color": "#f59e0b", "target_x": 60, "target_y": 225, "state": "Masada", "speech": "Lead topluyor", "energy": 80},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 205, "room_y": 180, "color": "#8b5cf6", "target_x": 250, "target_y": 225, "state": "Masada", "speech": "Bütçe kontrol", "energy": 88},
@@ -433,10 +433,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ AI DEV STUDIO TERMINAL</span>
-            <span style="color: var(--accent-color); font-weight: bold;">● GÜNCEL GROQ API AKTİF</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● openai/gpt-oss-20b AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Yeni Groq anahtarı başarıyla yüklendi!</div>
+            <div class="log-line">[SYSTEM]: Model openai/gpt-oss-20b başarıyla bağlandı!</div>
         </div>
     </div>
 
@@ -946,7 +946,7 @@ def api_chat():
             if groq_client:
                 prompt = f"Sen ofiste '{agent['role']}' olarak çalışan bir uzmansın. Patronun (Kullanıcı) sana şu mesajı gönderdi: '{user_message}'. Kendi departmanının uzmanlığıyla profesyonel ve kısa bir iş yanıtı ver. Asla HTML kodu yazma."
                 comp = groq_client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
+                    model="openai/gpt-oss-20b",
                     messages=[{"role": "user", "content": prompt}],
                     max_tokens=300, temperature=0.7
                 )
@@ -962,7 +962,7 @@ def api_chat():
             if groq_client:
                 summary_prompt = f"Kullanıcı şu projeyi istedi: '{user_message}'. Bu projeye karşılık kısa, havalı ve profesyonel bir yazılımcı onay yanıtı ver."
                 comp_rep = groq_client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
+                    model="openai/gpt-oss-20b",
                     messages=[{"role": "user", "content": summary_prompt}],
                     max_tokens=100, temperature=0.7
                 )
@@ -971,7 +971,7 @@ def api_chat():
             pass
         
         if not reply:
-            reply = f"Patron, talep ettiğin proje GPT-OSS 120B ile kodlandı!"
+            reply = f"Patron, talep ettiğin proje openai/gpt-oss-20b ile kodlandı!"
 
         audit_logs.append("<b>[SKRİNAR - SİBER GÜVENLİK]:</b> Kod yapısı tarandı, güvenlik açıklarına karşı onaylandı!")
         audit_logs.append("<b>[ALEX - HUKUK]:</b> Telif standartları ve lisans denetimi tamamlandı!")
@@ -987,7 +987,7 @@ IMPORTANT FORMATTING RULES:
 - Use gorgeous glassmorphism, responsive CSS, high-end styling, and working interactive JavaScript features."""
 
                 comp = groq_client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
+                    model="openai/gpt-oss-20b",
                     messages=[{"role": "user", "content": code_prompt}],
                     max_tokens=4000, temperature=0.7
                 )
