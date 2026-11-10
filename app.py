@@ -433,10 +433,10 @@ HTML_TEMPLATE = """
     <div id="activity-terminal">
         <div class="terminal-header">
             <span>⚡ AI DEV STUDIO TERMINAL</span>
-            <span style="color: var(--accent-color); font-weight: bold;">● AKILLI UYGULAMA ÜRETİCİ AKTİF</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● SÖZDizİMİ DÜZELTİLDİ AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Akıllı şablon motoru ve menü üreticisi devrede!</div>
+            <div class="log-line">[SYSTEM]: Render python syntax motoru kusursuzlaştırıldı!</div>
         </div>
     </div>
 
@@ -1010,25 +1010,24 @@ MANDATORY RULES:
         except Exception as e:
             print(f"Groq API Üretim Hatası: {e}")
 
-        # Eğer model ham metin döndürürse, restoran/kafe veya talep edilen konsept için tam fonksiyonel akıllı şablonu devreye sok
         if not html_code or "<html" not in html_code.lower() or len(html_code) < 150 or "<!doctype" not in html_code.lower():
             words = user_message.split()
             project_title = " ".join(words[:6]) if len(words) > 0 else "Dijital Kafe Menü ve Sipariş Paneli"
             
-            html_code = f"""<!DOCTYPE html>
+            html_code = """<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{project_title}</title>
+    <title>Dijital Kafe Menü ve Sipariş Paneli</title>
     <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
     <link href="[https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap)" rel="stylesheet">
-    <style>body {{ font-family: 'Space Grotesk', sans-serif; }}</style>
+    <style>body { font-family: 'Space Grotesk', sans-serif; }</style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
     <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 p-6 sticky top-0 z-50 flex justify-between items-center max-w-6xl mx-auto w-full rounded-b-2xl shadow-xl">
         <div>
-            <h1 class="text-2xl font-bold text-amber-400 tracking-wider">☕ {project_title}</h1>
+            <h1 class="text-2xl font-bold text-amber-400 tracking-wider">☕ Dijital Kafe Menü</h1>
             <p class="text-slate-400 text-xs mt-1">Dijital Menü & Masa Sipariş Sistemi</p>
         </div>
         <button onclick="alert('Garson masanıza yönlendirildi! En kısa sürede masanızda olacaklar.')" class="bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-rose-600/30 transition-all">
@@ -1132,7 +1131,7 @@ MANDATORY RULES:
             let total = 0;
             cart.forEach((item, idx) => {
                 total += item.price;
-                html += `<div class="flex justify-between items-center bg-slate-950/50 p-2 rounded-lg"><span>${item.name}</span><span class="text-amber-400 font-bold">${item.price} ₺</span></div>`;
+                html += '<div class="flex justify-between items-center bg-slate-950/50 p-2 rounded-lg"><span>' + item.name + '</span><span class="text-amber-400 font-bold">' + item.price + ' ₺</span></div>';
             });
             container.innerHTML = html;
             totalEl.innerText = total + ' ₺';
