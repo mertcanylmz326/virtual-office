@@ -570,7 +570,6 @@ HTML_TEMPLATE = """
                 ctx.stroke();
             }
 
-            // Koridorlar
             ctx.fillStyle = "#111827";
             ctx.fillRect(0, 145, 580, 30);
             ctx.fillRect(0, 315, 580, 30);
@@ -623,7 +622,6 @@ HTML_TEMPLATE = """
                 else ctx.fillRect(r.x + r.w - 3, r.y + 50, 5, 30);
             });
 
-            // Sağ Bölmeler
             const rightRooms = [
                 {x: 605, y: 15, w: 520, h: 130, title: "☕ MUTFAK & KAHVE MOLA ALANI", color: "#d97706"},
                 {x: 605, y: 165, w: 520, h: 130, title: "👑 CEO KONTROL MERKEZİ", color: "#38bdf8"},
@@ -642,7 +640,6 @@ HTML_TEMPLATE = """
                 ctx.fillText(rr.title, rr.x + 15, rr.y + 25);
             });
 
-            // Ayak İzleri
             for (let i = footprintList.length - 1; i >= 0; i--) {
                 let fp = footprintList[i];
                 fp.alpha -= 0.005;
@@ -654,7 +651,6 @@ HTML_TEMPLATE = """
                 }
             }
 
-            // Ajanlar ve Enerji/XP Barları
             for (let name in agentsDisplay) {
                 let ag = agentsDisplay[name];
                 
@@ -684,7 +680,6 @@ HTML_TEMPLATE = """
                 ctx.fillRect(ag.x + 5, ag.y + 24, 4, 6 + legOffset);
                 ctx.fillRect(ag.x + 15, ag.y + 24, 4, 6 - legOffset);
 
-                // Enerji Barı (Canlı)
                 let energyVal = ag.energy !== undefined ? ag.energy : 100;
                 ctx.fillStyle = "rgba(0,0,0,0.6)";
                 ctx.fillRect(ag.x - 4, ag.y + 32, 32, 4);
@@ -1040,19 +1035,19 @@ def api_chat():
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
     if not session.get('logged_in'):
-        return jsonify({"status": "Yetkisiz"}}, 403
+        return jsonify({"status": "Yetkisiz"}), 403
     return jsonify({"status": check_system_uptime()})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
     if not session.get('logged_in'):
-        return jsonify({"summary": "Yetkisiz"}}, 403
+        return jsonify({"summary": "Yetkisiz"}), 403
     return jsonify({"summary": "Supabase bağlantısı aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
     if not session.get('logged_in'):
-        return jsonify({"tasks": ["Yetkisiz"]}}, 403
+        return jsonify({"tasks": ["Yetkisiz"]}), 403
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
@@ -1068,7 +1063,7 @@ def api_tasks():
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
     if not session.get('logged_in'):
-        return jsonify({"decision": "Yetkisiz"}}, 403
+        return jsonify({"decision": "Yetkisiz"}), 403
     return jsonify({"decision": "Yönetim kurulu dinamik tema ve enerji barları arayüzünü onayladı."})
 
 if __name__ == '__main__':
