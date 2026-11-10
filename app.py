@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.secret_key = "e_trade_pro_secret_security_key_99"
 
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "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"
 UPTIMEROBOT_API_KEY = "u3671342-858d5db4b2fd40032fce3ce6"
 
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
