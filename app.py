@@ -92,7 +92,7 @@ employees = {
     "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "color": "#14b8a6", "target_x": 60, "target_y": 340, "state": "Masada", "speech": "Sözleşme aktif", "energy": 75},
     "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "color": "#64748b", "target_x": 240, "target_y": 340, "state": "Masada", "speech": "Firewall koruyor", "energy": 96},
     "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 375, "room_y": 295, "color": "#ec4899", "target_x": 420, "target_y": 340, "state": "Masada", "speech": "Hedefler tuttu", "energy": 82},
-    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 650, "room_y": 60, "color": "#f43f5e", "target_x": 650, "target_y": 60, "state": "Kahve Hazırlıyor", "speech": "Taze kahve!", "energy": 100}
+    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 620, "room_y": 60, "color": "#f43f5e", "target_x": 620, "target_y": 60, "state": "Kahve Hazırlıyor", "speech": "Taze kahve!", "energy": 100}
 }
 
 LOGIN_TEMPLATE = """
@@ -252,8 +252,8 @@ HTML_TEMPLATE = """
 
         #game-container {
             position: relative;
-            width: 1080px;
-            height: 440px;
+            width: 1140px;
+            height: 480px;
             max-width: 100%;
             margin: 15px auto;
             border: 3px solid #38bdf8;
@@ -265,7 +265,7 @@ HTML_TEMPLATE = """
         }
         canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
 
-        .action-bar { margin: 12px auto; width: 1080px; max-width: 100%; display: flex; justify-content: space-between; gap: 12px; padding: 0 10px; box-sizing: border-box; }
+        .action-bar { margin: 12px auto; width: 1140px; max-width: 100%; display: flex; justify-content: space-between; gap: 12px; padding: 0 10px; box-sizing: border-box; }
         #command-panel {
             background: rgba(15, 23, 42, 0.85); border: 2px solid #334155; padding: 10px; border-radius: 10px; display: flex; gap: 10px; align-items: center; flex-grow: 1; flex-wrap: wrap;
             backdrop-filter: blur(10px);
@@ -278,7 +278,7 @@ HTML_TEMPLATE = """
         .send-btn:hover { background: linear-gradient(135deg, #0369a1, #0284c7); box-shadow: 0 0 20px rgba(56, 189, 248, 0.8); }
 
         #activity-terminal {
-            margin: 0 auto 20px auto; width: 1080px; max-width: 100%; background: rgba(3, 7, 18, 0.9); border: 2px solid #334155; border-radius: 10px; text-align: left; overflow: hidden; box-sizing: border-box;
+            margin: 0 auto 20px auto; width: 1140px; max-width: 100%; background: rgba(3, 7, 18, 0.9); border: 2px solid #334155; border-radius: 10px; text-align: left; overflow: hidden; box-sizing: border-box;
             backdrop-filter: blur(12px);
             box-shadow: 0 15px 35px rgba(0,0,0,0.7);
         }
@@ -352,7 +352,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // CYBER HQ (REALISTIC MOVEMENT)</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // CYBER HQ (OPTIMIZED LAYOUT)</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="openProjectsModal()">📋 PROJELER ARŞİVİ</span>
@@ -369,7 +369,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-container">
-        <canvas id="officeCanvas" width="1080" height="440"></canvas>
+        <canvas id="officeCanvas" width="1140" height="480"></canvas>
     </div>
 
     <div class="action-bar">
@@ -386,11 +386,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ REALISTIC ANIMATION TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● AKICI YÜRÜYÜŞ & AYAK İZLERİ</span>
+            <span>⚡ OPTIMIZED ANIMATION TERMINAL</span>
+            <span style="color: #38bdf8; font-weight: bold;">● GENİŞ KORİDORLAR & MEKANİK KAPILAR</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Gerçekçi adım ve bacak animasyon motoru yüklendi!</div>
+            <div class="log-line">[SYSTEM]: Genişletilmiş sağ odalar ve otomatik açılır-kapanır kapı motoru aktif!</div>
         </div>
     </div>
 
@@ -404,16 +404,18 @@ HTML_TEMPLATE = """
         let activeModalAgent = null;
 
         const roomCoords = [
-            {name: "Marco", x: 15, y: 15, w: 160, h: 105},
-            {name: "Talisca", x: 195, y: 15, w: 160, h: 105},
-            {name: "Brown", x: 375, y: 15, w: 160, h: 105},
-            {name: "Kante", x: 15, y: 155, w: 160, h: 105},
-            {name: "İrfan", x: 195, y: 155, w: 160, h: 105},
-            {name: "İsmail", x: 375, y: 155, w: 160, h: 105},
-            {name: "Alex", x: 15, y: 295, w: 160, h: 105},
-            {name: "Skrinar", x: 195, y: 295, w: 160, h: 105},
-            {name: "Kerem", x: 375, y: 295, w: 160, h: 105},
-            {name: "Mutfak_Chef", x: 580, y: 15, w: 485, h: 110}
+            {name: "Marco", x: 15, y: 15, w: 170, h: 120},
+            {name: "Talisca", x: 205, y: 15, w: 170, h: 120},
+            {name: "Brown", x: 395, y: 15, w: 170, h: 120},
+            {name: "Kante", x: 15, y: 180, w: 170, h: 120},
+            {name: "İrfan", x: 205, y: 180, w: 170, h: 120},
+            {name: "İsmail", x: 395, y: 180, w: 170, h: 120},
+            {name: "Alex", x: 15, y: 345, w: 170, h: 120},
+            {name: "Skrinar", x: 205, y: 345, w: 170, h: 120},
+            {name: "Kerem", x: 395, y: 345, w: 170, h: 120},
+            {name: "Mutfak_Chef", x: 605, y: 15, w: 520, h: 130},
+            {name: "CEO", x: 605, y: 165, w: 520, h: 130},
+            {name: "Zirve", x: 605, y: 315, w: 520, h: 150}
         ];
 
         canvas.addEventListener('click', (e) => {
@@ -425,7 +427,9 @@ HTML_TEMPLATE = """
 
             roomCoords.forEach(r => {
                 if (clickX >= r.x && clickX <= r.x + r.w && clickY >= r.y && clickY <= r.y + r.h) {
-                    openAgentModal(r.name);
+                    if (r.name !== "CEO" && r.name !== "Zirve") {
+                        openAgentModal(r.name);
+                    }
                 }
             });
         });
@@ -511,8 +515,8 @@ HTML_TEMPLATE = """
         }
 
         function drawOffice() {
-            const w = 1080;
-            const h = 440;
+            const w = 1140;
+            const h = 480;
             ctx.clearRect(0, 0, w, h);
 
             ctx.fillStyle = "#090d16";
@@ -520,28 +524,29 @@ HTML_TEMPLATE = """
             
             ctx.strokeStyle = "#1e293b";
             ctx.lineWidth = 1;
-            for (let i = 0; i < w; i += 30) {
+            for (let i = 0; i < w; i += 35) {
                 ctx.beginPath();
                 ctx.moveTo(i, 0);
                 ctx.lineTo(i, h);
                 ctx.stroke();
             }
 
+            // Genişletilmiş Koridorlar
             ctx.fillStyle = "#111827";
-            ctx.fillRect(0, 130, w, 35);
-            ctx.fillRect(0, 270, w, 35);
-            ctx.fillRect(530, 0, 35, h);
+            ctx.fillRect(0, 145, 580, 30);
+            ctx.fillRect(0, 315, 580, 30);
+            ctx.fillRect(575, 0, 25, h);
 
             const rooms = [
-                {x: 15, y: 15, w: 160, h: 105, name: "1. MARCO", glow: "#3b82f6"},
-                {x: 195, y: 15, w: 160, h: 105, name: "2. TALİSCA", glow: "#ef4444"},
-                {x: 375, y: 15, w: 160, h: 105, name: "3. BROWN (DEV)", glow: "#10b981"},
-                {x: 15, y: 155, w: 160, h: 105, name: "4. KANTE", glow: "#f59e0b"},
-                {x: 195, y: 155, w: 160, h: 105, name: "5. İRFAN", glow: "#8b5cf6"},
-                {x: 375, y: 155, w: 160, h: 105, name: "6. İSMAİL (İK)", glow: "#f97316"},
-                {x: 15, y: 295, w: 160, h: 105, name: "7. ALEX", glow: "#14b8a6"},
-                {x: 195, y: 295, w: 160, h: 105, name: "8. SKRİNAR", glow: "#64748b"},
-                {x: 375, y: 295, w: 160, h: 105, name: "9. KEREM", glow: "#ec4899"}
+                {x: 15, y: 15, w: 170, h: 120, name: "1. MARCO", glow: "#3b82f6"},
+                {x: 205, y: 15, w: 170, h: 120, name: "2. TALİSCA", glow: "#ef4444"},
+                {x: 395, y: 15, w: 170, h: 120, name: "3. BROWN (DEV)", glow: "#10b981"},
+                {x: 15, y: 180, w: 170, h: 120, name: "4. KANTE", glow: "#f59e0b"},
+                {x: 205, y: 180, w: 170, h: 120, name: "5. İRFAN", glow: "#8b5cf6"},
+                {x: 395, y: 180, w: 170, h: 120, name: "6. İSMAİL (İK)", glow: "#f97316"},
+                {x: 15, y: 345, w: 170, h: 120, name: "7. ALEX", glow: "#14b8a6"},
+                {x: 205, y: 345, w: 170, h: 120, name: "8. SKRİNAR", glow: "#64748b"},
+                {x: 395, y: 345, w: 170, h: 120, name: "9. KEREM", glow: "#ec4899"}
             ];
 
             rooms.forEach(r => {
@@ -560,56 +565,47 @@ HTML_TEMPLATE = """
                 ctx.font = "bold 9px 'JetBrains Mono'";
                 ctx.fillText(r.name, r.x + 8, r.y + 14);
 
+                // Odalarda kapı ve çalışma masası
                 ctx.fillStyle = "#1e293b";
-                ctx.fillRect(r.x + 50, r.y + 55, 60, 24);
+                ctx.fillRect(r.x + 55, r.y + 60, 60, 24);
                 ctx.fillStyle = r.glow;
-                ctx.fillRect(r.x + 68, r.y + 60, 24, 12);
+                ctx.fillRect(r.x + 73, r.y + 65, 24, 12);
 
-                ctx.fillStyle = "#78350f";
-                ctx.fillRect(r.x + 15, r.y + 55, 16, 18);
-                ctx.fillStyle = "#4ade80";
-                ctx.font = "12px sans-serif";
-                ctx.fillText("🌿", r.x + 13, r.y + 50);
+                // Otomatik Açılır-Kapanır Kapı Çizimi (Ajan yakınsa kapı açık yeşil, değilse kapalı gri)
+                let doorOpen = false;
+                for(let an in agentsDisplay) {
+                    let ag = agentsDisplay[an];
+                    let cx = r.x + r.w / 2;
+                    let cy = r.y + r.h / 2;
+                    if(Math.hypot(ag.x - cx, ag.y - cy) < 80) doorOpen = true;
+                }
 
-                ctx.fillStyle = "#4ade80";
-                if (r.y < 130) ctx.fillRect(r.x + 65, r.y + r.h - 3, 30, 6);
-                else if (r.y > 250) ctx.fillRect(r.x + 65, r.y - 3, 30, 6);
-                else ctx.fillRect(r.x + r.w - 3, r.y + 45, 6, 25);
+                ctx.fillStyle = doorOpen ? "#4ade80" : "#64748b";
+                if (r.y < 150) ctx.fillRect(r.x + 70, r.y + r.h - 3, 30, 5);
+                else if (r.y > 300) ctx.fillRect(r.x + 70, r.y - 2, 30, 5);
+                else ctx.fillRect(r.x + r.w - 3, r.y + 50, 5, 30);
             });
 
-            ctx.fillStyle = "rgba(2, 132, 199, 0.2)";
-            ctx.fillRect(580, 135, 485, 30);
-            ctx.strokeStyle = "#38bdf8";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(580, 135, 485, 30);
-            ctx.fillStyle = "#38bdf8";
-            ctx.font = "bold 10px 'JetBrains Mono'";
-            ctx.fillText("👑 CEO KONTROL MERKEZİ", 600, 153);
+            // Sağ Taraf Büyük Odalar (Mutfak, CEO, Zirve)
+            const rightRooms = [
+                {x: 605, y: 15, w: 520, h: 130, title: "☕ MUTFAK & KAHVE MOLA ALANI", color: "#d97706"},
+                {x: 605, y: 165, w: 520, h: 130, title: "👑 CEO KONTROL MERKEZİ", color: "#38bdf8"},
+                {x: 605, y: 315, w: 520, h: 150, title: "🤝 OTONOM PROJE ONAY ODASI", color: "#8b5cf6"}
+            ];
 
-            ctx.fillStyle = "rgba(120, 53, 15, 0.35)";
-            ctx.fillRect(580, 15, 485, 110);
-            ctx.strokeStyle = "#d97706";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(580, 15, 485, 110);
-            ctx.fillStyle = "#fde68a";
-            ctx.font = "bold 10px 'JetBrains Mono'";
-            ctx.fillText("☕ MUTFAK & KAHVE MOLA ALANI", 595, 30);
-            ctx.fillStyle = "#451a03";
-            ctx.fillRect(720, 55, 100, 40);
-            ctx.fillStyle = "#fbbf24";
-            ctx.fillText("🍩 Atıştırmalık & Kahve Makinesi", 730, 80);
+            rightRooms.forEach(rr => {
+                ctx.fillStyle = "rgba(15, 23, 42, 0.95)";
+                ctx.fillRect(rr.x, rr.y, rr.w, rr.h);
+                ctx.strokeStyle = rr.color;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(rr.x, rr.y, rr.w, rr.h);
 
-            ctx.fillStyle = "rgba(109, 40, 217, 0.3)";
-            ctx.fillRect(580, 175, 485, 250);
-            ctx.strokeStyle = "#8b5cf6";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(580, 175, 485, 250);
-            ctx.fillStyle = "#e9d5ff";
-            ctx.font = "bold 10px 'JetBrains Mono'";
-            ctx.fillText("🤝 OTONOM PROJE ONAY ODASI", 600, 195);
-            ctx.fillStyle = "#3b0764";
-            ctx.fillRect(740, 270, 160, 60);
+                ctx.fillStyle = rr.color;
+                ctx.font = "bold 11px 'JetBrains Mono'";
+                ctx.fillText(rr.title, rr.x + 15, rr.y + 25);
+            });
 
+            // Ayak İzleri
             for (let i = footprintList.length - 1; i >= 0; i--) {
                 let fp = footprintList[i];
                 fp.alpha -= 0.005;
@@ -621,11 +617,13 @@ HTML_TEMPLATE = """
                 }
             }
 
+            // Ajanları Çiz
             for (let name in agentsDisplay) {
                 let ag = agentsDisplay[name];
                 
-                ag.x += (ag.targetX - ag.x) * 0.1;
-                ag.y += (ag.targetY - ag.y) * 0.1;
+                // Daha yavaş ve ağır (gerçekçi) hareket için katsayı 0.05 yapıldı
+                ag.x += (ag.targetX - ag.x) * 0.05;
+                ag.y += (ag.targetY - ag.y) * 0.05;
 
                 let moving = Math.abs(ag.targetX - ag.x) > 0.5 || Math.abs(ag.targetY - ag.y) > 0.5;
                 if (moving && Math.random() < 0.4) {
@@ -645,7 +643,7 @@ HTML_TEMPLATE = """
                 ctx.fillRect(ag.x + 5, ag.y + 7, 4, 4);
                 ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
 
-                let legOffset = moving ? Math.sin(Date.now() / 80) * 4 : 0;
+                let legOffset = moving ? Math.sin(Date.now() / 100) * 4 : 0;
                 ctx.fillStyle = "#1e293b";
                 ctx.fillRect(ag.x + 5, ag.y + 24, 4, 6 + legOffset);
                 ctx.fillRect(ag.x + 15, ag.y + 24, 4, 6 - legOffset);
@@ -822,12 +820,12 @@ def simulation_tick():
 
     for name, data in employees.items():
         if name == "Mutfak_Chef":
-            x, y, state, speech = 650, 60, "Kahve Hazırlıyor", "Kahveler taze!"
+            x, y, state, speech = 680, 60, "Kahve Hazırlıyor", "Kahveler taze!"
         else:
             data["energy"] -= random.randint(2, 6)
             if data["energy"] < 30:
-                x = random.randint(600, 750)
-                y = random.randint(40, 90)
+                x = random.randint(650, 950)
+                y = random.randint(40, 100)
                 state = "Mola / Kahve İçiyor"
                 speech = "☕ Kahve molası!"
                 if data["energy"] <= 10:
@@ -878,7 +876,7 @@ def preview_project(project_id):
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
     if not session.get('logged_in'):
-        return jsonify({"status": "Yetkisiz erişim"}), 403
+        return jsonify({"status": "Yetkisiz"}), 403
         
     data = request.json
     agent_name = data.get('agent', 'Brown')
@@ -1027,7 +1025,7 @@ def api_tasks():
 def api_boardroom():
     if not session.get('logged_in'):
         return jsonify({"decision": "Yetkisiz"}), 403
-    return jsonify({"decision": "Yönetim kurulu akıcı yürüyüş animasyonu ve ayak izi sistemini onayladı."})
+    return jsonify({"decision": "Yönetim kurulu genişletilmiş koridorları ve otomatik kapı sistemini onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
