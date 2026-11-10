@@ -82,17 +82,17 @@ def check_system_uptime():
 
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "target_x": 60, "target_y": 60, "state": "Masada", "speech": "Destek veriyor", "energy": 90},
-    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 195, "room_y": 15, "color": "#ef4444", "target_x": 240, "target_y": 60, "state": "Masada", "speech": "Süreç takipte", "energy": 85},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 375, "room_y": 15, "color": "#10b981", "target_x": 420, "target_y": 60, "state": "Masada", "speech": "GPT-OSS 120B Aktif", "energy": 95},
+    "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 205, "room_y": 15, "color": "#ef4444", "target_x": 250, "target_y": 60, "state": "Masada", "speech": "Süreç takipte", "energy": 85},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 395, "room_y": 15, "color": "#10b981", "target_x": 440, "target_y": 60, "state": "Masada", "speech": "GPT-OSS 120B Aktif", "energy": 95},
     
-    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 155, "color": "#f59e0b", "target_x": 60, "target_y": 200, "state": "Masada", "speech": "Lead topluyor", "energy": 80},
-    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 195, "room_y": 155, "color": "#8b5cf6", "target_x": 240, "target_y": 200, "state": "Masada", "speech": "Bütçe kontrol", "energy": 88},
-    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 375, "room_y": 155, "color": "#f97316", "target_x": 420, "target_y": 200, "state": "Masada", "speech": "Sistem Sağlığı OK", "energy": 92},
+    "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 180, "color": "#f59e0b", "target_x": 60, "target_y": 225, "state": "Masada", "speech": "Lead topluyor", "energy": 80},
+    "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 205, "room_y": 180, "color": "#8b5cf6", "target_x": 250, "target_y": 225, "state": "Masada", "speech": "Bütçe kontrol", "energy": 88},
+    "İsmail": {"role": "İK & Sistem", "salary": 850, "xp": 40, "level": 1, "title": "Junior", "room_x": 395, "room_y": 180, "color": "#f97316", "target_x": 440, "target_y": 225, "state": "Masada", "speech": "Sistem Sağlığı OK", "energy": 92},
     
-    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 295, "color": "#14b8a6", "target_x": 60, "target_y": 340, "state": "Masada", "speech": "Sözleşme aktif", "energy": 75},
-    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 195, "room_y": 295, "color": "#64748b", "target_x": 240, "target_y": 340, "state": "Masada", "speech": "Firewall koruyor", "energy": 96},
-    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 375, "room_y": 295, "color": "#ec4899", "target_x": 420, "target_y": 340, "state": "Masada", "speech": "Hedefler tuttu", "energy": 82},
-    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 620, "room_y": 60, "color": "#f43f5e", "target_x": 620, "target_y": 60, "state": "Kahve Hazırlıyor", "speech": "Taze kahve!", "energy": 100}
+    "Alex": {"role": "Hukuk", "salary": 1050, "xp": 90, "level": 2, "title": "Senior", "room_x": 15, "room_y": 345, "color": "#14b8a6", "target_x": 60, "target_y": 390, "state": "Masada", "speech": "Sözleşme aktif", "energy": 75},
+    "Skrinar": {"role": "Siber", "salary": 1300, "xp": 160, "level": 3, "title": "Master", "room_x": 205, "room_y": 345, "color": "#64748b", "target_x": 250, "target_y": 390, "state": "Masada", "speech": "Firewall koruyor", "energy": 96},
+    "Kerem": {"role": "Başarı", "salary": 950, "xp": 80, "level": 1, "title": "Junior", "room_x": 395, "room_y": 345, "color": "#ec4899", "target_x": 440, "target_y": 390, "state": "Masada", "speech": "Hedefler tuttu", "energy": 82},
+    "Mutfak_Chef": {"role": "Mutfak", "salary": 700, "xp": 30, "level": 1, "title": "Chef", "room_x": 605, "room_y": 15, "color": "#f43f5e", "target_x": 680, "target_y": 60, "state": "Kahve Hazırlıyor", "speech": "Taze kahve!", "energy": 100}
 }
 
 LOGIN_TEMPLATE = """
@@ -189,14 +189,43 @@ HTML_TEMPLATE = """
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
+        :root {
+            --bg-color: #030712;
+            --accent-color: #38bdf8;
+            --border-color: #334155;
+            --card-bg: rgba(15, 23, 42, 0.9);
+        }
+
+        body.theme-matrix {
+            --bg-color: #02200c;
+            --accent-color: #4ade80;
+            --border-color: #166534;
+            --card-bg: rgba(2, 44, 18, 0.9);
+        }
+
+        body.theme-cyberred {
+            --bg-color: #1a0505;
+            --accent-color: #f43f5e;
+            --border-color: #881337;
+            --card-bg: rgba(44, 12, 12, 0.9);
+        }
+
+        body.theme-purple {
+            --bg-color: #11051a;
+            --accent-color: #c084fc;
+            --border-color: #6b21a8;
+            --card-bg: rgba(30, 10, 48, 0.9);
+        }
+
         body { 
-            background-color: #030712; 
+            background-color: var(--bg-color); 
             color: #f8fafc; 
             font-family: 'JetBrains Mono', monospace; 
             text-align: center; 
             margin: 0; 
             padding: 0; 
             overflow-x: hidden; 
+            transition: background 0.5s ease;
         }
 
         body::after {
@@ -211,8 +240,8 @@ HTML_TEMPLATE = """
         }
 
         #game-topbar {
-            background: rgba(15, 23, 42, 0.9);
-            border-bottom: 2px solid #38bdf8;
+            background: var(--card-bg);
+            border-bottom: 2px solid var(--accent-color);
             padding: 12px 20px;
             display: flex;
             justify-content: space-between;
@@ -224,27 +253,27 @@ HTML_TEMPLATE = """
             box-shadow: 0 4px 20px rgba(56, 189, 248, 0.15);
         }
         .top-btn { 
-            background: rgba(30, 41, 59, 0.8); color: #38bdf8; border: 1px solid #334155; padding: 7px 14px; 
+            background: rgba(30, 41, 59, 0.8); color: var(--accent-color); border: 1px solid var(--border-color); padding: 7px 14px; 
             border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px;
             text-decoration: none; transition: 0.3s;
             font-family: 'Space Grotesk', sans-serif;
         }
-        .top-btn:hover { background: #38bdf8; color: #030712; box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); }
+        .top-btn:hover { background: var(--accent-color); color: #030712; box-shadow: 0 0 15px var(--accent-color); }
 
         #stats-bar {
             background: rgba(9, 13, 22, 0.95);
             padding: 10px 20px;
             display: flex;
             justify-content: space-around;
-            border-bottom: 1px solid #1e293b;
+            border-bottom: 1px solid var(--border-color);
             font-size: 12px;
             font-weight: bold;
             flex-wrap: wrap;
             gap: 15px;
         }
         .stat-badge {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid #334155;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             padding: 6px 14px;
             border-radius: 8px;
             box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.05);
@@ -256,9 +285,9 @@ HTML_TEMPLATE = """
             height: 480px;
             max-width: 100%;
             margin: 15px auto;
-            border: 3px solid #38bdf8;
+            border: 3px solid var(--accent-color);
             border-radius: 12px;
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3), inset 0 0 20px rgba(56, 189, 248, 0.1);
+            box-shadow: 0 0 30px var(--accent-color), inset 0 0 20px rgba(56, 189, 248, 0.1);
             background: #0b0f19;
             overflow: hidden;
             backdrop-filter: blur(8px);
@@ -267,22 +296,22 @@ HTML_TEMPLATE = """
 
         .action-bar { margin: 12px auto; width: 1140px; max-width: 100%; display: flex; justify-content: space-between; gap: 12px; padding: 0 10px; box-sizing: border-box; }
         #command-panel {
-            background: rgba(15, 23, 42, 0.85); border: 2px solid #334155; padding: 10px; border-radius: 10px; display: flex; gap: 10px; align-items: center; flex-grow: 1; flex-wrap: wrap;
+            background: var(--card-bg); border: 2px solid var(--border-color); padding: 10px; border-radius: 10px; display: flex; gap: 10px; align-items: center; flex-grow: 1; flex-wrap: wrap;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-        select, input[type="text"] { background: #1e293b; color: #fff; border: 1px solid #475569; padding: 10px 14px; border-radius: 8px; font-family: monospace; font-size: 13px; outline: none; transition: 0.3s; }
+        select, input[type="text"] { background: #1e293b; color: #fff; border: 1px solid var(--border-color); padding: 10px 14px; border-radius: 8px; font-family: monospace; font-size: 13px; outline: none; transition: 0.3s; }
         input[type="text"] { flex-grow: 1; min-width: 220px; }
-        input[type="text"]:focus, select:focus { border-color: #38bdf8; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
+        input[type="text"]:focus, select:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-color); }
         .send-btn { background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.3s; font-family: 'Space Grotesk', sans-serif; box-shadow: 0 0 15px rgba(2, 132, 199, 0.4); }
-        .send-btn:hover { background: linear-gradient(135deg, #0369a1, #0284c7); box-shadow: 0 0 20px rgba(56, 189, 248, 0.8); }
+        .send-btn:hover { background: linear-gradient(135deg, #0369a1, #0284c7); box-shadow: 0 0 20px var(--accent-color); }
 
         #activity-terminal {
-            margin: 0 auto 20px auto; width: 1140px; max-width: 100%; background: rgba(3, 7, 18, 0.9); border: 2px solid #334155; border-radius: 10px; text-align: left; overflow: hidden; box-sizing: border-box;
+            margin: 0 auto 20px auto; width: 1140px; max-width: 100%; background: rgba(3, 7, 18, 0.9); border: 2px solid var(--border-color); border-radius: 10px; text-align: left; overflow: hidden; box-sizing: border-box;
             backdrop-filter: blur(12px);
             box-shadow: 0 15px 35px rgba(0,0,0,0.7);
         }
-        .terminal-header { background: rgba(15, 23, 42, 0.95); padding: 8px 15px; font-size: 12px; color: #38bdf8; font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px solid #1e293b; }
+        .terminal-header { background: var(--card-bg); padding: 8px 15px; font-size: 12px; color: var(--accent-color); font-weight: bold; display: flex; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px solid var(--border-color); }
         .terminal-body { padding: 12px; height: 150px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.5; word-break: break-word; overflow-wrap: break-word; }
         .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 4px; }
 
@@ -292,20 +321,20 @@ HTML_TEMPLATE = """
             justify-content: center; align-items: center;
         }
         .modal-card {
-            background: rgba(15, 23, 42, 0.95); border: 2px solid #38bdf8; border-radius: 14px;
-            width: 600px; max-width: 90%; padding: 25px; box-shadow: 0 0 40px rgba(56, 189, 248, 0.4);
+            background: var(--card-bg); border: 2px solid var(--accent-color); border-radius: 14px;
+            width: 600px; max-width: 90%; padding: 25px; box-shadow: 0 0 40px var(--accent-color);
             text-align: left; max-height: 80vh; overflow-y: auto;
         }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; }
-        .modal-header h3 { color: #38bdf8; margin: 0; font-size: 16px; font-family: 'Space Grotesk', sans-serif; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; }
+        .modal-header h3 { color: var(--accent-color); margin: 0; font-size: 16px; font-family: 'Space Grotesk', sans-serif; }
         .close-btn { background: #ef4444; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
         #toast-container {
             position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;
         }
         .toast {
-            background: rgba(15, 23, 42, 0.95); border: 1px solid #38bdf8; color: #f8fafc;
-            padding: 12px 20px; border-radius: 8px; font-size: 12px; box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            background: var(--card-bg); border: 1px solid var(--accent-color); color: #f8fafc;
+            padding: 12px 20px; border-radius: 8px; font-size: 12px; box-shadow: 0 0 20px var(--accent-color);
             backdrop-filter: blur(10px); animation: slideIn 0.3s ease; max-width: 320px;
         }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -319,7 +348,7 @@ HTML_TEMPLATE = """
         }
     </style>
 </head>
-<body>
+<body class="theme-cyberred">
 
     <div id="toast-container"></div>
 
@@ -352,8 +381,13 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // CYBER HQ (OPTIMIZED LAYOUT)</div>
+        <div style="font-weight: bold; color: var(--accent-color); font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // CYBER HQ (ULTIMATE UI)</div>
         <div>
+            <select id="themeSelect" onchange="changeTheme(this.value)" class="top-btn" style="background: rgba(15,23,42,0.9); color: var(--accent-color); border: 1px solid var(--accent-color); cursor: pointer;">
+                <option value="theme-cyberred">🔴 Cyber Red</option>
+                <option value="theme-matrix">🟢 Matrix Green</option>
+                <option value="theme-purple">🟣 Cyber Purple</option>
+            </select>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
             <span class="top-btn" onclick="openProjectsModal()">📋 PROJELER ARŞİVİ</span>
             <span class="top-btn" onclick="checkUptime()">🛡️ SİSTEM SAĞLIĞI</span>
@@ -364,7 +398,7 @@ HTML_TEMPLATE = """
 
     <div id="stats-bar">
         <span class="stat-badge" style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
-        <span class="stat-badge" style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
+        <span class="stat-badge" style="color: var(--accent-color);">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
         <span class="stat-badge" style="color: #fbbf24;" id="stat-crisis">⚡ DURUM: Normal Operasyon</span>
     </div>
 
@@ -386,11 +420,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ OPTIMIZED ANIMATION TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● GENİŞ KORİDORLAR & MEKANİK KAPILAR</span>
+            <span>⚡ ULTIMATE UI TERMINAL</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● ENERJİ BARLARI & TEMA MOTORU AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Genişletilmiş sağ odalar ve otomatik açılır-kapanır kapı motoru aktif!</div>
+            <div class="log-line">[SYSTEM]: Dinamik Cyber Red tema ve ajan enerji/XP barları başarıyla yüklendi!</div>
         </div>
     </div>
 
@@ -402,6 +436,11 @@ HTML_TEMPLATE = """
         let agentsDisplay = {};
         let footprintList = [];
         let activeModalAgent = null;
+
+        function changeTheme(themeClass) {
+            document.body.className = themeClass;
+            showToast(`Tema değiştirildi: ${themeClass}`);
+        }
 
         const roomCoords = [
             {name: "Marco", x: 15, y: 15, w: 170, h: 120},
@@ -456,7 +495,7 @@ HTML_TEMPLATE = """
             if (!msg || !activeModalAgent) return;
 
             const body = document.getElementById('modalAgentBody');
-            body.innerHTML += `<br><b style="color: #38bdf8;">[CEO]:</b> ${msg}`;
+            body.innerHTML += `<br><b style="color: var(--accent-color);">[CEO]:</b> ${msg}`;
             input.value = "";
 
             fetch('/api/chat', {
@@ -531,7 +570,7 @@ HTML_TEMPLATE = """
                 ctx.stroke();
             }
 
-            // Genişletilmiş Koridorlar
+            // Koridorlar
             ctx.fillStyle = "#111827";
             ctx.fillRect(0, 145, 580, 30);
             ctx.fillRect(0, 315, 580, 30);
@@ -565,13 +604,11 @@ HTML_TEMPLATE = """
                 ctx.font = "bold 9px 'JetBrains Mono'";
                 ctx.fillText(r.name, r.x + 8, r.y + 14);
 
-                // Odalarda kapı ve çalışma masası
                 ctx.fillStyle = "#1e293b";
                 ctx.fillRect(r.x + 55, r.y + 60, 60, 24);
                 ctx.fillStyle = r.glow;
                 ctx.fillRect(r.x + 73, r.y + 65, 24, 12);
 
-                // Otomatik Açılır-Kapanır Kapı Çizimi (Ajan yakınsa kapı açık yeşil, değilse kapalı gri)
                 let doorOpen = false;
                 for(let an in agentsDisplay) {
                     let ag = agentsDisplay[an];
@@ -586,7 +623,7 @@ HTML_TEMPLATE = """
                 else ctx.fillRect(r.x + r.w - 3, r.y + 50, 5, 30);
             });
 
-            // Sağ Taraf Büyük Odalar (Mutfak, CEO, Zirve)
+            // Sağ Bölmeler
             const rightRooms = [
                 {x: 605, y: 15, w: 520, h: 130, title: "☕ MUTFAK & KAHVE MOLA ALANI", color: "#d97706"},
                 {x: 605, y: 165, w: 520, h: 130, title: "👑 CEO KONTROL MERKEZİ", color: "#38bdf8"},
@@ -617,11 +654,10 @@ HTML_TEMPLATE = """
                 }
             }
 
-            // Ajanları Çiz
+            // Ajanlar ve Enerji/XP Barları
             for (let name in agentsDisplay) {
                 let ag = agentsDisplay[name];
                 
-                // Daha yavaş ve ağır (gerçekçi) hareket için katsayı 0.05 yapıldı
                 ag.x += (ag.targetX - ag.x) * 0.05;
                 ag.y += (ag.targetY - ag.y) * 0.05;
 
@@ -648,9 +684,16 @@ HTML_TEMPLATE = """
                 ctx.fillRect(ag.x + 5, ag.y + 24, 4, 6 + legOffset);
                 ctx.fillRect(ag.x + 15, ag.y + 24, 4, 6 - legOffset);
 
+                // Enerji Barı (Canlı)
+                let energyVal = ag.energy !== undefined ? ag.energy : 100;
+                ctx.fillStyle = "rgba(0,0,0,0.6)";
+                ctx.fillRect(ag.x - 4, ag.y + 32, 32, 4);
+                ctx.fillStyle = energyVal > 30 ? "#4ade80" : "#ef4444";
+                ctx.fillRect(ag.x - 4, ag.y + 32, (32 * energyVal) / 100, 4);
+
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 8px 'JetBrains Mono'";
-                ctx.fillText(name + ` (${ag.title})`, ag.x - 6, ag.y + 42);
+                ctx.fillText(name + ` (${ag.title})`, ag.x - 6, ag.y + 45);
 
                 let bubbleText = ag.speech || ag.state;
                 ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
@@ -674,12 +717,13 @@ HTML_TEMPLATE = """
                 
                 data.agents.forEach(ag => {
                     if (!agentsDisplay[ag.name]) {
-                        agentsDisplay[ag.name] = { x: ag.x, y: ag.y, targetX: ag.x, targetY: ag.y, color: ag.color, title: ag.title, role: ag.role, state: ag.state, speech: ag.speech };
+                        agentsDisplay[ag.name] = { x: ag.x, y: ag.y, targetX: ag.x, targetY: ag.y, color: ag.color, title: ag.title, role: ag.role, state: ag.state, speech: ag.speech, energy: ag.energy };
                     } else {
                         agentsDisplay[ag.name].targetX = ag.x;
                         agentsDisplay[ag.name].targetY = ag.y;
                         agentsDisplay[ag.name].state = ag.state;
                         agentsDisplay[ag.name].speech = ag.speech;
+                        agentsDisplay[ag.name].energy = ag.energy;
                     }
                 });
             });
@@ -719,7 +763,7 @@ HTML_TEMPLATE = """
                     });
                 }
                 if(data.preview_url) {
-                    appendLog(`> 🚀 <b style="color: #38bdf8; font-size: 14px;">CANLI PROJE LİNKİ (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Sayfa 🌐</a>`);
+                    appendLog(`> 🚀 <b style="color: var(--accent-color); font-size: 14px;">CANLI PROJE LİNKİ (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Sayfa 🌐</a>`);
                     showToast("Proje başarıyla tamamlandı ve arşive eklendi!");
                 }
             })
@@ -839,7 +883,7 @@ def simulation_tick():
         agent_list.append({
             "name": name, "role": data["role"], "level": data.get("level", 1),
             "title": data.get("title", "Junior"), "x": x, "y": y, 
-            "state": state, "speech": speech, "color": data["color"]
+            "state": state, "speech": speech, "color": data["color"], "energy": data["energy"]
         })
 
     return jsonify({
@@ -996,19 +1040,19 @@ def api_chat():
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
     if not session.get('logged_in'):
-        return jsonify({"status": "Yetkisiz"}), 403
+        return jsonify({"status": "Yetkisiz"}}, 403
     return jsonify({"status": check_system_uptime()})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
     if not session.get('logged_in'):
-        return jsonify({"summary": "Yetkisiz"}), 403
+        return jsonify({"summary": "Yetkisiz"}}, 403
     return jsonify({"summary": "Supabase bağlantısı aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
     if not session.get('logged_in'):
-        return jsonify({"tasks": ["Yetkisiz"]}), 403
+        return jsonify({"tasks": ["Yetkisiz"]}}, 403
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
@@ -1024,8 +1068,8 @@ def api_tasks():
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
     if not session.get('logged_in'):
-        return jsonify({"decision": "Yetkisiz"}), 403
-    return jsonify({"decision": "Yönetim kurulu genişletilmiş koridorları ve otomatik kapı sistemini onayladı."})
+        return jsonify({"decision": "Yetkisiz"}}, 403
+    return jsonify({"decision": "Yönetim kurulu dinamik tema ve enerji barları arayüzünü onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
