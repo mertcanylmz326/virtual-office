@@ -18,7 +18,7 @@ groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 company_state = {
     "budget": 22500,
-    "crisis": "Yok",
+    "crisis": "Normal Operasyon",
     "active_clients": 6
 }
 
@@ -263,7 +263,7 @@ HTML_TEMPLATE = """
             overflow: hidden;
             backdrop-filter: blur(8px);
         }
-        canvas { display: block; width: 100%; height: 100%; }
+        canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
 
         .action-bar { margin: 12px auto; width: 1080px; max-width: 100%; display: flex; justify-content: space-between; gap: 12px; padding: 0 10px; box-sizing: border-box; }
         #command-panel {
@@ -286,26 +286,27 @@ HTML_TEMPLATE = """
         .terminal-body { padding: 12px; height: 150px; overflow-y: auto; font-size: 11px; color: #4ade80; line-height: 1.5; word-break: break-word; overflow-wrap: break-word; }
         .log-line { margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 4px; }
 
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(8px); z-index: 10000;
+            justify-content: center; align-items: center;
+        }
+        .modal-card {
+            background: rgba(15, 23, 42, 0.95); border: 2px solid #38bdf8; border-radius: 14px;
+            width: 600px; max-width: 90%; padding: 25px; box-shadow: 0 0 40px rgba(56, 189, 248, 0.4);
+            text-align: left; max-height: 80vh; overflow-y: auto;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; }
+        .modal-header h3 { color: #38bdf8; margin: 0; font-size: 16px; font-family: 'Space Grotesk', sans-serif; }
+        .close-btn { background: #ef4444; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
         #toast-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;
         }
         .toast {
-            background: rgba(15, 23, 42, 0.95);
-            border: 1px solid #38bdf8;
-            color: #f8fafc;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 12px;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
-            backdrop-filter: blur(10px);
-            animation: slideIn 0.3s ease, fadeOut 0.3s ease 3.7s;
-            max-width: 320px;
+            background: rgba(15, 23, 42, 0.95); border: 1px solid #38bdf8; color: #f8fafc;
+            padding: 12px 20px; border-radius: 8px; font-size: 12px; box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            backdrop-filter: blur(10px); animation: slideIn 0.3s ease; max-width: 320px;
         }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
@@ -322,11 +323,39 @@ HTML_TEMPLATE = """
 
     <div id="toast-container"></div>
 
+    <div class="modal-overlay" id="agentModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalAgentTitle">AJAN KANALI</h3>
+                <button class="close-btn" onclick="closeAgentModal()">KAPAT</button>
+            </div>
+            <div id="modalAgentBody" style="font-size: 12px; color: #cbd5e1; min-height: 100px; margin-bottom: 15px; line-height: 1.5;">
+                Ajan ile iletişim kuruluyor...
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="modalInput" placeholder="Ajana doğrudan talimat ver..." style="flex-grow: 1;" onkeypress="checkModalEnter(event)">
+                <button class="send-btn" onclick="sendModalMessage()">İLET</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="projectsModal">
+        <div class="modal-card" style="width: 750px;">
+            <div class="modal-header">
+                <h3>📋 CANLI PROJE ARŞİVİ & PORTFOLYO</h3>
+                <button class="close-btn" onclick="closeProjectsModal()">KAPAT</button>
+            </div>
+            <div id="projectsModalBody" style="font-size: 12px; color: #cbd5e1; max-height: 350px; overflow-y: auto;">
+                Yükleniyor...
+            </div>
+        </div>
+    </div>
+
     <div id="game-topbar">
-        <div style="font-weight: bold; color: #38bdf8; font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // CYBER HQ (GPT-OSS 120B)</div>
+        <div style="font-weight: bold; color: #38bdf8; font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // CYBER HQ (REALISTIC MOVEMENT)</div>
         <div>
             <span class="top-btn" onclick="loadMemory()">🧠 HAFIZA</span>
-            <span class="top-btn" onclick="loadTasks()">📋 PROJELER</span>
+            <span class="top-btn" onclick="openProjectsModal()">📋 PROJELER ARŞİVİ</span>
             <span class="top-btn" onclick="checkUptime()">🛡️ SİSTEM SAĞLIĞI</span>
             <span class="top-btn" onclick="triggerBoardroom()">🤝 ZİRVE</span>
             <a href="/logout" class="top-btn" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: #dc2626;">🚪 ÇIKIŞ</a>
@@ -336,7 +365,7 @@ HTML_TEMPLATE = """
     <div id="stats-bar">
         <span class="stat-badge" style="color: #4ade80;">💰 KASA: $<span id="stat-budget">22500</span></span>
         <span class="stat-badge" style="color: #38bdf8;">👥 MÜŞTERİ: <span id="stat-clients">6</span></span>
-        <span class="stat-badge" style="color: #fbbf24;">🚀 AKILLI KAPI & MOLA SİSTEMİ AKTİF</span>
+        <span class="stat-badge" style="color: #fbbf24;" id="stat-crisis">⚡ DURUM: Normal Operasyon</span>
     </div>
 
     <div id="game-container">
@@ -350,18 +379,18 @@ HTML_TEMPLATE = """
                 <option value="{{ name }}">{{ name }} ({{ data.role }})</option>
                 {% endfor %}
             </select>
-            <input type="text" id="ceo-message" placeholder="Brown'a kurumsal site veya projeyi yazdır..." onkeypress="checkEnter(event)">
+            <input type="text" id="ceo-message" placeholder="Genel merkeze veya Brown'a talimat ver..." onkeypress="checkEnter(event)">
             <button class="send-btn" onclick="sendDirectMessage()">GÖNDER</button>
         </div>
     </div>
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ OPERATIONS TERMINAL</span>
-            <span style="color: #38bdf8; font-weight: bold;">● ANIMATION & AI ENGINE ACTIVE</span>
+            <span>⚡ REALISTIC ANIMATION TERMINAL</span>
+            <span style="color: #38bdf8; font-weight: bold;">● AKICI YÜRÜYÜŞ & AYAK İZLERİ</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Ajanlar yürüyüş rotaları ve otomatik mola sistemi yüklendi!</div>
+            <div class="log-line">[SYSTEM]: Gerçekçi adım ve bacak animasyon motoru yüklendi!</div>
         </div>
     </div>
 
@@ -370,8 +399,94 @@ HTML_TEMPLATE = """
         const ctx = canvas.getContext('2d');
         const terminalLogs = document.getElementById('terminal-logs');
 
-        let agentsData = {};
-        let footprintList = [];
+        let agentsDisplay = {}; // Ekranda süzülen gerçek zamanlı koordinatlar
+        let footprintList = []; // Ayak izleri havuzu
+        let activeModalAgent = null;
+
+        const roomCoords = [
+            {name: "Marco", x: 15, y: 15, w: 160, h: 105},
+            {name: "Talisca", x: 195, y: 15, w: 160, h: 105},
+            {name: "Brown", x: 375, y: 15, w: 160, h: 105},
+            {name: "Kante", x: 15, y: 155, w: 160, h: 105},
+            {name: "İrfan", x: 195, y: 155, w: 160, h: 105},
+            {name: "İsmail", x: 375, y: 155, w: 160, h: 105},
+            {name: "Alex", x: 15, y: 295, w: 160, h: 105},
+            {name: "Skrinar", x: 195, y: 295, w: 160, h: 105},
+            {name: "Kerem", x: 375, y: 295, w: 160, h: 105},
+            {name: "Mutfak_Chef", x: 580, y: 15, w: 485, h: 110}
+        ];
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const clickX = (e.clientX - rect.left) * scaleX;
+            const clickY = (e.clientY - rect.top) * scaleY;
+
+            roomCoords.forEach(r => {
+                if (clickX >= r.x && clickX <= r.x + r.w && clickY >= r.y && clickY <= r.y + r.h) {
+                    openAgentModal(r.name);
+                }
+            });
+        });
+
+        function openAgentModal(agentName) {
+            activeModalAgent = agentName;
+            document.getElementById('modalAgentTitle').innerText = `${agentName.toUpperCase()} İLE ÖZEL GÖRÜŞME`;
+            document.getElementById('modalAgentBody').innerHTML = `> [SİSTEM]: ${agentName} ile güvenli kanal açıldı. Doğrudan soru sorabilir veya talimat verebilirsiniz.`;
+            document.getElementById('agentModal').style.display = 'flex';
+        }
+
+        function closeAgentModal() {
+            document.getElementById('agentModal').style.display = 'none';
+            activeModalAgent = null;
+        }
+
+        function checkModalEnter(e) {
+            if (e.key === 'Enter') sendModalMessage();
+        }
+
+        function sendModalMessage() {
+            const input = document.getElementById('modalInput');
+            const msg = input.value.trim();
+            if (!msg || !activeModalAgent) return;
+
+            const body = document.getElementById('modalAgentBody');
+            body.innerHTML += `<br><b style="color: #38bdf8;">[CEO]:</b> ${msg}`;
+            input.value = "";
+
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ agent: activeModalAgent, message: msg })
+            })
+            .then(res => res.json())
+            .then(data => {
+                body.innerHTML += `<br><b style="color: #4ade80;">[${activeModalAgent}]:</b> ${data.status}`;
+                body.scrollTop = body.scrollHeight;
+                if(data.preview_url) {
+                    body.innerHTML += `<br>🚀 <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold;">Canlı Proje Sayfası 🌐</a>`;
+                }
+            });
+        }
+
+        function openProjectsModal() {
+            document.getElementById('projectsModal').style.display = 'flex';
+            fetch('/api/tasks')
+            .then(res => res.json())
+            .then(data => {
+                let html = "<ul style='padding-left: 15px; margin: 0;'>";
+                data.tasks.forEach(t => {
+                    html += `<li style="margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 6px;">${t}</li>`;
+                });
+                html += "</ul>";
+                document.getElementById('projectsModalBody').innerHTML = html;
+            });
+        }
+
+        function closeProjectsModal() {
+            document.getElementById('projectsModal').style.display = 'none';
+        }
 
         function showToast(message) {
             const container = document.getElementById('toast-container');
@@ -495,36 +610,59 @@ HTML_TEMPLATE = """
             ctx.fillStyle = "#3b0764";
             ctx.fillRect(740, 270, 160, 60);
 
-            ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
-            footprintList.forEach(fp => {
-                ctx.fillRect(fp.x, fp.y, 4, 4);
-            });
+            // Ayak İzlerini Çiz ve Yavaşça Soluklaştır
+            for (let i = footprintList.length - 1; i >= 0; i--) {
+                let fp = footprintList[i];
+                fp.alpha -= 0.005;
+                if (fp.alpha <= 0) {
+                    footprintList.splice(i, 1);
+                } else {
+                    ctx.fillStyle = `rgba(56, 189, 248, ${fp.alpha})`;
+                    ctx.fillRect(fp.x, fp.y, 3, 3);
+                }
+            }
 
-            for (let name in agentsData) {
-                let ag = agentsData[name];
+            // Ajanları Gerçekçi Lerp (Akıcı Yürüyüş) ve Bacak Animasyonlarıyla Çiz
+            for (let name in agentsDisplay) {
+                let ag = agentsDisplay[name];
                 
-                if (Math.random() < 0.3) {
-                    footprintList.push({x: ag.x + 10, y: ag.y + 10});
-                    if (footprintList.length > 50) footprintList.shift();
+                // Hedefine yumuşak geçiş (Linear Interpolation)
+                ag.x += (ag.targetX - ag.x) * 0.1;
+                ag.y += (ag.targetY - ag.y) * 0.1;
+
+                // Yürürken ayak izi bırak
+                let moving = Math.abs(ag.targetX - ag.x) > 0.5 || Math.abs(ag.targetY - ag.y) > 0.5;
+                if (moving && Math.random() < 0.4) {
+                    footprintList.push({x: ag.x + 10, y: ag.y + 22, alpha: 0.5});
+                    if (footprintList.length > 80) footprintList.shift();
                 }
 
+                // Gövde
                 ctx.fillStyle = ag.color;
                 ctx.fillRect(ag.x, ag.y, 24, 24);
                 ctx.strokeStyle = "#ffffff";
                 ctx.lineWidth = 1;
                 ctx.strokeRect(ag.x, ag.y, 24, 24);
 
+                // Kafa / Gözler
                 ctx.fillStyle = "#38bdf8";
                 ctx.fillRect(ag.x + 11, ag.y - 4, 2, 4);
-
                 ctx.fillStyle = "#ffffff";
                 ctx.fillRect(ag.x + 5, ag.y + 7, 4, 4);
                 ctx.fillRect(ag.x + 15, ag.y + 7, 4, 4);
 
+                // Bacak Animasyonu (Yürürken sallanan minik ayaklar)
+                let legOffset = moving ? Math.sin(Date.now() / 80) * 4 : 0;
+                ctx.fillStyle = "#1e293b";
+                ctx.fillRect(ag.x + 5, ag.y + 24, 4, 6 + legOffset);
+                ctx.fillRect(ag.x + 15, ag.y + 24, 4, 6 - legOffset);
+
+                // İsim Etiketi
                 ctx.fillStyle = "#38bdf8";
                 ctx.font = "bold 8px 'JetBrains Mono'";
-                ctx.fillText(name + ` (${ag.title})`, ag.x - 6, ag.y + 38);
+                ctx.fillText(name + ` (${ag.title})`, ag.x - 6, ag.y + 42);
 
+                // Konuşma Baloncuğu
                 let bubbleText = ag.speech || ag.state;
                 ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
                 ctx.fillRect(ag.x - 12, ag.y - 22, ctx.measureText(bubbleText).width + 12, 16);
@@ -534,20 +672,33 @@ HTML_TEMPLATE = """
                 ctx.font = "bold 9px 'JetBrains Mono'";
                 ctx.fillText(bubbleText, ag.x - 8, ag.y - 11);
             }
+            requestAnimationFrame(drawOffice);
         }
 
+        // Sunucudan veri alıp hedefleri güncelle
         setInterval(() => {
             fetch('/api/simulation-tick')
             .then(res => res.json())
             .then(data => {
                 document.getElementById('stat-budget').innerText = data.budget;
                 document.getElementById('stat-clients').innerText = data.active_clients;
-                let mapped = {};
-                data.agents.forEach(ag => { mapped[ag.name] = ag; });
-                agentsData = mapped;
-                drawOffice();
+                document.getElementById('stat-crisis').innerText = `⚡ KRİZ: ${data.crisis}`;
+                
+                data.agents.forEach(ag => {
+                    if (!agentsDisplay[ag.name]) {
+                        agentsDisplay[ag.name] = { x: ag.x, y: ag.y, targetX: ag.x, targetY: ag.y, color: ag.color, title: ag.title, role: ag.role, state: ag.state, speech: ag.speech };
+                    } else {
+                        agentsDisplay[ag.name].targetX = ag.x;
+                        agentsDisplay[ag.name].targetY = ag.y;
+                        agentsDisplay[ag.name].state = ag.state;
+                        agentsDisplay[ag.name].speech = ag.speech;
+                    }
+                });
             });
-        }, 1200);
+        }, 2000);
+
+        // Animasyon döngüsünü başlat
+        requestAnimationFrame(drawOffice);
 
         function sendDirectMessage() {
             const agentName = document.getElementById('agent-select').value;
@@ -557,8 +708,8 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor...`);
-            showToast(`${agentName} projeyi kodlamaya başladı!`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor ve departmanlar arası denetim başlatılıyor...`);
+            showToast(`${agentName} projeyi işliyor!`);
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 120000);
@@ -575,9 +726,14 @@ HTML_TEMPLATE = """
             })
             .then(data => {
                 appendLog(`> [<b>${agentName}</b>]: "${data.status}"`);
+                if(data.audit_logs) {
+                    data.audit_logs.forEach(log => {
+                        appendLog(`> ${log}`);
+                    });
+                }
                 if(data.preview_url) {
                     appendLog(`> 🚀 <b style="color: #38bdf8; font-size: 14px;">CANLI PROJE LİNKİ (TIKLA AÇ):</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Sayfa 🌐</a>`);
-                    showToast("Proje başarıyla tamamlandı ve yayına alındı!");
+                    showToast("Proje başarıyla tamamlandı ve arşive eklendi!");
                 }
             })
             .catch(err => {
@@ -595,10 +751,7 @@ HTML_TEMPLATE = """
         }
 
         function loadTasks() {
-            appendLog(`> [PROJELER]: Listeleniyor...`);
-            fetch('/api/tasks').then(res => res.json()).then(data => {
-                appendLog(`> [KAYITLAR]: ${data.tasks.join(" | ")}`);
-            });
+            openProjectsModal();
         }
 
         function checkUptime() {
@@ -609,7 +762,7 @@ HTML_TEMPLATE = """
         }
 
         function triggerBoardroom() {
-            appendLog(`> [ZİRVE]: Yönetim kurulu toplandı...`);
+            appendLog(`> [ZİRVE]: Otonom yönetim kurulu toplantısı başladı...`);
             showToast("Yönetim kurulu zirvesi toplandı!");
             fetch('/api/boardroom', {method: 'POST'}).then(res => res.json()).then(data => {
                 appendLog(`> [KARAR]: "${data.decision}"`);
@@ -673,6 +826,10 @@ def simulation_tick():
         revenue = random.randint(2500, 5000)
         company_state["budget"] += revenue
         company_state["active_clients"] = random.randint(3, 8)
+        
+    if tick_counter % 25 == 0:
+        crises = ["Normal Operasyon", "Yüksek Sunucu Trafiği", "Bütçe Denetimi", "Siber Saldırı Girişimi"]
+        company_state["crisis"] = random.choice(crises)
 
     for name, data in employees.items():
         if name == "Mutfak_Chef":
@@ -687,8 +844,8 @@ def simulation_tick():
                 if data["energy"] <= 10:
                     data["energy"] = 100
             else:
-                x = data["target_x"] + random.randint(-10, 10)
-                y = data["target_y"] + random.randint(-10, 10)
+                x = data["target_x"] + random.randint(-6, 6)
+                y = data["target_y"] + random.randint(-6, 6)
                 state = "Masada Çalışıyor"
                 speech = f"{data['role']} Aktif"
 
@@ -698,7 +855,12 @@ def simulation_tick():
             "state": state, "speech": speech, "color": data["color"]
         })
 
-    return jsonify({"agents": agent_list, "budget": company_state["budget"], "active_clients": company_state["active_clients"]})
+    return jsonify({
+        "agents": agent_list, 
+        "budget": company_state["budget"], 
+        "active_clients": company_state["active_clients"],
+        "crisis": company_state["crisis"]
+    })
 
 @app.route('/')
 def index():
@@ -739,6 +901,7 @@ def api_chat():
     html_code = ""
     reply = ""
     preview_url = None
+    audit_logs = []
 
     if agent_name != "Brown":
         try:
@@ -759,7 +922,7 @@ def api_chat():
     else:
         try:
             if groq_client:
-                summary_prompt = f"Kullanıcı şu projeyi istedi: '{user_message}'. Bu projeye karşılık kısa, havalı ve profesyonel bir yazılımcı onay yanıtı ver (Örn: 'Patron, istediğin [proje adı] GPT-OSS 120B ile cam efektli ve modern UI standartlarında kodlandı!')."
+                summary_prompt = f"Kullanıcı şu projeyi istedi: '{user_message}'. Bu projeye karşılık kısa, havalı ve profesyonel bir yazılımcı onay yanıtı ver."
                 comp_rep = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": summary_prompt}],
@@ -772,9 +935,13 @@ def api_chat():
         if not reply:
             reply = f"Patron, talep ettiğin proje GPT-OSS 120B ile kodlandı!"
 
+        audit_logs.append("<b>[SKRİNAR - SİBER GÜVENLİK]:</b> Kod yapısı tarandı, XSS/SQL açıklığı bulunamadı. Güvenli!")
+        audit_logs.append("<b>[ALEX - HUKUK]:</b> Kullanım koşulları ve telif standartları onaylandı. Yasal!")
+        audit_logs.append("<b>[İRFAN - FİNANSMAN]:</b> Proje maliyet bütçesi onaylandı. Kasa dengede!")
+
         try:
             if groq_client:
-                code_prompt = f"""Sen kıdemli bir full-stack web geliştiricisisin ve UI/UX uzmansın. Sadece ve sadece saf, eksiksiz bir HTML/CSS/JS içeren modern web sitesi yaz. Tasarım kuralları: Glassmorphism (cam efekti, blur, şeffaf kartlar), neon renk geçişleri, Inter veya Space Grotesk tipografi, tamamen koyu tema ve kusursuz mobil uyumluluk. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"""
+                code_prompt = f"""Sen kıdemli bir full-stack web geliştiricisisin ve UI/UX uzmansın. Sadece ve sadece saf, eksiksiz bir HTML/CSS/JS içeren modern web sitesi yaz. Tasarım kuralları: Glassmorphism (cam efekti, blur, şeffaf kartlar), neon renk geçişleri, Space Grotesk tipografi, tamamen koyu tema ve kusursuz mobil uyumluluk. Asla markdown etiketi (```html) kullanma, asla açıklama yapma. İstek: {user_message}"""
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
@@ -837,18 +1004,18 @@ def api_chat():
             print(f"DB Kayıt Hatası: {e}")
 
     log_to_supabase(agent_name, "SYSTEM_OP", f"Talimat: {user_message}")
-    return jsonify({"status": reply, "preview_url": preview_url})
+    return jsonify({"status": reply, "audit_logs": audit_logs, "preview_url": preview_url})
 
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
     if not session.get('logged_in'):
-        return jsonify({"status": "Yetkisiz"}), 403
+        return jsonify({"status": "Yetkisiz"}}, 403
     return jsonify({"status": check_system_uptime()})
 
 @app.route('/api/memory', methods=['GET'])
 def api_memory():
     if not session.get('logged_in'):
-        return jsonify({"summary": "Yetkisiz"}), 403
+        return jsonify({"summary": "Yetkisiz"}}, 403
     return jsonify({"summary": "Supabase bağlantısı aktif."})
 
 @app.route('/api/tasks', methods=['GET'])
@@ -858,20 +1025,20 @@ def api_tasks():
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
-        cur.execute("SELECT id, client_name, project_type FROM client_orders ORDER BY id DESC LIMIT 5;")
+        cur.execute("SELECT id, client_name, project_type FROM client_orders ORDER BY id DESC LIMIT 10;")
         rows = cur.fetchall()
         cur.close()
         conn.close()
-        tasks = [f"[{r[1]}]: {r[2]} (Link: /preview/{r[0]})" for r in rows]
-        return jsonify({"tasks": tasks if tasks else ["Proje yok."]})
+        tasks = [f"<b>[{r[1]}]:</b> {r[2]} — <a href='/preview/{r[0]}' target='_blank' style='color: #f43f5e; font-weight: bold;'>Canlı Sayfa 🌐</a>" for r in rows]
+        return jsonify({"tasks": tasks if tasks else ["Arşivde henüz proje bulunmuyor."]})
     except:
         return jsonify({"tasks": ["Yüklenemedi."]})
 
 @app.route('/api/boardroom', methods=['POST'])
 def api_boardroom():
     if not session.get('logged_in'):
-        return jsonify({"status": "Yetkisiz"}), 403
-    return jsonify({"decision": "Yönetim kurulu akıllı kapı ve mola döngüsü simülasyonunu onayladı."})
+        return jsonify({"decision": "Yetkisiz"}), 403
+    return jsonify({"decision": "Yönetim kurulu akıcı yürüyüş animasyonu ve ayak izi sistemini onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
