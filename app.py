@@ -71,14 +71,12 @@ def push_to_github(filename, file_content, commit_msg):
             "Authorization": f"Bearer {GITHUB_TOKEN}",
             "Accept": "application/vnd.github+json"
         }
-        # Doğrudan kullanıcı adın üzerinden repoya bağlanıyoruz
         username = "mertcanylmz326"
         repo_name = "ai-agency-projects"
 
         file_path_api = f"https://api.github.com/repos/{username}/{repo_name}/contents/{filename}"
         content_encoded = base64.b64encode(file_content.encode('utf-8')).decode('utf-8')
         
-        # Dosya repoda zaten varsa sha değerini alıp güncellemek gerekir, yoksa direkt ekler
         get_res = requests.get(file_path_api, headers=headers, timeout=3)
         payload = {
             "message": commit_msg,
@@ -91,8 +89,8 @@ def push_to_github(filename, file_content, commit_msg):
         if put_res.status_code in [200, 201]:
             return f"https://github.com/{username}/{repo_name}/blob/main/{filename}"
     except Exception as e:
-        print(f"GitHub API Hatası: {e}")
-    return f"https://github.com/mertcanylmz326/ai-agency-projects"
+        print(f"GitHub API İstisnası: {e}")
+    return None
 
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "target_x": 60, "target_y": 60, "state": "Masada", "speech": "Destek veriyor", "energy": 90},
@@ -395,7 +393,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: var(--accent-color); font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // GITHUB AUTO-PUSH ACTIVE</div>
+        <div style="font-weight: bold; color: var(--accent-color); font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // AI AGENCY HQ</div>
         <div>
             <select id="themeSelect" onchange="changeTheme(this.value)" class="top-btn" style="background: rgba(15,23,42,0.9); color: var(--accent-color); border: 1px solid var(--accent-color); cursor: pointer;">
                 <option value="theme-cyberred">🔴 Cyber Red</option>
@@ -434,11 +432,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ GITHUB AUTO-PUSH TERMINAL</span>
-            <span style="color: var(--accent-color); font-weight: bold;">● DOSYA SENKRONİZASYONU AKTİF</span>
+            <span>⚡ AI DEV STUDIO TERMINAL</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● OTONOM ÜRETİCİ AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: GitHub 'ai-agency-projects' repo köprüsü hazır!</div>
+            <div class="log-line">[SYSTEM]: AI ajan geliştirme merkezi hazır!</div>
         </div>
     </div>
 
@@ -748,8 +746,8 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor, GitHub'a dosya push'lanıyor...`);
-            showToast(`${agentName} projeyi kodluyor & GitHub'a yüklüyor!`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor, web arayüzü kodlanıyor...`);
+            showToast(`${agentName} projeyi kodluyor & arşive ekliyor!`);
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 120000);
@@ -772,7 +770,7 @@ HTML_TEMPLATE = """
                     });
                 }
                 if(data.github_url) {
-                    appendLog(`> 🐙 <b style="color: #4ade80;">GİTHUB REPO:</b> <a href="${data.github_url}" target="_blank" style="color: #38bdf8; font-weight: bold;">Dosyaya Git 🌐</a>`);
+                    appendLog(`> 🐙 <b style="color: #4ade80;">GİTHUB REPO:</b> <a href="${data.github_url}" target="_blank" style="color: #38bdf8; font-weight: bold;">Depoya Git 🌐</a>`);
                 }
                 if(data.preview_url) {
                     appendLog(`> 🚀 <b style="color: #f43f5e; font-size: 14px;">CANLI PROJE LİNKİ:</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Sayfayı Aç 🌐</a>`);
@@ -977,7 +975,7 @@ def api_chat():
             pass
         
         if not reply:
-            reply = f"Patron, talep ettiğin proje GPT-OSS 120B ile kodlandı ve GitHub'a işlendi!"
+            reply = f"Patron, talep ettiğin proje GPT-OSS 120B ile kodlandı!"
 
         audit_logs.append("<b>[SKRİNAR - SİBER GÜVENLİK]:</b> Kod yapısı tarandı, güvenlik açıklarına karşı onaylandı!")
         audit_logs.append("<b>[ALEX - HUKUK]:</b> Telif standartları ve lisans denetimi tamamlandı!")
@@ -1016,6 +1014,7 @@ IMPORTANT FORMATTING RULES:
         except Exception as e:
             print(f"Groq API Üretim Hatası: {e}")
 
+        # Eğer model ham kod üretmek yerine hala metin dönerse, akıllı tematik bir web uygulaması oluştur
         if not html_code or "<html" not in html_code.lower() or len(html_code) < 100 or "<!doctype" not in html_code.lower() or "Sohbet etmeden" in html_code:
             words = user_message.split()
             project_title = " ".join(words[:6]) if len(words) > 0 else "Özel Yapay Zeka Paneli"
@@ -1029,40 +1028,44 @@ IMPORTANT FORMATTING RULES:
     <style>
         @import url('[https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap)');
         body {{ background: #030712; color: #f8fafc; font-family: 'Space Grotesk', sans-serif; margin: 0; padding: 0; }}
-        header {{ background: linear-gradient(135deg, #0f172a, #1e293b); padding: 50px 20px; border-bottom: 2px solid #38bdf8; text-align: center; }}
+        header {{ background: linear-gradient(135deg, #0f172a, #1e293b); padding: 50px 20px; border-bottom: 2px solid #38bdf8; text-align: center; box-shadow: 0 4px 20px rgba(56,189,248,0.2); }}
         h1 {{ color: #38bdf8; font-size: 32px; margin: 0; text-shadow: 0 0 15px rgba(56,189,248,0.5); }}
         .container {{ max-width: 900px; margin: 30px auto; padding: 0 20px; }}
         .card {{ background: rgba(15, 23, 42, 0.9); border: 1px solid #334155; border-radius: 12px; padding: 25px; margin-bottom: 20px; backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }}
-        .btn {{ background: #38bdf8; color: #030712; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }}
-        .btn:hover {{ background: #0ea5e9; box-shadow: 0 0 15px #38bdf8; }}
+        .btn {{ background: #38bdf8; color: #030712; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 14px; }}
+        .btn:hover {{ background: #0ea5e9; box-shadow: 0 0 20px #38bdf8; transform: translateY(-2px); }}
+        .status-badge {{ background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid #4ade80; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; margin-bottom: 15px; }}
     </style>
 </head>
 <body>
     <header>
         <h1>{project_title}</h1>
-        <p style="color: #94a3b8; margin-top: 10px;">Otonom AI Sistemi Tarafından Üretilmiştir</p>
+        <p style="color: #94a3b8; margin-top: 10px;">Otonom AI Ajansı Tarafından Üretildi</p>
     </header>
     <div class="container">
         <div class="card">
-            <h3>📊 Proje Modülü Aktif</h3>
-            <p>Talep ettiğiniz özellikler başarıyla entegre edildi.</p>
-            <button class="btn" onclick="alert('İşlem Başarılı!')">Test Et</button>
+            <span class="status-badge">● Sistem Çevrim İçi</span>
+            <h3>🚀 {user_message}</h3>
+            <p>Talep ettiğiniz konsept için tüm mimari hazırlandı, veriler senkronize edildi ve modüller aktif hale getirildi.</p>
+            <button class="btn" onclick="alert('İşlem başarıyla tetiklendi ve onaylandı!')">Sistemi Çalıştır</button>
         </div>
     </div>
 </body>
 </html>"""
 
-        # GitHub'a Dosya Olarak Push At
+        # GitHub'a Dosya Olarak Push At (Hata alsa bile durmaz)
         filename = f"project_{int(time.time())}.html"
         github_url = push_to_github(filename, html_code, f"Brown otonom ajans projesi: {user_message[:30]}")
         if github_url and "github.com" in github_url:
             audit_logs.append(f"<b>[GİTHUB API]:</b> Dosya repoya başarıyla eklendi! 🐙")
+        else:
+            audit_logs.append(f"<b>[GİTHUB API]:</b> Lokal Supabase arşivi aktif.")
 
         try:
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
             cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
-                        ("Brown (Yazılımcı)", user_message[:40], github_url, html_code))
+                        ("Brown (Yazılımcı)", user_message[:40], github_url or "Lokal Arşiv", html_code))
             project_id = cur.fetchone()[0]
             conn.commit()
             cur.close()
@@ -1092,7 +1095,7 @@ def api_memory():
 @app.route('/api/tasks', methods=['GET'])
 def api_tasks():
     if not session.get('logged_in'):
-        return jsonify({"tasks": ["YetkiszIndex"]})
+        return jsonify({"tasks": ["Yetkisiz"]})
     try:
         conn = psycopg2.connect(DB_URL)
         cur = conn.cursor()
@@ -1112,7 +1115,7 @@ def api_tasks():
 def api_boardroom():
     if not session.get('logged_in'):
         return jsonify({"decision": "Yetkisiz"})
-    return jsonify({"decision": "Yönetim kurulu GitHub dosya entegrasyonunu ve canlı önizleme köprüsünü onayladı."})
+    return jsonify({"decision": "Yönetim kurulu projelerin otonom üretim hattını ve canlı önizleme köprüsünü onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
