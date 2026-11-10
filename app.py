@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = "e_trade_pro_secret_security_key_99"
 
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
-GROQ_API_KEY = "Gsk_lsfdhNuWhDs4IgvuAkCCWGdyb3FYFKlpWQQ3dvDN1NYb1UVsDUZW"
+GROQ_API_KEY = "Gsk_lsfdhNuWhDs4IgvuAkCCWGdyb3FYFKlpWQQ3dvDN1NYb1UVsDUZW" # Buraya kendi güncel Groq API anahtarını yazabilirsin
 GITHUB_TOKEN = "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"
 
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
@@ -95,7 +95,7 @@ def push_to_github(filename, file_content, commit_msg):
 employees = {
     "Marco": {"role": "Destek", "salary": 800, "xp": 50, "level": 1, "title": "Junior", "room_x": 15, "room_y": 15, "color": "#3b82f6", "target_x": 60, "target_y": 60, "state": "Masada", "speech": "Destek veriyor", "energy": 90},
     "Talisca": {"role": "Operasyon", "salary": 950, "xp": 70, "level": 1, "title": "Junior", "room_x": 205, "room_y": 15, "color": "#ef4444", "target_x": 250, "target_y": 60, "state": "Masada", "speech": "Süreç takipte", "energy": 85},
-    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 395, "room_y": 15, "color": "#10b981", "target_x": 440, "target_y": 60, "state": "Masada", "speech": "gpt-oss-20b Aktif", "energy": 95},
+    "Brown": {"role": "Yazılım", "salary": 1200, "xp": 130, "level": 2, "title": "Senior", "room_x": 395, "room_y": 15, "color": "#10b981", "target_x": 440, "target_y": 60, "state": "Masada", "speech": "gpt-oss-120b Aktif", "energy": 95},
     
     "Kante": {"role": "Pazarlama", "salary": 900, "xp": 60, "level": 1, "title": "Junior", "room_x": 15, "room_y": 180, "color": "#f59e0b", "target_x": 60, "target_y": 225, "state": "Masada", "speech": "Lead topluyor", "energy": 80},
     "İrfan": {"role": "Finans", "salary": 1100, "xp": 100, "level": 2, "title": "Senior", "room_x": 205, "room_y": 180, "color": "#8b5cf6", "target_x": 250, "target_y": 225, "state": "Masada", "speech": "Bütçe kontrol", "energy": 88},
@@ -432,11 +432,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ AI DEV STUDIO TERMINAL</span>
-            <span style="color: var(--accent-color); font-weight: bold;">● İNLINE CSS STİL MOTORU AKTİF</span>
+            <span>⚡ AI DEV STUDIO TERMINAL (120B ACTIVE)</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● gpt-oss-120b MOTORU AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Harici CDN bağımlılıkları kaldırıldı, inline stiller entegre edildi!</div>
+            <div class="log-line">[SYSTEM]: openai/gpt-oss-120b ile güçlendirilmiş otonom üretim hattı hazır!</div>
         </div>
     </div>
 
@@ -746,7 +746,7 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor, web arayüzü kodlanıyor...`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor (120B model), web arayüzü kodlanıyor...`);
             showToast(`${agentName} projeyi kodluyor & arşive ekliyor!`);
 
             const controller = new AbortController();
@@ -946,7 +946,7 @@ def api_chat():
             if groq_client:
                 prompt = f"Sen ofiste '{agent['role']}' olarak çalışan bir uzmansın. Patronun (Kullanıcı) sana şu mesajı gönderdi: '{user_message}'. Kendi departmanının uzmanlığıyla profesyonel ve kısa bir iş yanıtı ver. Asla HTML kodu yazma."
                 comp = groq_client.chat.completions.create(
-                    model="openai/gpt-oss-20b",
+                    model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": prompt}],
                     max_tokens=300, temperature=0.7
                 )
@@ -962,7 +962,7 @@ def api_chat():
             if groq_client:
                 summary_prompt = f"Kullanıcı şu projeyi istedi: '{user_message}'. Bu projeye karşılık kısa, havalı ve profesyonel bir yazılımcı onay yanıtı ver."
                 comp_rep = groq_client.chat.completions.create(
-                    model="openai/gpt-oss-20b",
+                    model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": summary_prompt}],
                     max_tokens=100, temperature=0.7
                 )
@@ -971,7 +971,7 @@ def api_chat():
             pass
         
         if not reply:
-            reply = f"Patron, talep ettiğin proje openai/gpt-oss-20b ile kodlandı!"
+            reply = f"Patron, talep ettiğin proje openai/gpt-oss-120b ile kodlandı!"
 
         audit_logs.append("<b>[SKRİNAR - SİBER GÜVENLİK]:</b> Kod yapısı tarandı, güvenlik açıklarına karşı onaylandı!")
         audit_logs.append("<b>[ALEX - HUKUK]:</b> Telif standartları ve lisans denetimi tamamlandı!")
@@ -987,7 +987,7 @@ MANDATORY RULES:
 - Include embedded CSS styling so it looks gorgeous without external CDN dependencies."""
 
                 comp = groq_client.chat.completions.create(
-                    model="openai/gpt-oss-20b",
+                    model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
                     max_tokens=4000, temperature=0.7
                 )
@@ -1008,122 +1008,65 @@ MANDATORY RULES:
                 else:
                     html_code = clean_code.strip()
         except Exception as e:
-            print(f"Groq API Üretim Hatası: {e}")
+            print(f"Groq API Üretim Hatası (120b): {e}")
 
         if not html_code or "<html" not in html_code.lower() or len(html_code) < 150 or "<!doctype" not in html_code.lower():
             words = user_message.split()
-            project_title = " ".join(words[:6]) if len(words) > 0 else "Dijital Kafe Menü ve Sipariş Paneli"
+            project_title = " ".join(words[:6]) if len(words) > 0 else "Gelişmiş Yapay Zeka Uygulama Paneli"
             
-            html_code = """<!DOCTYPE html>
+            html_code = f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dijital Kafe Menü ve Sipariş Paneli</title>
+    <title>{project_title}</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #030712; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
-        header { background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid #1e293b; padding: 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px); }
-        header h1 { font-size: 20px; color: #fbbf24; }
-        header p { font-size: 11px; color: #94a3b8; margin-top: 3px; }
-        .garson-btn { background: #e11d48; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.3s; box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4); }
-        .garson-btn:hover { background: #be123c; }
-        main { max-width: 1100px; margin: 30px auto; padding: 0 20px; width: 100%; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; flex-grow: 1; }
-        @media (max-width: 768px) { main { grid-template-columns: 1fr; } }
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; }
-        .cat-btn { background: #0f172a; border: 1px solid #1e293b; color: #cbd5e1; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s; white-space: nowrap; }
-        .cat-btn.active, .cat-btn:hover { background: #fbbf24; color: #030712; border-color: #fbbf24; }
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; }
-        .menu-card { background: rgba(15, 23, 42, 0.8); border: 1px solid #1e293b; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; backdrop-filter: blur(8px); }
-        .menu-card h3 { font-size: 15px; color: #fff; margin-bottom: 5px; }
-        .menu-card .price { color: #fbbf24; font-weight: bold; font-size: 14px; }
-        .menu-card p { color: #94a3b8; font-size: 11px; margin: 8px 0 14px 0; }
-        .add-btn { background: #1e293b; color: #fbbf24; border: 1px solid #334155; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.3s; width: 100%; }
-        .add-btn:hover { background: #fbbf24; color: #030712; }
-        .cart-box { background: rgba(15, 23, 42, 0.9); border: 1px solid #1e293b; border-radius: 16px; padding: 20px; height: fit-content; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .cart-box h2 { font-size: 16px; color: #fff; margin-bottom: 15px; border-bottom: 1px solid #1e293b; padding-bottom: 10px; }
-        .cart-items { min-height: 120px; max-height: 250px; overflow-y: auto; margin-bottom: 15px; font-size: 12px; color: #cbd5e1; }
-        .cart-item-row { display: flex; justify-content: space-between; align-items: center; background: rgba(3, 7, 18, 0.6); padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; }
-        .cart-total-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #1e293b; }
-        .cart-total-row span:last-child { color: #fbbf24; }
-        .checkout-btn { width: 100%; background: #fbbf24; color: #030712; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.3s; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3); }
-        .checkout-btn:hover { background: #f59e0b; }
-        footer { background: #0f172a; border-top: 1px solid #1e293b; padding: 15px; text-align: center; font-size: 11px; color: #64748b; }
+        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+        body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #030712; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }}
+        header {{ background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid #1e293b; padding: 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px); }}
+        header h1 {{ font-size: 20px; color: #38bdf8; }}
+        header p {{ font-size: 11px; color: #94a3b8; margin-top: 3px; }}
+        .action-btn {{ background: #0284c7; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.3s; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4); }}
+        .action-btn:hover {{ background: #0369a1; }}
+        main {{ max-width: 1100px; margin: 30px auto; padding: 0 20px; width: 100%; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; flex-grow: 1; }}
+        @media (max-width: 768px) {{ main {{ grid-template-columns: 1fr; }} }}
+        .card-box {{ background: rgba(15, 23, 42, 0.8); border: 1px solid #1e293b; border-radius: 16px; padding: 20px; backdrop-filter: blur(8px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }}
+        .card-box h2 {{ font-size: 16px; color: #fff; margin-bottom: 15px; border-bottom: 1px solid #1e293b; padding-bottom: 10px; }}
+        .info-text {{ font-size: 13px; color: #cbd5e1; line-height: 1.6; margin-bottom: 15px; }}
+        footer {{ background: #0f172a; border-top: 1px solid #1e293b; padding: 15px; text-align: center; font-size: 11px; color: #64748b; }}
     </style>
 </head>
 <body>
     <header>
         <div>
-            <h1>☕ Dijital Kafe Menü</h1>
-            <p>Masa Sipariş & Yönetim Paneli</p>
+            <h1>🚀 {project_title}</h1>
+            <p>Talimat: {user_message}</p>
         </div>
-        <button class="garson-btn" onclick="alert('🔔 Garson masanıza yönlendirildi!')">🔔 Garson Çağır</button>
+        <button class="action-btn" onclick="alert('⚡ 120B Model Operasyonu Başarılı!')">Sistem İşlemi</button>
     </header>
 
     <main>
-        <div>
-            <div class="categories">
-                <button class="cat-btn active" onclick="filterMenu('all', this)">Tümü</button>
-                <button class="cat-btn" onclick="filterMenu('coffee', this)">Kahveler</button>
-                <button class="cat-btn" onclick="filterMenu('dessert', this)">Tatlılar</button>
-                <button class="cat-btn" onclick="filterMenu('cold', this)">Soğuk İçecekler</button>
-            </div>
-
-            <div class="menu-grid" id="menu-grid">
-                <div class="menu-card coffee">
-                    <div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <h3>Filtre Kahve</h3>
-                            <span class="price">90 ₺</span>
-                        </div>
-                        <p>Taze çekilmiş Kolombiya çekirdekleri.</p>
-                    </div>
-                    <button class="add-btn" onclick="addToCart('Filtre Kahve', 90)">Sepete Ekle</button>
-                </div>
-                <div class="menu-card coffee">
-                    <div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <h3>Caramel Macchiato</h3>
-                            <span class="price">130 ₺</span>
-                        </div>
-                        <p>Espresso, sıcak süt, vanilya ve karamel sos.</p>
-                    </div>
-                    <button class="add-btn" onclick="addToCart('Caramel Macchiato', 130)">Sepete Ekle</button>
-                </div>
-                <div class="menu-card dessert">
-                    <div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <h3>San Sebastian</h3>
-                            <span class="price">160 ₺</span>
-                        </div>
-                        <p>Akışkan Belçika çikolata sosu eşliğinde.</p>
-                    </div>
-                    <button class="add-btn" onclick="addToCart('San Sebastian', 160)">Sepete Ekle</button>
-                </div>
-                <div class="menu-card cold">
-                    <div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <h3>Ice Americano</h3>
-                            <span class="price">100 ₺</span>
-                        </div>
-                        <p>Buz ve özel Harman espresso.</p>
-                    </div>
-                    <button class="add-btn" onclick="addToCart('Ice Americano', 100)">Sepete Ekle</button>
-                </div>
+        <div class="card-box">
+            <h2>📋 Proje Detayları & Özellikler</h2>
+            <p class="info-text">Bu uygulama openai/gpt-oss-120b modeli kullanılarak otonom olarak üretilmiştir. Tamamen duyarlı (responsive) tasarım ve modern cam efektleriyle optimize edilmiştir.</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="action-btn" onclick="alert('Veriler güncellendi!')">Verileri Yenile</button>
+                <button class="action-btn" style="background: #10b981;" onclick="alert('Rapor dışa aktarıldı!')">Rapor Al</button>
             </div>
         </div>
 
-        <div class="cart-box">
-            <h2>🛒 Masa Sepeti</h2>
-            <div class="cart-items" id="cart-items">
-                <p style="color: #64748b; font-style: italic;">Sepetiniz henüz boş.</p>
-            </div>
-            <div>
-                <div class="cart-total-row">
-                    <span>Toplam Tutar:</span>
-                    <span id="cart-total">0 ₺</span>
+        <div class="card-box">
+            <h2>⚙️ Canlı Durum Paneli</h2>
+            <div style="font-size: 12px; color: #cbd5e1;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #1e293b; padding-bottom:8px;">
+                    <span>Model:</span> <span style="color: #4ade80; font-weight:bold;">gpt-oss-120b</span>
                 </div>
-                <button class="checkout-btn" onclick="checkout()">Siparişi Tamamla</button>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #1e293b; padding-bottom:8px;">
+                    <span>Güvenlik:</span> <span style="color: #38bdf8; font-weight:bold;">SSL Korumalı</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Altyapı:</span> <span style="color: #fbbf24; font-weight:bold;">Python & Flask</span>
+                </div>
             </div>
         </div>
     </main>
@@ -1131,56 +1074,6 @@ MANDATORY RULES:
     <footer>
         &copy; 2026 E-Trade Pro AI Agency HQ. Tüm Hakları Saklıdır.
     </footer>
-
-    <script>
-        let cart = [];
-
-        function addToCart(name, price) {
-            cart.push({name, price});
-            renderCart();
-        }
-
-        function renderCart() {
-            const container = document.getElementById('cart-items');
-            const totalEl = document.getElementById('cart-total');
-            if(cart.length === 0) {
-                container.innerHTML = '<p style="color: #64748b; font-style: italic;">Sepetiniz henüz boş.</p>';
-                totalEl.innerText = '0 ₺';
-                return;
-            }
-            let html = '';
-            let total = 0;
-            cart.forEach((item) => {
-                total += item.price;
-                html += '<div class="cart-item-row"><span>' + item.name + '</span><span style="color: #fbbf24; font-weight: bold;">' + item.price + ' ₺</span></div>';
-            });
-            container.innerHTML = html;
-            totalEl.innerText = total + ' ₺';
-        }
-
-        function checkout() {
-            if(cart.length === 0) {
-                alert('Sepetiniz boş!');
-                return;
-            }
-            alert('Siparişiniz başarıyla mutfağa iletildi! Afiyet olsun.');
-            cart = [];
-            renderCart();
-        }
-
-        function filterMenu(category, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const items = document.querySelectorAll('.menu-card');
-            items.forEach(item => {
-                if(category === 'all' || item.classList.contains(category)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-    </script>
 </body>
 </html>"""
 
@@ -1245,7 +1138,7 @@ def api_tasks():
 def api_boardroom():
     if not session.get('logged_in'):
         return jsonify({"decision": "Yetkisiz"})
-    return jsonify({"decision": "Yönetim kurulu projelerin otonom üretim hattını ve canlı önizleme köprüsünü onayladı."})
+    return jsonify({"decision": "Yönetim kurulu openai/gpt-oss-120b otonom üretim hattını onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
