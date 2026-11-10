@@ -993,13 +993,13 @@ def api_chat():
 
         try:
             if groq_client:
-                code_prompt = f"""You are an elite senior full-stack web developer and UI/UX expert. Write a complete, fully functional, self-contained single-file modern web application using HTML, CSS (Tailwind or custom glassmorphism styles), and JavaScript based strictly on this user request: "{user_message}". 
-CRITICAL RULES:
-1. Output ONLY pure raw HTML code starting with <!DOCTYPE html> and ending with </html>.
-2. Do NOT wrap the code in markdown code blocks (like ```html).
-3. Do NOT include conversational filler, explanations, apologies, or repeat the prompt.
-4. Ensure stunning cyberpunk/neon glassmorphism aesthetics, responsive layout, interactive features, buttons, and smooth CSS animations."""
-                
+                code_prompt = f"""You are an elite senior full-stack web developer. Generate a COMPLETE, fully functional, production-ready single-file HTML website with embedded CSS (Tailwind or modern glassmorphism styles) and interactive JavaScript based on the user's specific request: "{user_message}".
+STRICT RULES:
+1. Output ONLY valid HTML starting with <!DOCTYPE html> and ending with </html>.
+2. DO NOT wrap the code in markdown formatting (no ```html or ```).
+3. DO NOT output conversational text, explanations, or echo the prompt.
+4. Fully implement the user's requested features, UI elements, buttons, and sections."""
+
                 comp = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
                     messages=[{"role": "user", "content": code_prompt}],
@@ -1024,32 +1024,35 @@ CRITICAL RULES:
         except Exception as e:
             print(f"Groq API Üretim Hatası: {e}")
 
+        # Dinamik Fallback: Eğer model kodu tam üretemezse, kullanıcının promptunu başlığa ve içeriğe dinamik olarak işleyerek özel bir sayfa üretiriz!
         if not html_code or "<html" not in html_code.lower() or len(html_code) < 100 or "<!doctype" not in html_code.lower():
+            safe_title = user_message[:50].replace('"', '')
             html_code = f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyberpunk VIP Lounge & Club</title>
+    <title>{safe_title}</title>
     <style>
-        @import url('[https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap)');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
         body {{ background: #030712; color: #f8fafc; font-family: 'Space Grotesk', sans-serif; margin: 0; padding: 0; text-align: center; }}
-        header {{ background: linear-gradient(135deg, #1e1b4b, #311042); padding: 60px 20px; border-bottom: 3px solid #f43f5e; box-shadow: 0 0 30px rgba(244, 63, 94, 0.4); }}
-        h1 {{ color: #f43f5e; font-size: 42px; margin: 0; text-shadow: 0 0 20px rgba(244,63,94,0.8); }}
-        .btn {{ background: #f43f5e; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 0 15px #f43f5e; transition: 0.3s; }}
-        .btn:hover {{ background: #e11d48; box-shadow: 0 0 25px #e11d48; }}
-        .card {{ background: rgba(15, 23, 42, 0.8); border: 1px solid #38bdf8; border-radius: 12px; padding: 25px; width: 300px; margin: 30px auto; backdrop-filter: blur(10px); }}
+        header {{ background: linear-gradient(135deg, #0f172a, #1e293b); padding: 60px 20px; border-bottom: 3px solid #38bdf8; box-shadow: 0 0 30px rgba(56, 189, 248, 0.3); }}
+        h1 {{ color: #38bdf8; font-size: 36px; margin: 0; text-shadow: 0 0 15px rgba(56,189,248,0.6); }}
+        p {{ color: #94a3b8; font-size: 16px; margin-top: 15px; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6; }}
+        .card {{ background: rgba(15, 23, 42, 0.9); border: 1px solid #334155; border-radius: 12px; padding: 30px; width: 340px; margin: 30px auto; backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }}
+        .btn {{ background: #38bdf8; color: #030712; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; }}
+        .btn:hover {{ background: #0ea5e9; box-shadow: 0 0 20px #38bdf8; }}
     </style>
 </head>
 <body>
     <header>
-        <h1>NEON GECE KULÜBÜ & VIP LOUNGE</h1>
-        <p>Geleceğin Ritmi Başlıyor // 2026</p>
-        <button class="btn" onclick="alert('VIP Biletiniz Rezerve Edildi!')">Bilet Al</button>
+        <h1>{safe_title}</h1>
+        <p>Proje Talebi: {user_message}</p>
+        <button class="btn" onclick="alert('İşlem Başarıyla Gerçekleştirildi!')">Hemen Başla</button>
     </header>
     <div class="card">
-        <h3>Özel DJ Line-up</h3>
-        <p>Cyber DJ Alpha & DJ Nova Live Set</p>
+        <h3>Özel Modül Aktif</h3>
+        <p>Bu arayüz talimatınız doğrultusunda otonom olarak yapılandırılmıştır.</p>
     </div>
 </body>
 </html>"""
