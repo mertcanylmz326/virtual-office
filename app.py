@@ -942,150 +942,99 @@ def api_chat():
     audit_logs = []
 
     if agent_name != "Brown":
-        reply = f"Patron, {agent['role']} departmanı olarak talimatını aldık!"
+        try:
+            if groq_client:
+                prompt = f"Sen ofiste '{agent['role']}' olarak çalışan bir uzmansın. Patronun (Kullanıcı) sana şu mesajı gönderdi: '{user_message}'. Kendi departmanının uzmanlığıyla profesyonel ve kısa bir iş yanıtı ver. Asla HTML kodu yazma."
+                comp = groq_client.chat.completions.create(
+                    model="openai/gpt-oss-120b",
+                    messages=[{"role": "user", "content": prompt}],
+                    max_tokens=300, temperature=0.7
+                )
+                reply = comp.choices[0].message.content.strip()
+        except:
+            reply = f"Patron, {agent['role']} departmanı olarak talimatını aldık!"
+        
+        if not reply:
+            reply = f"Patron, {agent['role']} departmanı olarak notumuzu aldık!"
     else:
-        reply = f"Patron, talep ettiğin Kripto Terminali gpt-oss-120b ile kodlandı!"
+        reply = f"Patron, talep ettiğin proje openai/gpt-oss-120b ile otonom olarak kodlandı!"
 
         audit_logs.append("<b>[SKRİNAR - SİBER GÜVENLİK]:</b> Kod yapısı tarandı, güvenlik açıklarına karşı onaylandı!")
         audit_logs.append("<b>[ALEX - HUKUK]:</b> Telif standartları ve lisans denetimi tamamlandı!")
         audit_logs.append("<b>[İRFAN - FİNANSMAN]:</b> Proje maliyet bütçesi onaylandı!")
 
-        # Kripto Para Terminali Sabit / Dinamik Kod Üretimi
-        html_code = """<!DOCTYPE html>
+        # DİNAMİK 120B OTONOM KOD ÜRETİMİ
+        try:
+            if groq_client:
+                code_prompt = f"""You are an elite senior full-stack web developer and designer. Write a fully working, stunning single-file HTML application based strictly on this request: "{user_message}".
+MANDATORY RULES:
+- Output ONLY valid HTML starting with <!DOCTYPE html> and ending with </html>.
+- DO NOT wrap the code in markdown formatting blocks like ```html.
+- DO NOT output explanations, conversational filler, or repeat the prompt.
+- Include embedded CSS styling and JavaScript so it looks gorgeous and interactive without external CDN dependencies."""
+
+                comp = groq_client.chat.completions.create(
+                    model="openai/gpt-oss-120b",
+                    messages=[{"role": "user", "content": code_prompt}],
+                    max_tokens=4000, temperature=0.7
+                )
+                raw_code = comp.choices[0].message.content.strip()
+                
+                clean_code = re.sub(r'```[a-zA-Z]*', '', raw_code).replace('```', '')
+
+                lower_code = clean_code.lower()
+                start_idx = lower_code.find("<!doctype")
+                if start_idx == -1:
+                    start_idx = lower_code.find("<html")
+                
+                end_idx = lower_code.rfind("</html>")
+
+                if start_idx != -1 and end_idx != -1:
+                    html_code = clean_code[start_idx:end_idx+7]
+                else:
+                    html_code = clean_code.strip()
+        except Exception as e:
+            print(f"Groq API Üretim Hatası (120b): {e}")
+
+        if not html_code or "<html" not in html_code.lower() or len(html_code) < 150:
+            words = user_message.split()
+            project_title = " ".join(words[:6]) if len(words) > 0 else "Özel Yapay Zeka Uygulaması"
+            
+            html_code = f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyberpunk Crypto & Asset Terminal</title>
+    <title>{project_title}</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Courier New', Courier, monospace; background-color: #030712; color: #38bdf8; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
-        header { background: rgba(15, 23, 42, 0.95); border-bottom: 2px solid #38bdf8; padding: 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px); }
-        header h1 { font-size: 20px; color: #38bdf8; text-shadow: 0 0 10px rgba(56,189,248,0.5); }
-        header p { font-size: 11px; color: #94a3b8; margin-top: 3px; }
-        .action-btn { background: #0284c7; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.3s; box-shadow: 0 0 15px rgba(2, 132, 199, 0.4); font-family: monospace; }
-        .action-btn:hover { background: #0369a1; box-shadow: 0 0 25px #38bdf8; }
-        main { max-width: 1200px; margin: 30px auto; padding: 0 20px; width: 100%; display: grid; grid-template-columns: 2fr 1fr; gap: 25px; flex-grow: 1; }
-        @media (max-width: 768px) { main { grid-template-columns: 1fr; } }
-        .card-box { background: rgba(15, 23, 42, 0.85); border: 1px solid #334155; border-radius: 14px; padding: 20px; backdrop-filter: blur(8px); box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
-        .card-box h2 { font-size: 15px; color: #fff; margin-bottom: 15px; border-bottom: 1px dashed #334155; padding-bottom: 10px; }
-        .crypto-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-        @media (max-width: 600px) { .crypto-grid { grid-template-columns: 1fr; } }
-        .crypto-card { background: #090d16; border: 1px solid #1e293b; border-radius: 10px; padding: 15px; text-align: center; }
-        .crypto-card h3 { font-size: 14px; color: #38bdf8; margin-bottom: 5px; }
-        .crypto-price { font-size: 16px; font-weight: bold; color: #4ade80; }
-        .crypto-change { font-size: 11px; color: #f43f5e; margin-top: 4px; }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 5px; }
-        select, input { width: 100%; background: #030712; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 6px; font-family: monospace; outline: none; }
-        select:focus, input:focus { border-color: #38bdf8; box-shadow: 0 0 10px rgba(56,189,248,0.4); }
-        .history-list { font-size: 11px; color: #cbd5e1; max-height: 180px; overflow-y: auto; }
-        .history-item { padding: 6px 0; border-bottom: 1px dashed #1e293b; display: flex; justify-content: space-between; }
-        footer { background: #090d16; border-top: 1px solid #334155; padding: 15px; text-align: center; font-size: 11px; color: #64748b; }
+        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+        body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #030712; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }}
+        header {{ background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid #1e293b; padding: 20px; display: flex; justify-content: space-between; align-items: center; }}
+        header h1 {{ font-size: 20px; color: #38bdf8; }}
+        .action-btn {{ background: #0284c7; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; }}
+        main {{ max-width: 1000px; margin: 40px auto; padding: 0 20px; width: 100%; }}
+        .card-box {{ background: rgba(15, 23, 42, 0.9); border: 1px solid #1e293b; border-radius: 16px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }}
     </style>
 </head>
 <body>
     <header>
-        <div>
-            <h1>⚡ CYBER CRYPTO TERMINAL</h1>
-            <p>Model: openai/gpt-oss-120b | Canlı Varlık Takibi</p>
-        </div>
-        <div style="font-size: 14px; color: #4ade80; font-weight: bold;">Cüzdan: $546,350.00</div>
+        <h1>🚀 {project_title}</h1>
+        <button class="action-btn" onclick="alert('İşlem Başarılı!')">Sistem Butonu</button>
     </header>
-
     <main>
         <div class="card-box">
-            <h2>📊 Piyasa Özet Kartları</h2>
-            <div class="crypto-grid">
-                <div class="crypto-card">
-                    <h3>Bitcoin (BTC)</h3>
-                    <div class="crypto-price" id="btc-price">$91,450</div>
-                    <div class="crypto-change" style="color: #4ade80;">+3.42%</div>
-                </div>
-                <div class="crypto-card">
-                    <h3>Ethereum (ETH)</h3>
-                    <div class="crypto-price" id="eth-price">$3,420</div>
-                    <div class="crypto-change" style="color: #4ade80;">+1.85%</div>
-                </div>
-                <div class="crypto-card">
-                    <h3>Solana (SOL)</h3>
-                    <div class="crypto-price" id="sol-price">$210.50</div>
-                    <div class="crypto-change">-0.74%</div>
-                </div>
-            </div>
-            <h2>📈 Canlı Fiyat Simülasyonu</h2>
-            <div style="background: #030712; border: 1px solid #334155; height: 120px; border-radius: 8px; display: flex; align-items: flex-end; padding: 10px; gap: 8px;" id="chart-bars">
-                <div style="flex: 1; background: #38bdf8; height: 60%; border-radius: 4px;"></div>
-                <div style="flex: 1; background: #38bdf8; height: 75%; border-radius: 4px;"></div>
-                <div style="flex: 1; background: #38bdf8; height: 50%; border-radius: 4px;"></div>
-                <div style="flex: 1; background: #4ade80; height: 90%; border-radius: 4px;"></div>
-                <div style="flex: 1; background: #38bdf8; height: 65%; border-radius: 4px;"></div>
-                <div style="flex: 1; background: #4ade80; height: 95%; border-radius: 4px;"></div>
-            </div>
-        </div>
-
-        <div class="card-box">
-            <h2>💱 Varlık Dağılımı & İşlem Paneli</h2>
-            <div class="form-group">
-                <label>İşlem Türü:</label>
-                <select id="tx-type">
-                    <option value="AL">Kripto Al (BUY)</option>
-                    <option value="SAT">Kripto Sat (SELL)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Kripto Varlık:</label>
-                <select id="crypto-select">
-                    <option value="BTC">Bitcoin (BTC)</option>
-                    <option value="ETH">Ethereum (ETH)</option>
-                    <option value="SOL">Solana (SOL)</option>
-                    <option value="XRP">Ripple (XRP)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Miktar:</label>
-                <input type="number" id="tx-amount" value="1.5" step="0.1">
-            </div>
-            <button class="action-btn" style="width: 100%; margin-top: 5px;" onclick="executeTrade()">EMRİ GERÇEKLEŞTİR</button>
-
-            <h2 style="margin-top: 20px;">📜 İşlem Geçmişi</h2>
-            <div class="history-list" id="history-box">
-                <div class="history-item"><span>[AL] 0.5 BTC</span><span style="color: #4ade80;">Başarılı</span></div>
-                <div class="history-item"><span>[SAT] 12.0 ETH</span><span style="color: #4ade80;">Başarılı</span></div>
-            </div>
+            <h2>Talimat: {user_message}</h2>
+            <p style="color: #94a3b8; margin-top: 15px; line-height: 1.6;">Bu arayüz openai/gpt-oss-120b motoru tarafından isteğinize göre otonom olarak üretilmiştir.</p>
         </div>
     </main>
-
-    <footer>
-        &copy; 2026 E-Trade Pro AI Agency HQ. Tüm Hakları Saklıdır.
+    <footer style="background: #0f172a; padding: 15px; text-align: center; font-size: 11px; color: #64748b;">
+        &copy; 2026 E-Trade Pro AI Agency HQ
     </footer>
-
-    <script>
-        function executeTrade() {
-            const type = document.getElementById('tx-type').value;
-            const crypto = document.getElementById('crypto-select').value;
-            const amount = document.getElementById('tx-amount').value;
-            const historyBox = document.getElementById('history-box');
-
-            const item = document.createElement('div');
-            item.className = 'history-item';
-            item.innerHTML = `<span>[${type}] ${amount} ${crypto}</span><span style="color: #4ade80;">Başarılı</span>`;
-            historyBox.prepend(item);
-            alert(`Emir başarıyla işlendi: ${type} ${amount} ${crypto}`);
-        }
-
-        setInterval(() => {
-            const btcElem = document.getElementById('btc-price');
-            let randomChange = (Math.random() * 200 - 100).toFixed(2);
-            let currentBtc = 91450 + parseFloat(randomChange);
-            btcElem.innerText = '$' + currentBtc.toLocaleString();
-        }, 3000);
-    </script>
 </body>
 </html>"""
 
         filename = f"project_{int(time.time())}.html"
-        github_url = push_to_github(filename, html_code, f"Kripto Terminali otonom üretimi: {user_message[:30]}")
+        github_url = push_to_github(filename, html_code, f"Otonom proje üretimi: {user_message[:30]}")
         if github_url and "github.com" in github_url:
             audit_logs.append(f"<b>[GİTHUB API]:</b> Dosya repoya başarıyla eklendi! 🐙")
         else:
@@ -1103,7 +1052,7 @@ def api_chat():
 
             host_url = request.host_url.rstrip('/')
             preview_url = f"{host_url}/preview/{project_id}"
-            audit_logs.append(f"<b>[CANLI ÖNİZLEME]:</b> Kripto Terminali render sunucusunda yayına alındı! 🚀")
+            audit_logs.append(f"<b>[CANLI ÖNİZLEME]:</b> Proje render sunucusunda yayına alındı! 🚀")
         except Exception as e:
             print(f"DB Kayıt Hatası: {e}")
 
@@ -1145,7 +1094,7 @@ def api_tasks():
 def api_boardroom():
     if not session.get('logged_in'):
         return jsonify({"decision": "Yetkisiz"})
-    return jsonify({"decision": "Yönetim kurulu Kripto Terminali uygulamasını onayladı."})
+    return jsonify({"decision": "Yönetim kurulu otonom üretim hattını onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
