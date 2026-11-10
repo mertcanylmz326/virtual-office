@@ -16,8 +16,6 @@ DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-
 GROQ_API_KEY = "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"
 UPTIMEROBOT_API_KEY = "u3671342-858d5db4b2fd40032fce3ce6"
 GITHUB_TOKEN = "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"
-VERCEL_TOKEN = "TC8LHuqLjVDPVq53f8W7X38f"
-VERCEL_TEAM_ID = "team_YksPBgHEADae6wtVZoITK3p4"
 
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
@@ -102,35 +100,6 @@ def push_to_github(filename, file_content, commit_msg):
             return f"https://github.com/{username}/{repo_name}/blob/main/{filename}"
     except Exception as e:
         print(f"GitHub API Hatası: {e}")
-    return None
-
-def deploy_to_vercel(project_name, html_content):
-    try:
-        headers = {
-            "Authorization": f"Bearer {VERCEL_TOKEN}",
-            "Content-Type": "application/json"
-        }
-        url = f"https://api.vercel.com/v13/deployments?teamId={VERCEL_TEAM_ID}"
-        
-        payload = {
-            "name": project_name,
-            "files": [
-                {
-                    "file": "index.html",
-                    "data": html_content
-                }
-            ],
-            "projectSettings": {"framework": None}
-        }
-        
-        res = requests.post(url, headers=headers, json=payload, timeout=15)
-        if res.status_code in [200, 201]:
-            data = res.json()
-            url_alias = data.get("url")
-            if url_alias:
-                return f"https://{url_alias}"
-    except Exception as e:
-        print(f"Vercel API Hatası: {e}")
     return None
 
 employees = {
@@ -434,7 +403,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: var(--accent-color); font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // GITHUB & VERCEL AUTO-DEPLOY</div>
+        <div style="font-weight: bold; color: var(--accent-color); font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // GITHUB SYNC ACTIVE</div>
         <div>
             <select id="themeSelect" onchange="changeTheme(this.value)" class="top-btn" style="background: rgba(15,23,42,0.9); color: var(--accent-color); border: 1px solid var(--accent-color); cursor: pointer;">
                 <option value="theme-cyberred">🔴 Cyber Red</option>
@@ -473,11 +442,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ FULL AUTO-DEPLOY TERMINAL</span>
-            <span style="color: var(--accent-color); font-weight: bold;">● GITHUB & VERCEL CLOUD AKTİF</span>
+            <span>⚡ GITHUB AUTOMATION TERMINAL</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● KESİNTİSİZ LİNK ÜRETİCİ AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: Vercel ve GitHub entegrasyonu başarıyla yüklendi!</div>
+            <div class="log-line">[SYSTEM]: GitHub ve Supabase önizleme köprüsü hazır!</div>
         </div>
     </div>
 
@@ -561,7 +530,7 @@ HTML_TEMPLATE = """
                 body.innerHTML += `<br><b style="color: #4ade80;">[${activeModalAgent}]:</b> ${data.status}`;
                 body.scrollTop = body.scrollHeight;
                 if(data.preview_url) {
-                    body.innerHTML += `<br>🚀 <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold;">Canlı Vercel Sayfası 🌐</a>`;
+                    body.innerHTML += `<br>🚀 <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold;">Canlı Proje Sayfası 🌐</a>`;
                 }
             });
         }
@@ -787,8 +756,8 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor, GitHub & Vercel cloud deploy başlatıldı...`);
-            showToast(`${agentName} projeyi kodluyor & Vercel'e canlıya alıyor!`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor, GitHub & önizleme hazırlanıyor...`);
+            showToast(`${agentName} projeyi kodluyor & arşive ekliyor!`);
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 120000);
@@ -813,9 +782,9 @@ HTML_TEMPLATE = """
                 if(data.github_url) {
                     appendLog(`> 🐙 <b style="color: #4ade80;">GİTHUB REPO:</b> <a href="${data.github_url}" target="_blank" style="color: #38bdf8; font-weight: bold;">Depoya Git 🌐</a>`);
                 }
-                if(data.vercel_url) {
-                    appendLog(`> 🚀 <b style="color: #f43f5e; font-size: 14px;">VERCEL CANLI LİNK:</b> <a href="${data.vercel_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Sayfayı Aç 🌐</a>`);
-                    showToast("Proje Vercel'de canlıya alındı!");
+                if(data.preview_url) {
+                    appendLog(`> 🚀 <b style="color: #f43f5e; font-size: 14px;">CANLI PROJE LİNKİ:</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Sayfayı Aç 🌐</a>`);
+                    showToast("Proje başarıyla canlıya alındı!");
                 }
             })
             .catch(err => {
@@ -984,7 +953,6 @@ def api_chat():
     reply = ""
     preview_url = None
     github_url = None
-    vercel_url = None
     audit_logs = []
 
     if agent_name != "Brown":
@@ -1017,7 +985,7 @@ def api_chat():
             pass
         
         if not reply:
-            reply = f"Patron, talep ettiğin proje GPT-OSS 120B ile kodlandı, GitHub ve Vercel'e yayımlandı!"
+            reply = f"Patron, talep ettiğin proje GPT-OSS 120B ile kodlandı ve GitHub'a yollandı!"
 
         audit_logs.append("<b>[SKRİNAR - SİBER GÜVENLİK]:</b> Kod yapısı tarandı, güvenlik açıklarına karşı onaylandı!")
         audit_logs.append("<b>[ALEX - HUKUK]:</b> Telif standartları ve lisans denetimi tamamlandı!")
@@ -1078,29 +1046,24 @@ def api_chat():
         if github_url:
             audit_logs.append(f"<b>[GİTHUB API]:</b> Kodlar repoya başarıyla push'landı! 🐙")
 
-        # Vercel'e Canlıya Al
-        proj_slug = f"ai-project-{int(time.time())}"
-        vercel_url = deploy_to_vercel(proj_slug, html_code)
-        if vercel_url:
-            audit_logs.append(f"<b>[VERCEL API]:</b> Proje canlıya alındı! 🚀")
-
         try:
             conn = psycopg2.connect(DB_URL)
             cur = conn.cursor()
             cur.execute("INSERT INTO client_orders (client_name, project_type, repo_url, html_code) VALUES (%s, %s, %s, %s) RETURNING id", 
-                        ("Brown (Yazılımcı)", user_message[:40], vercel_url or github_url or "Cloud Deploy Başarılı", html_code))
+                        ("Brown (Yazılımcı)", user_message[:40], github_url or "GitHub Push Başarılı", html_code))
             project_id = cur.fetchone()[0]
             conn.commit()
             cur.close()
             conn.close()
 
             host_url = request.host_url.rstrip('/')
-            preview_url = vercel_url or f"{host_url}/preview/{project_id}"
+            preview_url = f"{host_url}/preview/{project_id}"
+            audit_logs.append(f"<b>[CANLI ÖNİZLEME]:</b> Proje render sunucusunda yayına alındı! 🚀")
         except Exception as e:
             print(f"DB Kayıt Hatası: {e}")
 
     log_to_supabase(agent_name, "SYSTEM_OP", f"Talimat: {user_message}")
-    return jsonify({"status": reply, "audit_logs": audit_logs, "preview_url": preview_url, "github_url": github_url, "vercel_url": vercel_url})
+    return jsonify({"status": reply, "audit_logs": audit_logs, "preview_url": preview_url, "github_url": github_url})
 
 @app.route('/api/uptime', methods=['GET'])
 def api_uptime():
@@ -1127,8 +1090,8 @@ def api_tasks():
         conn.close()
         tasks = []
         for r in rows:
-            link_display = f"<a href='{r[3]}' target='_blank' style='color: #f43f5e; font-weight: bold;'>Canlı/Repo 🌐</a>" if r[3] and r[3].startswith("http") else f"<a href='/preview/{r[0]}' target='_blank' style='color: #f43f5e; font-weight: bold;'>Canlı Sayfa 🌐</a>"
-            tasks.append(f"<b>[{r[1]}]:</b> {r[2]} — {link_display}")
+            gh_link = f" — <a href='{r[3]}' target='_blank' style='color: #4ade80; font-weight: bold;'>GitHub 🐙</a>" if r[3] and r[3].startswith("http") else ""
+            tasks.append(f"<b>[{r[1]}]:</b> {r[2]} — <a href='/preview/{r[0]}' target='_blank' style='color: #f43f5e; font-weight: bold;'>Canlı Sayfa 🌐</a>{gh_link}")
         return jsonify({"tasks": tasks if tasks else ["Arşivde henüz proje bulunmuyor."]})
     except:
         return jsonify({"tasks": ["Yüklenemedi."]})
@@ -1137,7 +1100,7 @@ def api_tasks():
 def api_boardroom():
     if not session.get('logged_in'):
         return jsonify({"decision": "Yetkisiz"})
-    return jsonify({"decision": "Yönetim kurulu Vercel ve GitHub tam otonom deploy zincirini onayladı."})
+    return jsonify({"decision": "Yönetim kurulu GitHub senkronizasyonunu ve canlı önizleme köprüsünü onayladı."})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
