@@ -14,7 +14,7 @@ app.secret_key = "e_trade_pro_secret_security_key_99"
 
 DB_URL = "postgresql://postgres.prphsmgaujdwrqqdmmrd:yaheroyamero@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
 GROQ_API_KEY = "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"
-GITHUB_TOKEN = "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"
+GITHUB_TOKEN = "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"
 
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
@@ -393,7 +393,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div id="game-topbar">
-        <div style="font-weight: bold; color: var(--accent-color); font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // AI AGENCY HQ</div>
+        <div style="font-weight: bold; color: var(--accent-color); font-size: 14px; font-family: 'Space Grotesk', sans-serif;">🏢 E-TRADE PRO // GITHUB TOKEN SYNC</div>
         <div>
             <select id="themeSelect" onchange="changeTheme(this.value)" class="top-btn" style="background: rgba(15,23,42,0.9); color: var(--accent-color); border: 1px solid var(--accent-color); cursor: pointer;">
                 <option value="theme-cyberred">🔴 Cyber Red</option>
@@ -432,11 +432,11 @@ HTML_TEMPLATE = """
 
     <div id="activity-terminal">
         <div class="terminal-header">
-            <span>⚡ AI DEV STUDIO TERMINAL</span>
-            <span style="color: var(--accent-color); font-weight: bold;">● OTONOM ÜRETİCİ AKTİF</span>
+            <span>⚡ GITHUB TOKEN TERMINAL</span>
+            <span style="color: var(--accent-color); font-weight: bold;">● OTOMATİK DOSYA YÜKLEYİCİ AKTİF</span>
         </div>
         <div class="terminal-body" id="terminal-logs">
-            <div class="log-line">[SYSTEM]: AI ajan geliştirme merkezi hazır!</div>
+            <div class="log-line">[SYSTEM]: Yeni GitHub Token entegre edildi!</div>
         </div>
     </div>
 
@@ -746,8 +746,8 @@ HTML_TEMPLATE = """
 
             appendLog(`> [CEO -> ${agentName}]: "${messageText}"`);
             messageInput.value = "";
-            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor, web arayüzü kodlanıyor...`);
-            showToast(`${agentName} projeyi kodluyor & arşive ekliyor!`);
+            appendLog(`> [SİSTEM]: ${agentName} talimatı işliyor, GitHub'a dosya yükleniyor...`);
+            showToast(`${agentName} projeyi kodluyor & GitHub'a gönderiyor!`);
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 120000);
@@ -770,11 +770,11 @@ HTML_TEMPLATE = """
                     });
                 }
                 if(data.github_url) {
-                    appendLog(`> 🐙 <b style="color: #4ade80;">GİTHUB REPO:</b> <a href="${data.github_url}" target="_blank" style="color: #38bdf8; font-weight: bold;">Depoya Git 🌐</a>`);
+                    appendLog(`> 🐙 <b style="color: #4ade80;">GİTHUB DOSYA LİNKİ:</b> <a href="${data.github_url}" target="_blank" style="color: #38bdf8; font-weight: bold;">Depoda Gör 🌐</a>`);
                 }
                 if(data.preview_url) {
                     appendLog(`> 🚀 <b style="color: #f43f5e; font-size: 14px;">CANLI PROJE LİNKİ:</b> <a href="${data.preview_url}" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: underline; font-size: 14px;">Canlı Sayfayı Aç 🌐</a>`);
-                    showToast("Proje başarıyla canlıya alındı!");
+                    showToast("Proje GitHub ve Canlı Sunucuya eklendi!");
                 }
             })
             .catch(err => {
@@ -1014,7 +1014,6 @@ IMPORTANT FORMATTING RULES:
         except Exception as e:
             print(f"Groq API Üretim Hatası: {e}")
 
-        # Eğer model ham kod üretmek yerine hala metin dönerse, akıllı tematik bir web uygulaması oluştur
         if not html_code or "<html" not in html_code.lower() or len(html_code) < 100 or "<!doctype" not in html_code.lower() or "Sohbet etmeden" in html_code:
             words = user_message.split()
             project_title = " ".join(words[:6]) if len(words) > 0 else "Özel Yapay Zeka Paneli"
@@ -1053,13 +1052,13 @@ IMPORTANT FORMATTING RULES:
 </body>
 </html>"""
 
-        # GitHub'a Dosya Olarak Push At (Hata alsa bile durmaz)
+        # GitHub'a Dosya Olarak Push At
         filename = f"project_{int(time.time())}.html"
         github_url = push_to_github(filename, html_code, f"Brown otonom ajans projesi: {user_message[:30]}")
         if github_url and "github.com" in github_url:
             audit_logs.append(f"<b>[GİTHUB API]:</b> Dosya repoya başarıyla eklendi! 🐙")
         else:
-            audit_logs.append(f"<b>[GİTHUB API]:</b> Lokal Supabase arşivi aktif.")
+            audit_logs.append(f"<b>[GİTHUB API]:</b> Lokal arşive kaydedildi.")
 
         try:
             conn = psycopg2.connect(DB_URL)
